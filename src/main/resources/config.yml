@@ -1,0 +1,5 @@
+URL: https://community.example.com/register/mc
+FORUMNAME: https://community.example.com/
+KEY: SECRETPASSWORD
+APIHOSTNAME: localhost
+APIPORT: 25665
