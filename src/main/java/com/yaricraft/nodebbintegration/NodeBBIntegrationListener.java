@@ -26,14 +26,12 @@ public class NodeBBIntegrationListener implements Listener {
     @EventHandler
     public void handlePlayerChat(AsyncPlayerChatEvent event) {
         String data = event.getPlayer().getName() + ":" + event.getMessage();
-        System.out.println("Sending data PlayerChat, " + data);
         SocketServer.getInstance().emitPlayerChat(data);
     }
 
     @EventHandler
     public void handleServerCommand(ServerCommandEvent event) {
         String data = event.getSender().getName() + ":" + event.getCommand();
-        System.out.println("Sending data ServerCommand, " + data);
         //SocketServer.getInstance().emitServerCommand(data);
     }
 }
