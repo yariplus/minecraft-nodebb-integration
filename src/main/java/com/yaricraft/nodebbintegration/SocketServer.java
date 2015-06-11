@@ -65,4 +65,6 @@ public class SocketServer extends BukkitRunnable {
     public void emitPlayerQuit(String data) {
         server.getBroadcastOperations().sendEvent("PlayerQuit", data);
     }
+
+    public void emitPlayerChat(String data) { server.getBroadcastOperations().sendEvent("PlayerChat", data); }
 }
