@@ -1,9 +1,6 @@
 package com.yaricraft.nodebbintegration;
 
-import com.corundumstudio.socketio.AckRequest;
-import com.corundumstudio.socketio.Configuration;
-import com.corundumstudio.socketio.SocketIOClient;
-import com.corundumstudio.socketio.SocketIOServer;
+import com.corundumstudio.socketio.*;
 import com.corundumstudio.socketio.annotation.OnConnect;
 import com.corundumstudio.socketio.annotation.OnDisconnect;
 import com.corundumstudio.socketio.annotation.OnEvent;
@@ -25,6 +22,9 @@ public class SocketServer extends BukkitRunnable {
         this.config = new Configuration();
         this.config.setHostname("localhost");
         this.config.setPort(25665);
+        SocketConfig socketConfig = new SocketConfig();
+        socketConfig.setReuseAddress(true);
+        this.config.setSocketConfig(socketConfig);
     }
 
     public static SocketServer create(JavaPlugin plugin) {
@@ -38,9 +38,13 @@ public class SocketServer extends BukkitRunnable {
 
     @Override
     public void run() {
-        server = new SocketIOServer(config);
-        server.addListeners(this);
-        server.start();
+        if (server == null) {
+            server = new SocketIOServer(config);
+            server.addListeners(this);
+            server.start();
+        }else {
+            System.out.println("Oops, something went wrong with the socket server. I tried to start a duplicate instance.");
+        }
     }
 
     @OnEvent("someevent")
