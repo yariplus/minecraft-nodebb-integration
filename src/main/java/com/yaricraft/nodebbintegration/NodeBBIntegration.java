@@ -3,6 +3,8 @@ package com.yaricraft.nodebbintegration;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,6 +18,7 @@ public class NodeBBIntegration extends JavaPlugin {
         SocketServer.create(this).runTaskLaterAsynchronously(this, 20);
 
         this.saveDefaultConfig();
+        NodeBBIntegration.config = this.getConfig();
 
         setupChat();
         setupPermissions();
@@ -27,6 +30,19 @@ public class NodeBBIntegration extends JavaPlugin {
     @Override
     public void onDisable() {
 
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if (cmd.getName().equalsIgnoreCase("register")) {
+            if (args.length != 2) {
+                return false;
+            }
+            new TaskRegister(sender, args).runTaskAsynchronously(this);
+
+            return true;
+        }
+        return false;
     }
 
     public static Permission permission = null;
