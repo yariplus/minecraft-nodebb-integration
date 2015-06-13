@@ -6,6 +6,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerCommandEvent;
+import org.bukkit.event.server.ServerListPingEvent;
 
 /**
  * Created by Yari on 5/28/2015.
@@ -33,5 +34,10 @@ public class NodeBBIntegrationListener implements Listener {
     public void handleServerCommand(ServerCommandEvent event) {
         String data = event.getSender().getName() + ":" + event.getCommand();
         //SocketServer.getInstance().emitServerCommand(data);
+    }
+
+    @EventHandler
+    public void onServerListPing(final ServerListPingEvent event) {
+        SocketServer.getInstance().emitTPS(TaskTick.getTPS());
     }
 }

@@ -16,6 +16,7 @@ public class NodeBBIntegration extends JavaPlugin {
     @Override
     public void onEnable() {
         SocketServer.create(this).runTaskLaterAsynchronously(this, 20);
+        new TaskTick(this);
 
         this.saveDefaultConfig();
         NodeBBIntegration.config = this.getConfig();

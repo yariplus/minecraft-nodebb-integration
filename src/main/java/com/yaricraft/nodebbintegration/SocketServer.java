@@ -71,4 +71,6 @@ public class SocketServer extends BukkitRunnable {
     }
 
     public void emitPlayerChat(String data) { server.getBroadcastOperations().sendEvent("PlayerChat", data); }
+
+    public void emitTPS(String data) { server.getBroadcastOperations().sendEvent("TPS", data); }
 }
