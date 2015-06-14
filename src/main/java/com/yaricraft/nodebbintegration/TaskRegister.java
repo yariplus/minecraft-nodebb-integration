@@ -112,8 +112,8 @@ public class TaskRegister extends BukkitRunnable
                     case "SUCCESS":
                         commandSender.sendMessage("Successfully created a new account.");
                         break;
-                    case "RECREATED":
-                        commandSender.sendMessage("Account recreated.");
+                    case "REREGISTER":
+                        commandSender.sendMessage("Successfully registered with your existing forum account.");
                         break;
                     case "FAILPASS":
                         commandSender.sendMessage("Your password was too short.");
