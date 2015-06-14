@@ -52,7 +52,7 @@ public class TaskRegister extends BukkitRunnable
             return;
         }
 
-        if (NodeBBIntegration.config.getBoolean("ALLOWINSECURE")) {
+        if (NodeBBIntegration.config.getString("KEY").substring(0,8) == "INSECURE") {
             try
             {
                 con = (HttpURLConnection) url.openConnection();

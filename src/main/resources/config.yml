@@ -3,4 +3,3 @@ FORUMNAME: https://community.example.com/
 KEY: SECRETPASSWORD
 APIHOSTNAME: localhost
 APIPORT: 25665
-ALLOWINSECURE: false
