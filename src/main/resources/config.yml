@@ -1,5 +1,4 @@
-URL: https://community.example.com/register/mc
-FORUMNAME: https://community.example.com/
-KEY: SECRETPASSWORD
-APIHOSTNAME: localhost
-APIPORT: 25665
+FORUMURL: https://community.example.com/
+FORUMNAME: My Minecraft Forum
+APIKEY: SECRETPASSWORD
+SOCKETNAMESPACE: plugins.MinecraftIntegration

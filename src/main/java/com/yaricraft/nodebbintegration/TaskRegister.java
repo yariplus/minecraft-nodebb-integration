@@ -52,22 +52,12 @@ public class TaskRegister extends BukkitRunnable
             return;
         }
 
-        if (NodeBBIntegration.config.getString("KEY").substring(0,8) == "INSECURE") {
-            try
-            {
-                con = (HttpURLConnection) url.openConnection();
-            }catch (IOException e) {
-                e.printStackTrace();
-                return;
-            }
-        }else{
-            try
-            {
-                con = (HttpsURLConnection) url.openConnection();
-            }catch (IOException e) {
-                e.printStackTrace();
-                return;
-            }
+        try
+        {
+            con = (HttpURLConnection) url.openConnection();
+        }catch (IOException e) {
+            e.printStackTrace();
+            return;
         }
 
         if (con == null) return;

@@ -15,7 +15,7 @@ public class NodeBBIntegration extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        SocketServer.create(this).runTaskLaterAsynchronously(this, 20);
+        SocketIOClient.create(this).runTaskLaterAsynchronously(this, 60);
         new TaskTick(this);
 
         this.saveDefaultConfig();
@@ -25,7 +25,7 @@ public class NodeBBIntegration extends JavaPlugin {
         setupPermissions();
         if (!setupEconomy()) System.out.println("Vault economy not found.");
 
-        getServer().getPluginManager().registerEvents(new NodeBBIntegrationListener(), this);
+        getServer().getPluginManager().registerEvents(new NodeBBIntegrationListener(this), this);
     }
 
     @Override

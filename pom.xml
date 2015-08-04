@@ -42,8 +42,10 @@
                         <configuration>
                             <artifactSet>
                                 <includes>
-                                    <include>com.corundumstudio.socketio:*</include>
-                                    <include>org.slf4j:*</include>
+                                    <include>com.github.nkzawa:*</include>
+                                    <include>org.json:*</include>
+                                    <include>com.squareup.okhttp:*</include>
+                                    <include>com.squareup.okio:*</include>
                                     <include>com.fasterxml.jackson.core:*</include>
                                 </includes>
                             </artifactSet>
@@ -63,19 +65,29 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.corundumstudio.socketio</groupId>
-            <artifactId>netty-socketio</artifactId>
-            <version>1.7.6</version>
+            <groupId>com.github.nkzawa</groupId>
+            <artifactId>socket.io-client</artifactId>
+            <version>0.5.2</version>
         </dependency>
         <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>4.0.24.Final</version>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20090211</version>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.12</version>
+            <groupId>com.squareup.okhttp</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>2.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp</groupId>
+            <artifactId>okhttp-ws</artifactId>
+            <version>2.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okio</groupId>
+            <artifactId>okio</artifactId>
+            <version>1.4.0</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
