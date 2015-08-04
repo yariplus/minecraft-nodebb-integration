@@ -12,12 +12,19 @@ public class SocketIOClient extends BukkitRunnable {
 
     private static SocketIOClient instance;
 
-    private JavaPlugin plugin;
+    private static JavaPlugin plugin;
     private IO.Options options;
     private static Socket socket;
 
-    private SocketIOClient(JavaPlugin plugin) {
-        this.plugin = plugin;
+    public static String getNamespace() {
+        String ns = plugin.getConfig().getString("SOCKETNAMESPACE");
+        String pl = plugin.getConfig().getString("PLUGINID");
+
+        return ns + "." + pl + ".";
+    }
+
+    private SocketIOClient(JavaPlugin _plugin) {
+        plugin = _plugin;
     }
 
     public static SocketIOClient create(JavaPlugin plugin) {

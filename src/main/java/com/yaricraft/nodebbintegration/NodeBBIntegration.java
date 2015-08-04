@@ -36,14 +36,10 @@ public class NodeBBIntegration extends JavaPlugin {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (cmd.getName().equalsIgnoreCase("register")) {
-            if (args.length != 2) {
-                return false;
-            }
-            new TaskRegister(sender, args).runTaskAsynchronously(this);
-
-            return true;
+            return CommandRegister.execute(sender, cmd, label, args);
+        }else{
+            return false;
         }
-        return false;
     }
 
     public static Permission permission = null;

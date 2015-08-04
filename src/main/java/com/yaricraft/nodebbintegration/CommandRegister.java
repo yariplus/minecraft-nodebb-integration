@@ -2,29 +2,22 @@ package com.yaricraft.nodebbintegration;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.java.JavaPlugin;
 
-public class CommandRegister extends Command
+public class CommandRegister
 {
-    NodeBBIntegration plugin;
-
-    public CommandRegister(String name, NodeBBIntegration plugin)
-    {
-        super(name);
-        this.plugin = plugin;
-    }
-
-    @Override
-    public boolean execute(CommandSender commandSender, String s, String[] strings) {
-        if (strings.length != 2) {
+    public static boolean execute(CommandSender sender, Command cmd, String label, String[] args) {
+        if (args.length != 2) {
             String msg = "";
             for (int i = 0; i < CommandRegister.params.values().length; i++) {
                 msg += " " + CommandRegister.params.values()[i].toString();
             }
-            commandSender.sendMessage("Please use /register" + msg);
+            sender.sendMessage("Please use /register" + msg);
+            return false;
         }else{
-            new TaskRegister(commandSender, strings).runTaskAsynchronously(plugin);
+            new TaskRegister(sender, args).runTaskAsynchronously(NodeBBIntegration.getPlugin(JavaPlugin.class));
+            return true;
         }
-        return false;
     }
 
     public enum params
