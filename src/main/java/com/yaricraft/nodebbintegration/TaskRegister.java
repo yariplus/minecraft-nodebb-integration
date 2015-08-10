@@ -23,7 +23,7 @@ public class TaskRegister extends BukkitRunnable
         if (SocketIOClient.getSocket() == null) return;
 
         try {
-            commandSender.sendMessage("Registering you on " + NodeBBIntegration.config.getString("FORUMNAME") + "...");
+            commandSender.sendMessage("Registering you on " + NodeBBIntegration.getPlugin(JavaPlugin.class).getConfig().getString("FORUMNAME") + "...");
         }catch (Exception e) {
             e.printStackTrace();
         }

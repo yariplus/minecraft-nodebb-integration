@@ -1,6 +1,6 @@
 package com.yaricraft.nodebbintegration;
 
-import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.Ack;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -44,9 +44,9 @@ public class NodeBBIntegrationListener implements Listener {
             e.printStackTrace();
         }
 
-        System.out.println("Sending " + getNamespace() + "PlayerJoinEvent");
+        System.out.println("Sending " + getNamespace() + "eventPlayerJoin");
 
-        SocketIOClient.getSocket().emit(getNamespace() + "PlayerJoinEvent", obj, new Emitter.Listener() {
+        SocketIOClient.getSocket().emit(getNamespace() + "eventPlayerJoin", obj, new Ack() {
             @Override
             public void call(Object... args) {
                 System.out.println("PlayerJoinEvent received.");
@@ -68,9 +68,9 @@ public class NodeBBIntegrationListener implements Listener {
             e.printStackTrace();
         }
 
-        System.out.println("Sending " + getNamespace() + "PlayerQuitEvent");
+        System.out.println("Sending " + getNamespace() + "eventPlayerQuit");
 
-        SocketIOClient.getSocket().emit(getNamespace() + "PlayerQuitEvent", obj, new Emitter.Listener() {
+        SocketIOClient.getSocket().emit(getNamespace() + "eventPlayerQuit", obj, new Ack() {
             @Override
             public void call(Object... args) {
                 System.out.println("PlayerQuitEvent received.");
@@ -92,9 +92,9 @@ public class NodeBBIntegrationListener implements Listener {
             e.printStackTrace();
         }
 
-        System.out.println("Sending " + getNamespace() + "PlayerChatEvent");
+        System.out.println("Sending " + getNamespace() + "eventPlayerChat");
 
-        SocketIOClient.getSocket().emit(getNamespace() + "PlayerChatEvent", obj, new Emitter.Listener() {
+        SocketIOClient.getSocket().emit(getNamespace() + "eventPlayerChat", obj, new Ack() {
             @Override
             public void call(Object... args) {
                 System.out.println("PlayerChatEvent received.");
@@ -124,7 +124,7 @@ public class NodeBBIntegrationListener implements Listener {
 
         System.out.println("Sending " + getNamespace() + "emitTPS");
 
-        SocketIOClient.getSocket().emit(getNamespace() + "emitTPS", obj, new Emitter.Listener() {
+        SocketIOClient.getSocket().emit(getNamespace() + "emitTPS", obj, new Ack() {
             @Override
             public void call(Object... args) {
                 System.out.println("emitTPS received.");
