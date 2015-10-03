@@ -1,4 +1,5 @@
 FORUMURL: https://community.example.com/
 FORUMNAME: My Minecraft Forum
 APIKEY: SECRETPASSWORD
-SOCKETNAMESPACE: plugins.MinecraftIntegration
+SOCKETNAMESPACE: plugins
+PLUGINID: MinecraftIntegration

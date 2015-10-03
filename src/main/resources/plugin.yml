@@ -1,11 +1,12 @@
 name: NodeBB Integration
 main: com.yaricraft.nodebbintegration.NodeBBIntegration
-version: 0.1.0
+version: 0.2.0
 softdepend: [Vault]
 commands:
   register:
-    description: Register your Minecraft account on NodeBB.
+    description: Register your Minecraft account with your forum account.
     usage: /register [email] [password]
   nodebb:
-    description: Reload NodeBB integration.
+    description: Reload NodeBB Integration.
     usage: /nodebb
+    permission: nodebb.admin

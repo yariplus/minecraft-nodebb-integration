@@ -1,6 +1,8 @@
 package com.yaricraft.nodebbintegration;
 
 import com.github.nkzawa.socketio.client.Ack;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -33,23 +35,36 @@ public class NodeBBIntegrationListener implements Listener {
     @EventHandler
     public void handlePlayerJoin(PlayerJoinEvent event) {
         if (SocketIOClient.getSocket() == null) return;
+        final String socketEvent = getNamespace() + "eventPlayerJoin";
 
-        JSONObject obj = new JSONObject();
+        String prefix = null;
+        Player player = event.getPlayer();
 
-        try {
-            obj.put("name", event.getPlayer().getName());
-            obj.put("id", event.getPlayer().getUniqueId());
-            obj.put("key", plugin.getConfig().getString("APIKEY"));
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (NodeBBIntegration.chat != null && NodeBBIntegration.permission != null) {
+            prefix = NodeBBIntegration.chat.getPlayerPrefix(player);
+            if (prefix == null)
+                prefix = NodeBBIntegration.chat.getGroupPrefix(Bukkit.getWorlds().get(0), NodeBBIntegration.permission.getPrimaryGroup(player));
+            System.out.println(player.getName() + " has group " + NodeBBIntegration.permission.getPrimaryGroup(player));
+            System.out.println(player.getName() + " has prefix " + prefix);
         }
 
-        System.out.println("Sending " + getNamespace() + "eventPlayerJoin");
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("name", player.getName());
+            obj.put("id", player.getUniqueId());
+            obj.put("prefix", prefix);
+            obj.put("key", plugin.getConfig().getString("APIKEY"));
+        } catch (JSONException e) {
+            System.out.println("Error constructing JSON Object for " + socketEvent);
+            e.printStackTrace();
+            return;
+        }
 
-        SocketIOClient.getSocket().emit(getNamespace() + "eventPlayerJoin", obj, new Ack() {
+        System.out.println("Sending " + socketEvent);
+        SocketIOClient.getSocket().emit(socketEvent, obj, new Ack() {
             @Override
             public void call(Object... args) {
-                System.out.println("PlayerJoinEvent received.");
+                System.out.println(socketEvent + " callback received.");
             }
         });
     }
@@ -57,23 +72,24 @@ public class NodeBBIntegrationListener implements Listener {
     @EventHandler
     public void handlePlayerQuit(PlayerQuitEvent event) {
         if (SocketIOClient.getSocket() == null) return;
+        final String socketEvent = getNamespace() + "eventPlayerQuit";
 
         JSONObject obj = new JSONObject();
-
         try {
             obj.put("name", event.getPlayer().getName());
             obj.put("id", event.getPlayer().getUniqueId());
             obj.put("key", plugin.getConfig().getString("APIKEY"));
         } catch (JSONException e) {
+            System.out.println("Error constructing JSON Object for " + socketEvent);
             e.printStackTrace();
+            return;
         }
 
-        System.out.println("Sending " + getNamespace() + "eventPlayerQuit");
-
-        SocketIOClient.getSocket().emit(getNamespace() + "eventPlayerQuit", obj, new Ack() {
+        System.out.println("Sending " + socketEvent);
+        SocketIOClient.getSocket().emit(socketEvent, obj, new Ack() {
             @Override
             public void call(Object... args) {
-                System.out.println("PlayerQuitEvent received.");
+                System.out.println(socketEvent + " callback received.");
             }
         });
     }
@@ -81,23 +97,25 @@ public class NodeBBIntegrationListener implements Listener {
     @EventHandler
     public void handlePlayerChat(AsyncPlayerChatEvent event) {
         if (SocketIOClient.getSocket() == null) return;
+        final String socketEvent = getNamespace() + "eventPlayerChat";
 
         JSONObject obj = new JSONObject();
-
         try {
-            obj.put("player", event.getPlayer().getName());
+            obj.put("name", event.getPlayer().getName());
+            obj.put("id", event.getPlayer().getUniqueId());
             obj.put("message", event.getMessage());
             obj.put("key", plugin.getConfig().getString("APIKEY"));
         } catch (JSONException e) {
+            System.out.println("Error constructing JSON Object for " + socketEvent);
             e.printStackTrace();
+            return;
         }
 
-        System.out.println("Sending " + getNamespace() + "eventPlayerChat");
-
-        SocketIOClient.getSocket().emit(getNamespace() + "eventPlayerChat", obj, new Ack() {
+        System.out.println("Sending " + socketEvent);
+        SocketIOClient.getSocket().emit(socketEvent, obj, new Ack() {
             @Override
             public void call(Object... args) {
-                System.out.println("PlayerChatEvent received.");
+                System.out.println(socketEvent + " callback received.");
             }
         });
     }
@@ -112,23 +130,39 @@ public class NodeBBIntegrationListener implements Listener {
     @EventHandler
     public void onServerListPing(final ServerListPingEvent event) {
         if (SocketIOClient.getSocket() == null) return;
+        final String socketEvent = getNamespace() + "emitTPS";
 
         JSONObject obj = new JSONObject();
-
         try {
             obj.put("tps", TaskTick.getTPS());
             obj.put("key", plugin.getConfig().getString("APIKEY"));
         } catch (JSONException e) {
+            System.out.println("Error constructing JSON Object for " + socketEvent);
             e.printStackTrace();
+            return;
         }
 
-        System.out.println("Sending " + getNamespace() + "emitTPS");
-
-        SocketIOClient.getSocket().emit(getNamespace() + "emitTPS", obj, new Ack() {
+        System.out.println("Sending " + socketEvent);
+        SocketIOClient.getSocket().emit(socketEvent, obj, new Ack() {
             @Override
             public void call(Object... args) {
-                System.out.println("emitTPS received.");
+                System.out.println(socketEvent + " callback received.");
             }
         });
+
+        final String socketSyncEvent = getNamespace() + "eventSyncServer";
+
+        obj = new JSONObject();
+        try {
+            obj.put("socketid", SocketIOClient.id);
+            obj.put("key", plugin.getConfig().getString("APIKEY"));
+        } catch (JSONException e) {
+            System.out.println("Error constructing JSON Object for " + socketSyncEvent);
+            e.printStackTrace();
+            return;
+        }
+
+        System.out.println("Sending " + socketSyncEvent);
+        SocketIOClient.getSocket().emit(socketSyncEvent, obj);
     }
 }
