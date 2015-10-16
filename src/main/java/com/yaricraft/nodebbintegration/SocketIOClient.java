@@ -40,70 +40,45 @@ public class SocketIOClient extends BukkitRunnable {
         return socket;
     }
 
+    public static void closeSocket() { socket.close(); }
+
     @Override
     public void run() {
         if (socket == null) {
             try {
                 socket = IO.socket(plugin.getConfig().getString("FORUMURL"));
-                System.out.println("Success! The socket client was created.");
+                NodeBBIntegration.log("Success! The socket client was created.");
             } catch (URISyntaxException e) {
                 e.printStackTrace();
             }
         }else{
-            System.out.println("Oops, something went wrong with the socket client. I tried to start a duplicate instance.");
+            NodeBBIntegration.log("Oops, something went wrong with the socket client. I tried to start a duplicate instance.");
         }
 
         if (socket != null) {
             socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    System.out.println("I connected to the forum. Joy!");
-                    id = socket.id();
-
-                    JSONObject obj = new JSONObject();
-
-                    try {
-                        obj.put("socketid", id);
-                        obj.put("key", plugin.getConfig().getString("APIKEY"));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    String ns = plugin.getConfig().getString("SOCKETNAMESPACE") + "." + plugin.getConfig().getString("PLUGINID") + ".";
-                    System.out.println("Sending " + ns + "eventSyncServer");
-
-                    socket.emit(ns + "eventSyncServer", obj);
+                    sync();
                 }
             }).on(Socket.EVENT_RECONNECT, new Emitter.Listener() {
 
                 @Override
                 public void call(Object... args) {
-                    System.out.println("Hurray! I re-connected to forum!");
-                    id = socket.id();
-
-                    JSONObject obj = new JSONObject();
-
-                    try {
-                        obj.put("socketid", id);
-                        obj.put("key", plugin.getConfig().getString("APIKEY"));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    String ns = plugin.getConfig().getString("SOCKETNAMESPACE") + "." + plugin.getConfig().getString("PLUGINID") + ".";
-                    System.out.println("Sending " + ns + "eventSyncServer");
-
-                    socket.emit(ns + "eventSyncServer", obj);
+                    sync();
                 }
 
             }).on("eventWebChat", new Emitter.Listener() {
                 @Override
-                public void call(Object... args) {
+                public void call(final Object... args) {
                     System.out.println("Got eventWebChat");
+                    System.out.println("Thread is: " + Thread.currentThread().getId());
+
+                    // Interpret message.
                     if (args[0] != null) {
                         try {
-                            String name = ((JSONObject)args[0]).getString("name");
-                            String message = ((JSONObject)args[0]).getString("message");
+                            final String name = ((JSONObject)args[0]).getString("name");
+                            final String message = ((JSONObject)args[0]).getString("message");
                             Bukkit.broadcastMessage("[" + ChatColor.GOLD + "WEB" + ChatColor.RESET + "] <" + name + "> " + message);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -113,7 +88,7 @@ public class SocketIOClient extends BukkitRunnable {
             }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    System.out.println("Oh no! I lost my connection to the forum. I'll try to re-connect next time it pings the server.");
+                    System.out.println("Oh no! I lost my connection to the forum. I'll try to re-connect later.");
                 }
             });
 
@@ -121,5 +96,25 @@ public class SocketIOClient extends BukkitRunnable {
         }else{
             System.out.println("Uh Oh. I failed to create a socket client. Are you sure the forum url is correct?");
         }
+    }
+
+    // Socket events are sent asynchronously.
+    public static void send(final String event, final JSONObject object) {
+        SocketIOClient.instance._send(event, object);
+    }
+
+    private void _send(final String event, final JSONObject object) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if(socket.connected()) socket.emit(event, object);
+            }
+        }.runTaskAsynchronously(plugin);
+    }
+
+    private void sync() {
+        NodeBBIntegration.log("Hurray! I connected to the forum!");
+        id = socket.id();
+        ((NodeBBIntegration)plugin).taskTick.run();
     }
 }

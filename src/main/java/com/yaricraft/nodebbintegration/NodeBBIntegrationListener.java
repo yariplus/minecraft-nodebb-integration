@@ -130,39 +130,10 @@ public class NodeBBIntegrationListener implements Listener {
     @EventHandler
     public void onServerListPing(final ServerListPingEvent event) {
         if (SocketIOClient.getSocket() == null) return;
-        final String socketEvent = getNamespace() + "emitTPS";
 
-        JSONObject obj = new JSONObject();
-        try {
-            obj.put("tps", TaskTick.getTPS());
-            obj.put("key", plugin.getConfig().getString("APIKEY"));
-        } catch (JSONException e) {
-            System.out.println("Error constructing JSON Object for " + socketEvent);
-            e.printStackTrace();
-            return;
-        }
+        System.out.println("Server list ping from: " + event.getAddress().toString());
 
-        System.out.println("Sending " + socketEvent);
-        SocketIOClient.getSocket().emit(socketEvent, obj, new Ack() {
-            @Override
-            public void call(Object... args) {
-                System.out.println(socketEvent + " callback received.");
-            }
-        });
 
-        final String socketSyncEvent = getNamespace() + "eventSyncServer";
 
-        obj = new JSONObject();
-        try {
-            obj.put("socketid", SocketIOClient.id);
-            obj.put("key", plugin.getConfig().getString("APIKEY"));
-        } catch (JSONException e) {
-            System.out.println("Error constructing JSON Object for " + socketSyncEvent);
-            e.printStackTrace();
-            return;
-        }
-
-        System.out.println("Sending " + socketSyncEvent);
-        SocketIOClient.getSocket().emit(socketSyncEvent, obj);
     }
 }
