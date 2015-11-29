@@ -1,6 +1,7 @@
 package com.yaricraft.nodebbintegration;
 
 import com.github.nkzawa.socketio.client.Ack;
+import me.edge209.OnTime.OnTimeAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,23 +38,23 @@ public class NodeBBIntegrationListener implements Listener {
         if (SocketIOClient.getSocket() == null) return;
         final String socketEvent = getNamespace() + "eventPlayerJoin";
 
-        String prefix = null;
         Player player = event.getPlayer();
-
-        if (NodeBBIntegration.chat != null && NodeBBIntegration.permission != null) {
-            prefix = NodeBBIntegration.chat.getPlayerPrefix(player);
-            if (prefix == null)
-                prefix = NodeBBIntegration.chat.getGroupPrefix(Bukkit.getWorlds().get(0), NodeBBIntegration.permission.getPrimaryGroup(player));
-            System.out.println(player.getName() + " has group " + NodeBBIntegration.permission.getPrimaryGroup(player));
-            System.out.println(player.getName() + " has prefix " + prefix);
-        }
 
         JSONObject obj = new JSONObject();
         try {
             obj.put("name", player.getName());
             obj.put("id", player.getUniqueId());
-            obj.put("prefix", prefix);
             obj.put("key", plugin.getConfig().getString("APIKEY"));
+
+            if (NodeBBIntegration.ontime && OnTimeAPI.playerHasOnTimeRecord(player.getName())) {
+                obj.put("playtime", OnTimeAPI.getPlayerTimeData(player.getName(), OnTimeAPI.data.TOTALPLAY));
+            }
+
+            if (NodeBBIntegration.chat != null && NodeBBIntegration.permission != null) {
+                String prefix = NodeBBIntegration.chat.getPlayerPrefix(player);
+                if (prefix == null) prefix = NodeBBIntegration.chat.getGroupPrefix(Bukkit.getWorlds().get(0), NodeBBIntegration.permission.getPrimaryGroup(player));
+                obj.put("prefix", prefix);
+            }
         } catch (JSONException e) {
             System.out.println("Error constructing JSON Object for " + socketEvent);
             e.printStackTrace();
@@ -132,8 +133,6 @@ public class NodeBBIntegrationListener implements Listener {
         if (SocketIOClient.getSocket() == null) return;
 
         System.out.println("Server list ping from: " + event.getAddress().toString());
-
-
 
     }
 }

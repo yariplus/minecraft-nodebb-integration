@@ -40,7 +40,13 @@ public class SocketIOClient extends BukkitRunnable {
         return socket;
     }
 
-    public static void closeSocket() { socket.close(); }
+    public static void closeSocket() {
+        try {
+            socket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void run() {
@@ -65,15 +71,11 @@ public class SocketIOClient extends BukkitRunnable {
 
                 @Override
                 public void call(Object... args) {
-                    sync();
                 }
 
             }).on("eventWebChat", new Emitter.Listener() {
                 @Override
                 public void call(final Object... args) {
-                    System.out.println("Got eventWebChat");
-                    System.out.println("Thread is: " + Thread.currentThread().getId());
-
                     // Interpret message.
                     if (args[0] != null) {
                         try {

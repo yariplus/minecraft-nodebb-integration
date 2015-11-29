@@ -14,7 +14,6 @@ import java.io.File;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.function.Consumer;
 
 /**
  * Created by Yari on 6/12/2015.
@@ -50,6 +49,7 @@ public class TaskTick extends BukkitRunnable {
             new BukkitRunnable() {
                 @Override
                 public void run() {
+
                     final String socketEvent = SocketIOClient.getNamespace() + "eventStatus";
 
                     JSONObject obj = new JSONObject();
@@ -57,19 +57,17 @@ public class TaskTick extends BukkitRunnable {
                     final ArrayList<JSONObject> pluginList = new ArrayList<JSONObject>();
 
                     try {
-                        Bukkit.getServer().getOnlinePlayers().forEach(new Consumer<Player>() {
-                            @Override
-                            public void accept(Player player) {
-                                JSONObject _player = new JSONObject();
-                                try {
-                                    _player.put("name", player.getName());
-                                    _player.put("id", player.getUniqueId());
-                                    players.add(_player);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
+                        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+                            JSONObject _player = new JSONObject();
+                            try {
+                                _player.put("name", player.getName());
+                                _player.put("id", player.getUniqueId());
+
+                                players.add(_player);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        });
+                        }
 
                         for (Plugin plugin : Bukkit.getServer().getPluginManager().getPlugins()) {
                             JSONObject _plugin = new JSONObject();
