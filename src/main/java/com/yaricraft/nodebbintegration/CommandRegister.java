@@ -19,11 +19,27 @@ public class CommandRegister implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
+        final CommandSender commandSender = sender;
+        final String forumname;
+        final String forumurl;
+
+        // Get config
+        try {
+            forumname = plugin.getConfig().getString("FORUMNAME");
+            forumurl  = plugin.getConfig().getString("FORUMURL");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return true;
+        }
+
         // Sender needs to be a player.
         if (!(sender instanceof Player)) {
             sender.sendMessage("Command needs to be run by a player.");
             return true;
         }
+
+        // Alert
+        sender.sendMessage("Registering your player on " + forumname + " (" + forumurl + ")");
 
         // If we're not connected, don't do anything.
         if (SocketIOClient.getSocket() == null) {
@@ -33,14 +49,8 @@ public class CommandRegister implements CommandExecutor {
 
         // Assert parameters.
         if (args.length != 2) {
-            sender.sendMessage("Please use \"/register [email] [password]\"");
+            sender.sendMessage("Error: Please use \"/register [email] [password]\"");
             return true;
-        }
-
-        try {
-            sender.sendMessage("Registering you on " + plugin.getConfig().getString("FORUMNAME") + "...");
-        }catch (Exception e) {
-            e.printStackTrace();
         }
 
         JSONObject obj = new JSONObject();
@@ -52,12 +62,11 @@ public class CommandRegister implements CommandExecutor {
             obj.put("key", plugin.getConfig().getString("APIKEY"));
         } catch (JSONException e) {
             e.printStackTrace();
+            return true;
         }
 
+        // DEBUG
         System.out.println("Sending " + SocketIOClient.getNamespace() + "commandRegister");
-
-        final CommandSender commandSender = sender;
-        final String forum = plugin.getConfig().getString("FORUMNAME");
 
         SocketIOClient.getSocket().emit(SocketIOClient.getNamespace() + "commandRegister", obj, new Ack() {
             @Override
@@ -70,9 +79,9 @@ public class CommandRegister implements CommandExecutor {
                         String message = result.getString("task");
 
                         if (message.equals("REGISTER")) {
-                            message = "Success! Registered your account on " + forum;
+                            message = "Success! Registered your account on " + forumname;
                         } else if (message.equals("REREGISTER")) {
-                            message = "Success! Updated your profile on " + forum;
+                            message = "Success! Updated your profile on " + forumname;
                         }
 
                         commandSender.sendMessage(message);
