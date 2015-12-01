@@ -71,45 +71,39 @@ public class CommandRegister implements CommandExecutor {
         SocketIOClient.getSocket().emit(SocketIOClient.getNamespace() + "commandRegister", obj, new Ack() {
             @Override
             public void call(Object... args) {
-                if (args[0] == null) {
-                    try {
-                        JSONObject result = ((JSONObject) args[1]);
-                        System.out.println("commandRegister success: " + result.getString("task"));
 
-                        String message = result.getString("task");
+                String result;
+                String message;
 
-                        if (message.equals("REGISTER")) {
-                            message = "Success! Registered your account on " + forumname;
-                        } else if (message.equals("REREGISTER")) {
-                            message = "Success! Updated your profile on " + forumname;
-                        }
-
-                        commandSender.sendMessage(message);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        System.out.println("commandRegister error: Failed to parse result.");
-                        commandSender.sendMessage("Registration error: Internal parsing error. Please inform an administrator.");
+                try {
+                    if (args[0] != null) {
+                        result = ((JSONObject)args[0]).getString("message");
+                    }else{
+                        result = ((JSONObject)args[1]).getString("result");
                     }
-                }else{
-                    try {
-                        JSONObject err = ((JSONObject) args[0]);
-                        System.out.println("commandRegister error: " + err.getString("message"));
-
-                        String error = err.getString("message");
-
-                        if (error.equals("FAILPASS")) {
-                            error = "Invalid Password";
-                        }
-
-                        commandSender.sendMessage("Registration error: " + error);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        System.out.println("commandRegister error: Failed to parse error.");
-                        commandSender.sendMessage("Registration error: Internal parsing error. Please inform an administrator.");
-                    }
+                }catch (Exception e) {
+                    result = "BADRES";
                 }
+
+                if (result.equals("REGISTER")) {
+                    message = "Success! Registered your player on " + forumname;
+                } else if (result.equals("CREATE")) {
+                    message = "Success! Created a new account on " + forumname;
+                } else if (result.equals("FAILPASS")) {
+                    message = "Invalid Password";
+                } else if (result.equals("FAILDB")) {
+                    message = "Error on forum. Please inform an administrator.";
+                } else if (result.equals("FAILEMAIL")) {
+                    message = "Invalid email.";
+                } else if (result.equals("BADRES")) {
+                    message = "Internal error. Please inform an administrator.";
+                } else if (result.equals("FAILDATA")) {
+                    message = "Data error. Please inform an administrator.";
+                } else {
+                    message = "Parsing error. Please inform an administrator.";
+                }
+
+                commandSender.sendMessage(message);
             }
         });
 
