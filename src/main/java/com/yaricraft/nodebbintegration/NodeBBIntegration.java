@@ -14,8 +14,14 @@ public class NodeBBIntegration extends JavaPlugin {
 
     public TaskTick taskTick;
 
+    // Debug
+    public static boolean debug = true;
     public static void log(String message) { log(message, Level.INFO); }
-    public static void log(String message, Level level) { Bukkit.getLogger().log(level != null ? level : Level.INFO, "[NodeBB-Integration] " + message); }
+    public static void log(String message, Level level) {
+        if (debug) {
+            Bukkit.getLogger().log(level != null ? level : Level.INFO, "[NodeBB-Integration] " + message);
+        }
+    }
 
     // OnTime
     public static boolean ontime = false;
@@ -56,6 +62,9 @@ public class NodeBBIntegration extends JavaPlugin {
 
         this.getCommand("nodebb").setExecutor(new CommandNodeBB(this));
         this.getCommand("register").setExecutor(new CommandRegister(this));
+
+        // Turn off debug messages after setup.
+        debug = false;
     }
 
     @Override

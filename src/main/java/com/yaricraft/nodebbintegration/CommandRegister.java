@@ -1,6 +1,7 @@
 package com.yaricraft.nodebbintegration;
 
 import com.github.nkzawa.socketio.client.Ack;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -39,10 +40,10 @@ public class CommandRegister implements CommandExecutor {
         }
 
         // Alert
-        sender.sendMessage("Registering your player on " + forumname + " (" + forumurl + ")");
+        sender.sendMessage("Registering your player on " + p(forumname) + " (" + forumurl + ")");
 
         // If we're not connected, don't do anything.
-        if (SocketIOClient.getSocket() == null) {
+        if (SocketIOClient.getSocket() == null || !SocketIOClient.getSocket().connected()) {
             sender.sendMessage("Sorry! The server isn't currently connected to the forum.");
             return true;
         }
@@ -66,7 +67,7 @@ public class CommandRegister implements CommandExecutor {
         }
 
         // DEBUG
-        System.out.println("Sending " + SocketIOClient.getNamespace() + "commandRegister");
+        NodeBBIntegration.log("Sending " + SocketIOClient.getNamespace() + "commandRegister");
 
         SocketIOClient.getSocket().emit(SocketIOClient.getNamespace() + "commandRegister", obj, new Ack() {
             @Override
@@ -86,9 +87,9 @@ public class CommandRegister implements CommandExecutor {
                 }
 
                 if (result.equals("REGISTER")) {
-                    message = "Success! Registered your player on " + forumname;
+                    message = "Success! Registered your player on " + p(forumname);
                 } else if (result.equals("CREATE")) {
-                    message = "Success! Created a new account on " + forumname;
+                    message = "Success! Created a new account on " + p(forumname);
                 } else if (result.equals("FAILPASS")) {
                     message = "Invalid Password";
                 } else if (result.equals("FAILDB")) {
@@ -108,5 +109,9 @@ public class CommandRegister implements CommandExecutor {
         });
 
         return true;
+    }
+
+    private String p(String s) {
+        return ChatColor.translateAlternateColorCodes('&', s);
     }
 }

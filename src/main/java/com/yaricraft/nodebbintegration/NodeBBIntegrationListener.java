@@ -56,16 +56,16 @@ public class NodeBBIntegrationListener implements Listener {
                 obj.put("prefix", prefix);
             }
         } catch (JSONException e) {
-            System.out.println("Error constructing JSON Object for " + socketEvent);
+            NodeBBIntegration.log("Error constructing JSON Object for " + socketEvent);
             e.printStackTrace();
             return;
         }
 
-        System.out.println("Sending " + socketEvent);
+        NodeBBIntegration.log("Sending " + socketEvent);
         SocketIOClient.getSocket().emit(socketEvent, obj, new Ack() {
             @Override
             public void call(Object... args) {
-                System.out.println(socketEvent + " callback received.");
+                NodeBBIntegration.log(socketEvent + " callback received.");
             }
         });
     }
@@ -81,16 +81,16 @@ public class NodeBBIntegrationListener implements Listener {
             obj.put("id", event.getPlayer().getUniqueId());
             obj.put("key", plugin.getConfig().getString("APIKEY"));
         } catch (JSONException e) {
-            System.out.println("Error constructing JSON Object for " + socketEvent);
+            NodeBBIntegration.log("Error constructing JSON Object for " + socketEvent);
             e.printStackTrace();
             return;
         }
 
-        System.out.println("Sending " + socketEvent);
+        NodeBBIntegration.log("Sending " + socketEvent);
         SocketIOClient.getSocket().emit(socketEvent, obj, new Ack() {
             @Override
             public void call(Object... args) {
-                System.out.println(socketEvent + " callback received.");
+                NodeBBIntegration.log(socketEvent + " callback received.");
             }
         });
     }
@@ -107,16 +107,16 @@ public class NodeBBIntegrationListener implements Listener {
             obj.put("message", event.getMessage());
             obj.put("key", plugin.getConfig().getString("APIKEY"));
         } catch (JSONException e) {
-            System.out.println("Error constructing JSON Object for " + socketEvent);
+            NodeBBIntegration.log("Error constructing JSON Object for " + socketEvent);
             e.printStackTrace();
             return;
         }
 
-        System.out.println("Sending " + socketEvent);
+        NodeBBIntegration.log("Sending " + socketEvent);
         SocketIOClient.getSocket().emit(socketEvent, obj, new Ack() {
             @Override
             public void call(Object... args) {
-                System.out.println(socketEvent + " callback received.");
+                NodeBBIntegration.log(socketEvent + " callback received.");
             }
         });
     }
@@ -132,7 +132,7 @@ public class NodeBBIntegrationListener implements Listener {
     public void onServerListPing(final ServerListPingEvent event) {
         if (SocketIOClient.getSocket() == null) return;
 
-        System.out.println("Server list ping from: " + event.getAddress().toString());
+        NodeBBIntegration.log("Server list ping from: " + event.getAddress().toString());
 
     }
 }
