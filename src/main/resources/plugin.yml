@@ -1,6 +1,7 @@
-name: NodeBB Integration
+name: NodeBBIntegration
 main: com.yaricraft.nodebbintegration.NodeBBIntegration
 version: 0.6.1
+depend: [OnTime]
 softdepend: [Vault]
 commands:
   register:
