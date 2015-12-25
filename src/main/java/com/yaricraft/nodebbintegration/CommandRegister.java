@@ -1,6 +1,9 @@
 package com.yaricraft.nodebbintegration;
 
+import java.util.List;
+
 import com.github.nkzawa.socketio.client.Ack;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -17,6 +20,18 @@ public class CommandRegister implements CommandExecutor {
 
     public CommandRegister(NodeBBIntegration plugin) { this.plugin = plugin; }
 
+    // Since I can't use getConfig up here, I've set these to null so that I can reduce disk IO later.
+    List<String> RegisterAlert = null;
+    List<String> RegisterNotConnected = null;
+    List<String> RegisterAssertParameters = null;
+    List<String> RegisterRegSuccess = null;
+    List<String> RegisterCreatedNewAccount = null;
+    List<String> RegisterFailPass = null;
+    List<String> RegisterFailDB = null;
+    List<String> RegisterFailEmail = null;
+    List<String> RegisterBadRes = null;
+    List<String> RegisterFailData = null;
+    List<String> RegisterParsingError = null;
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
@@ -40,17 +55,34 @@ public class CommandRegister implements CommandExecutor {
         }
 
         // Alert
-        sender.sendMessage("Registering your player on " + p(forumname) + " (" + forumurl + ")");
+        if (RegisterAlert == null) {
+            RegisterAlert = plugin.getConfig().getStringList("PluginMessages.Register.Alert");
+        }
+        for (String str : RegisterAlert) {
+            str = str.replaceAll("%forumname%", forumname);
+            str = str.replaceAll("%forumurl%",forumurl);
+            sender.sendMessage(p(str));
+        }
 
         // If we're not connected, don't do anything.
         if (SocketIOClient.getSocket() == null || !SocketIOClient.getSocket().connected()) {
-            sender.sendMessage("Sorry! The server isn't currently connected to the forum.");
+            if (RegisterNotConnected == null) {
+                RegisterNotConnected = plugin.getConfig().getStringList("PluginMessages.Register.NotConnected");
+            }
+            for (String str : RegisterNotConnected) {
+                sender.sendMessage(p(str));
+            }
             return true;
         }
 
         // Assert parameters.
         if (args.length != 2) {
-            sender.sendMessage("Error: Please use \"/register [email] [password]\"");
+            if (RegisterAssertParameters == null) {
+                RegisterAssertParameters = plugin.getConfig().getStringList("PluginMessages.Register.AssertParameters");
+            }
+            for (String str : RegisterAssertParameters) {
+                sender.sendMessage(p(str));
+            }
             return true;
         }
 
@@ -74,7 +106,7 @@ public class CommandRegister implements CommandExecutor {
             public void call(Object... args) {
 
                 String result;
-                String message;
+                List<String> message;
 
                 try {
                     if (args[0] != null) {
@@ -87,24 +119,52 @@ public class CommandRegister implements CommandExecutor {
                 }
 
                 if (result.equals("REGISTER")) {
-                    message = "Success! Registered your player on " + p(forumname);
+                    if (RegisterRegSuccess == null) {
+                        RegisterRegSuccess = plugin.getConfig().getStringList("PluginMessages.Register.RegSuccess");
+                    }
+                    message = RegisterRegSuccess;
                 } else if (result.equals("CREATE")) {
-                    message = "Success! Created a new account on " + p(forumname);
+                    if (RegisterCreatedNewAccount == null) {
+                        RegisterCreatedNewAccount = plugin.getConfig().getStringList("PluginMessages.Register.CreatedNewAccount");
+                    }
+                    message = RegisterCreatedNewAccount;
                 } else if (result.equals("FAILPASS")) {
-                    message = "Invalid Password";
+                    if (RegisterFailPass == null) {
+                        RegisterFailPass = plugin.getConfig().getStringList("PluginMessages.Register.FailPass");
+                    }
+                    message = RegisterFailPass;
                 } else if (result.equals("FAILDB")) {
-                    message = "Error on forum. Please inform an administrator.";
+                    if (RegisterFailDB == null) {
+                        RegisterFailDB = plugin.getConfig().getStringList("PluginMessages.Register.FailPass");
+                    }
+                    message = RegisterFailDB;
                 } else if (result.equals("FAILEMAIL")) {
-                    message = "Invalid email.";
+                    if (RegisterFailEmail == null) {
+                        RegisterFailEmail = plugin.getConfig().getStringList("PluginMessages.Register.FailEmail");
+                    }
+                    message = RegisterFailEmail;
                 } else if (result.equals("BADRES")) {
-                    message = "Internal error. Please inform an administrator.";
+                    if (RegisterBadRes == null) {
+                        RegisterBadRes = plugin.getConfig().getStringList("PluginMessages.Register.BadRes");
+                    }
+                    message = RegisterBadRes;
                 } else if (result.equals("FAILDATA")) {
-                    message = "Data error. Please inform an administrator.";
+                    if (RegisterFailData == null) {
+                        RegisterFailData = plugin.getConfig().getStringList("PluginMessages.Register.FailData");
+                    }
+                    message = RegisterFailData;
                 } else {
-                    message = "Parsing error. Please inform an administrator.";
+                    if (RegisterParsingError == null) {
+                        RegisterParsingError = plugin.getConfig().getStringList("PluginMessages.Register.ParsingError");
+                    }
+                    message = RegisterParsingError;
                 }
-
-                commandSender.sendMessage(message);
+                
+                for (String str : message) {
+                    str = str.replaceAll("%forumname%", forumname);
+                    str = str.replaceAll("%forumurl%",forumurl);
+                    commandSender.sendMessage(p(str));
+                }
             }
         });
 

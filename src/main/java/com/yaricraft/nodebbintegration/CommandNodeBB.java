@@ -1,5 +1,7 @@
 package com.yaricraft.nodebbintegration;
 
+import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,12 +12,11 @@ import org.bukkit.command.CommandSender;
  */
 public class CommandNodeBB implements CommandExecutor {
     private final NodeBBIntegration plugin;
-
+    List<String> NodeBBMessage = null;
     public CommandNodeBB(NodeBBIntegration plugin) { this.plugin = plugin; }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-
         if (args.length == 0) {
             help(sender);
         } else if (args.length == 1) {
@@ -82,33 +83,11 @@ public class CommandNodeBB implements CommandExecutor {
     }
 
     private void help(CommandSender sender) {
-        sender.sendMessage("[" + ChatColor.GOLD + "NodeBB Integration" + ChatColor.WHITE + "]");
-        sender.sendMessage(
-                ChatColor.DARK_RED + "=" +
-                ChatColor.RED + "=" +
-                ChatColor.GOLD + "=" +
-                ChatColor.YELLOW + "=" +
-                ChatColor.GREEN + "=" +
-                ChatColor.DARK_GREEN + "=" +
-                ChatColor.DARK_AQUA + "=" +
-                ChatColor.AQUA + "=" +
-                ChatColor.BLUE + "=" +
-                ChatColor.DARK_BLUE + "=" +
-                ChatColor.LIGHT_PURPLE + "=" +
-                ChatColor.DARK_PURPLE + "=" +
-                ChatColor.DARK_RED + "=" +
-                ChatColor.RED + "=" +
-                ChatColor.GOLD + "=" +
-                ChatColor.YELLOW + "=" +
-                ChatColor.GREEN + "=" +
-                ChatColor.DARK_GREEN + "=" +
-                ChatColor.DARK_AQUA + "=" +
-                ChatColor.AQUA + "=");
-        sender.sendMessage("Commands:");
-        sender.sendMessage(ChatColor.YELLOW + "/nodebb reload "      + ChatColor.RESET + "- Reloads config and reconnects to the forum.");
-        sender.sendMessage(ChatColor.YELLOW + "/nodebb key [key] "   + ChatColor.RESET + "- Get or set the forum API key.");
-        sender.sendMessage(ChatColor.YELLOW + "/nodebb name [name] " + ChatColor.RESET + "- Get or set the forum name.");
-        sender.sendMessage(ChatColor.YELLOW + "/nodebb url [url] "   + ChatColor.RESET + "- Get or set the forum url.");
-        sender.sendMessage(ChatColor.YELLOW + "/nodebb debug "       + ChatColor.RESET + "- Displays information useful for fixing errors.");
+        if (NodeBBMessage == null) {
+            NodeBBMessage = plugin.getConfig().getStringList("PluginMessages.NodeBB.Help");
+        }
+        for (String str : NodeBBMessage) {
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', str));
+        }
     }
 }
