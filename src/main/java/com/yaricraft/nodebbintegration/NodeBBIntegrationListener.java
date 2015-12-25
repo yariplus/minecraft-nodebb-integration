@@ -1,7 +1,6 @@
 package com.yaricraft.nodebbintegration;
 
 import com.github.nkzawa.socketio.client.Ack;
-import me.edge209.OnTime.OnTimeAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -46,14 +45,18 @@ public class NodeBBIntegrationListener implements Listener {
             obj.put("id", player.getUniqueId());
             obj.put("key", plugin.getConfig().getString("APIKEY"));
 
-            if (NodeBBIntegration.ontime && OnTimeAPI.playerHasOnTimeRecord(player.getName())) {
-                obj.put("playtime", OnTimeAPI.getPlayerTimeData(player.getName(), OnTimeAPI.data.TOTALPLAY));
+            if (Bukkit.getPluginManager().isPluginEnabled("OnTime")) {
+                if (OnTimeHook.ontime) {
+                    OnTimeHook.onTimeCheckTime(player, obj);
+                }
             }
 
-            if (NodeBBIntegration.chat != null && NodeBBIntegration.permission != null) {
-                String prefix = NodeBBIntegration.chat.getPlayerPrefix(player);
-                if (prefix == null) prefix = NodeBBIntegration.chat.getGroupPrefix(Bukkit.getWorlds().get(0), NodeBBIntegration.permission.getPrimaryGroup(player));
-                obj.put("prefix", prefix);
+            if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
+                if (VaultHook.chat != null && VaultHook.permission != null) {
+                     String prefix = VaultHook.chat.getPlayerPrefix(player);
+                     if (prefix == null) prefix = VaultHook.chat.getGroupPrefix(Bukkit.getWorlds().get(0), VaultHook.permission.getPrimaryGroup(player));
+                     obj.put("prefix", prefix);
+                }
             }
         } catch (JSONException e) {
             NodeBBIntegration.log("Error constructing JSON Object for " + socketEvent);
