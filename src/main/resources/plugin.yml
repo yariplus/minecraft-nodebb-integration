@@ -1,8 +1,7 @@
 name: NodeBBIntegration
 main: com.yaricraft.nodebbintegration.NodeBBIntegration
 version: 0.6.1
-depend: [OnTime]
-softdepend: [Vault]
+depend: [OnTime, Vault]
 commands:
   register:
     description: Register your Minecraft account with your forum account.
