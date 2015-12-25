@@ -3,3 +3,38 @@ FORUMNAME: My Minecraft Forum
 APIKEY: SECRETPASSWORD
 SOCKETNAMESPACE: plugins
 PLUGINID: MinecraftIntegration
+
+PluginMessages:
+    NodeBB:
+        Help:
+            - "&f[&6NodeBB Integration&f]"
+            - "&4=&c=&6=&e=&a=&3=&b=&9=&1=&d=&5=&4=&c=&6=&e=&a=&2=&3=&b="
+            - "&fCommands:"
+            - "&e/nodebb reload &r- Reloads config and reconnects to the forum."
+            - "&e/nodebb key [key] &r- Get or set the forum API key."
+            - "&e/nodebb name [name] &r- Get or set the forum name."
+            - "&e/nodebb url [url] &r- Get or set the forum url."
+            - "&e/nodebb debug &r- Displays information useful for fixing errors."
+    Register:
+        Alert:
+            - "Registering your player on %forumname% (%forumurl%)"
+        NotConnected:
+            - "Sorry! The server isn't currently connected to the forum."
+        AssertParameters:
+            - "Error: Please use '/register [email] [password]'"
+        RegSuccess:
+            - "Success! Registered your player on %forumname%"
+        CreatedNewAccount:
+            - "Success! Created a new account on %forumname%"
+        FailPass:
+            - "Invalid Password"
+        FailDB:
+            - "Error on forum. Please inform an administrator."
+        FailEmail:
+            - "Invalid email."
+        BadRes:
+            - "Internal error. Please inform an administrator."
+        FailData:
+            - "Data error. Please inform an administrator."
+        ParsingError:
+            - "Parsing error. Please inform an administrator."
