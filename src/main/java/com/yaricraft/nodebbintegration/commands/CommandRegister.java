@@ -1,9 +1,8 @@
-package com.yaricraft.nodebbintegration;
-
-import java.util.List;
+package com.yaricraft.nodebbintegration.commands;
 
 import com.github.nkzawa.socketio.client.Ack;
-
+import com.yaricraft.nodebbintegration.NodeBBIntegration;
+import com.yaricraft.nodebbintegration.SocketIOClient;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,6 +10,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 /**
  * Created by Yari on 10/5/2015.
@@ -159,7 +160,7 @@ public class CommandRegister implements CommandExecutor {
                     }
                     message = RegisterParsingError;
                 }
-                
+
                 for (String str : message) {
                     str = str.replaceAll("%forumname%", forumname);
                     str = str.replaceAll("%forumurl%",forumurl);

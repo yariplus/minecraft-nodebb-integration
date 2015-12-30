@@ -1,11 +1,14 @@
-package com.yaricraft.nodebbintegration;
+package com.yaricraft.nodebbintegration.commands;
 
-import java.util.List;
-
+import com.yaricraft.nodebbintegration.NodeBBIntegration;
+import com.yaricraft.nodebbintegration.SocketIOClient;
+import com.yaricraft.nodebbintegration.hooks.VotifierHook;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+
+import java.util.List;
 
 /**
  * Created by Yari on 10/5/2015.
@@ -17,6 +20,11 @@ public class CommandNodeBB implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+
+        if (VotifierHook.votifier) {
+            VotifierHook.doThing();
+        }
+
         if (args.length == 0) {
             help(sender);
         } else if (args.length == 1) {

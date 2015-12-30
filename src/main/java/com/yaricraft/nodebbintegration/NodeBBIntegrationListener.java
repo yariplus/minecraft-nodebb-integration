@@ -1,6 +1,8 @@
 package com.yaricraft.nodebbintegration;
 
 import com.github.nkzawa.socketio.client.Ack;
+import com.yaricraft.nodebbintegration.hooks.OnTimeHook;
+import com.yaricraft.nodebbintegration.hooks.VaultHook;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
