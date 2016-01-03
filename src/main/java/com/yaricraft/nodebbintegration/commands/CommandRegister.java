@@ -16,26 +16,21 @@ import java.util.List;
 /**
  * Created by Yari on 10/5/2015.
  */
-public class CommandRegister implements CommandExecutor {
-    private final NodeBBIntegration plugin;
+public class CommandRegister implements CommandExecutor
+{
+    protected static NodeBBIntegration plugin;
 
-    public CommandRegister(NodeBBIntegration plugin) { this.plugin = plugin; }
+    public CommandRegister(NodeBBIntegration plugin) { CommandRegister.plugin = plugin; }
 
     // Since I can't use getConfig up here, I've set these to null so that I can reduce disk IO later.
     List<String> RegisterAlert = null;
     List<String> RegisterNotConnected = null;
     List<String> RegisterAssertParameters = null;
-    List<String> RegisterRegSuccess = null;
-    List<String> RegisterCreatedNewAccount = null;
-    List<String> RegisterFailPass = null;
-    List<String> RegisterFailDB = null;
-    List<String> RegisterFailEmail = null;
-    List<String> RegisterBadRes = null;
-    List<String> RegisterFailData = null;
     List<String> RegisterParsingError = null;
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
+    {
         final CommandSender commandSender = sender;
         final String forumname;
         final String forumurl;
@@ -119,45 +114,13 @@ public class CommandRegister implements CommandExecutor {
                     result = "BADRES";
                 }
 
-                if (result.equals("REGISTER")) {
-                    if (RegisterRegSuccess == null) {
-                        RegisterRegSuccess = plugin.getConfig().getStringList("PluginMessages.Register.RegSuccess");
-                    }
-                    message = RegisterRegSuccess;
-                } else if (result.equals("CREATE")) {
-                    if (RegisterCreatedNewAccount == null) {
-                        RegisterCreatedNewAccount = plugin.getConfig().getStringList("PluginMessages.Register.CreatedNewAccount");
-                    }
-                    message = RegisterCreatedNewAccount;
-                } else if (result.equals("FAILPASS")) {
-                    if (RegisterFailPass == null) {
-                        RegisterFailPass = plugin.getConfig().getStringList("PluginMessages.Register.FailPass");
-                    }
-                    message = RegisterFailPass;
-                } else if (result.equals("FAILDB")) {
-                    if (RegisterFailDB == null) {
-                        RegisterFailDB = plugin.getConfig().getStringList("PluginMessages.Register.FailPass");
-                    }
-                    message = RegisterFailDB;
-                } else if (result.equals("FAILEMAIL")) {
-                    if (RegisterFailEmail == null) {
-                        RegisterFailEmail = plugin.getConfig().getStringList("PluginMessages.Register.FailEmail");
-                    }
-                    message = RegisterFailEmail;
-                } else if (result.equals("BADRES")) {
-                    if (RegisterBadRes == null) {
-                        RegisterBadRes = plugin.getConfig().getStringList("PluginMessages.Register.BadRes");
-                    }
-                    message = RegisterBadRes;
-                } else if (result.equals("FAILDATA")) {
-                    if (RegisterFailData == null) {
-                        RegisterFailData = plugin.getConfig().getStringList("PluginMessages.Register.FailData");
-                    }
-                    message = RegisterFailData;
-                } else {
-                    if (RegisterParsingError == null) {
-                        RegisterParsingError = plugin.getConfig().getStringList("PluginMessages.Register.ParsingError");
-                    }
+                RegisterResponse response = RegisterResponse.valueOf(result);
+
+                if (response != null) {
+                    message = response.getMessage();
+                }
+                else
+                {
                     message = RegisterParsingError;
                 }
 
@@ -170,6 +133,28 @@ public class CommandRegister implements CommandExecutor {
         });
 
         return true;
+    }
+
+    private enum RegisterResponse
+    {
+        REGISTER  ("PluginMessages.Register.RegSuccess"),
+        CREATE    ("PluginMessages.Register.CreatedNewAccount"),
+        FAILPASS  ("PluginMessages.Register.FailPass"),
+        FAILDB    ("PluginMessages.Register.FailPass"),
+        FAILEMAIL ("PluginMessages.Register.FailEmail"),
+        BADRES    ("PluginMessages.Register.BadRes"),
+        FAILDATA  ("PluginMessages.Register.FailData"),
+        ERROR     ("PluginMessages.Register.ParsingError");
+
+        private String key;
+        private List<String> message = null;
+
+        RegisterResponse(String key) { this.key = key; }
+
+        public List<String> getMessage() {
+            if (this.message == null) this.message = plugin.getConfig().getStringList(this.key);
+            return this.message;
+        }
     }
 
     private String p(String s) {
