@@ -12,6 +12,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.event.server.ServerListPingEvent;
+import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -139,5 +140,11 @@ public class NodeBBIntegrationListener implements Listener {
 
         NodeBBIntegration.log("Server list ping from: " + event.getAddress().toString());
 
+    }
+
+    @EventHandler
+    public void onWorldSave(WorldSaveEvent event)
+    {
+        PlayerManager.saveConfig();
     }
 }

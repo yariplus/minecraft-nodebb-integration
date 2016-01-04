@@ -2,7 +2,7 @@ package com.yaricraft.nodebbintegration.listeners;
 
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.model.VotifierEvent;
-import com.yaricraft.nodebbintegration.NodeBBIntegration;
+import com.yaricraft.nodebbintegration.PlayerManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -12,13 +12,10 @@ import org.bukkit.event.Listener;
  */
 public class ListenerVotifier implements Listener
 {
-    @EventHandler(priority=EventPriority.NORMAL)
-    public void onVotifierEvent(VotifierEvent event)
-    {
-        Vote vote = event.getVote();
-        NodeBBIntegration.log(vote.getUsername());
-        NodeBBIntegration.log(vote.getAddress());
-        NodeBBIntegration.log(vote.getServiceName());
-        NodeBBIntegration.log(vote.getTimeStamp());
-    }
+	@EventHandler(priority=EventPriority.NORMAL)
+	public void onVotifierEvent(VotifierEvent event)
+	{
+		Vote vote = event.getVote();
+		PlayerManager.getPlayerData().set(vote.getUsername() + ".voted." + vote.getServiceName(), javax.xml.bind.DatatypeConverter.parseDateTime(vote.getTimeStamp()).getTimeInMillis());
+	}
 }

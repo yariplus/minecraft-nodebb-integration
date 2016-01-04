@@ -14,6 +14,8 @@ public class NodeBBIntegration extends JavaPlugin {
 
     public TaskTick taskTick;
 
+    public static NodeBBIntegration instance;
+
     // Debug
     public static boolean debug = true;
     public static void log(String message) { log(message, Level.INFO); }
@@ -25,6 +27,8 @@ public class NodeBBIntegration extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
+        instance = this;
 
         // Start the socket client.
         SocketIOClient.create(this).runTaskLaterAsynchronously(this, 60);
