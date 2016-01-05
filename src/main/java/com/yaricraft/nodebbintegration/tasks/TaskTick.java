@@ -1,6 +1,8 @@
-package com.yaricraft.nodebbintegration;
+package com.yaricraft.nodebbintegration.tasks;
 
 import com.github.nkzawa.socketio.client.Ack;
+import com.yaricraft.nodebbintegration.NodeBBIntegration;
+import com.yaricraft.nodebbintegration.SocketIOClient;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;

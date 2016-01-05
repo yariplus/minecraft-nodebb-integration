@@ -16,6 +16,9 @@ public class ListenerVotifier implements Listener
 	public void onVotifierEvent(VotifierEvent event)
 	{
 		Vote vote = event.getVote();
-		PlayerManager.getPlayerData().set(vote.getUsername() + ".voted." + vote.getServiceName(), javax.xml.bind.DatatypeConverter.parseDateTime(vote.getTimeStamp()).getTimeInMillis());
+		String service = vote.getServiceName().replace('.', '_');
+		String timestamp = vote.getTimeStamp();
+
+		PlayerManager.getPlayerData().set(vote.getUsername() + ".voted." + service, timestamp);
 	}
 }

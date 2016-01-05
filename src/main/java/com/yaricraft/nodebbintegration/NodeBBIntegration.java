@@ -5,6 +5,7 @@ import com.yaricraft.nodebbintegration.commands.CommandRegister;
 import com.yaricraft.nodebbintegration.hooks.OnTimeHook;
 import com.yaricraft.nodebbintegration.hooks.VaultHook;
 import com.yaricraft.nodebbintegration.hooks.VotifierHook;
+import com.yaricraft.nodebbintegration.tasks.TaskTick;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 

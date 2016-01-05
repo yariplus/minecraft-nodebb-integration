@@ -1,6 +1,5 @@
 package com.yaricraft.nodebbintegration;
 
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -33,6 +32,7 @@ public class PlayerManager
 	}
 
 	public static void saveConfig() {
+		NodeBBIntegration.log("Saving player data.");
 		try {
 			playerData.save(file);
 		} catch (IOException ex) {
