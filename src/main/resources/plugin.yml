@@ -1,6 +1,6 @@
 name: NodeBBIntegration
 main: com.yaricraft.nodebbintegration.NodeBBIntegration
-version: 0.6.2
+version: 0.7.0-beta
 depend: [Vault]
 softdepend: [OnTime, Votifier]
 commands:
@@ -8,6 +8,6 @@ commands:
     description: Register your Minecraft account with your forum account.
     usage: /register [email] [password]
   nodebb:
-    description: Reload NodeBB Integration.
+    description: NodeBB Integration parent command.
     usage: /nodebb
     permission: nodebb.admin

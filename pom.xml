@@ -6,7 +6,7 @@
 
     <groupId>com.yaricraft</groupId>
     <artifactId>nodebb-integration</artifactId>
-    <version>0.6.2</version>
+    <version>0.7.0-beta</version>
 
     <repositories>
         <repository>
