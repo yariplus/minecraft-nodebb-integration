@@ -1,14 +1,17 @@
 package com.yaricraft.nodebbintegration.commands;
 
 import com.yaricraft.nodebbintegration.NodeBBIntegration;
-import com.yaricraft.nodebbintegration.SocketIOClient;
+import com.yaricraft.nodebbintegration.PlayerManager;
+import com.yaricraft.nodebbintegration.socketio.SocketIOClient;
 import com.yaricraft.nodebbintegration.hooks.VotifierHook;
+import com.yaricraft.nodebbintegration.socketio.listeners.ListenerGetPlayerVotes;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Yari on 10/5/2015.
@@ -34,6 +37,7 @@ public class CommandNodeBB implements CommandExecutor {
                 sender.sendMessage("Reloaded Config.");
                 NodeBBIntegration.log("Reloaded Config.");
                 SocketIOClient.reconnect(sender);
+                PlayerManager.reloadConfig();
             } else if (args[0].equals("debug")) {
                 if (SocketIOClient.getSocket().connected()) {
                     sender.sendMessage("Server is connected to " + plugin.getConfig().getString("FORUMNAME") + " at " + plugin.getConfig().getString("FORUMURL"));

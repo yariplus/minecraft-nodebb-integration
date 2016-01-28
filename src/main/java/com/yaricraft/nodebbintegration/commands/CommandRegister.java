@@ -2,7 +2,7 @@ package com.yaricraft.nodebbintegration.commands;
 
 import com.github.nkzawa.socketio.client.Ack;
 import com.yaricraft.nodebbintegration.NodeBBIntegration;
-import com.yaricraft.nodebbintegration.SocketIOClient;
+import com.yaricraft.nodebbintegration.socketio.SocketIOClient;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

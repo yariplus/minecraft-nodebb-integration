@@ -3,6 +3,7 @@ package com.yaricraft.nodebbintegration;
 import com.github.nkzawa.socketio.client.Ack;
 import com.yaricraft.nodebbintegration.hooks.OnTimeHook;
 import com.yaricraft.nodebbintegration.hooks.VaultHook;
+import com.yaricraft.nodebbintegration.socketio.SocketIOClient;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -128,13 +129,6 @@ public class NodeBBIntegrationListener implements Listener {
     }
 
     @EventHandler
-    public void handleServerCommand(ServerCommandEvent event) {
-        // Placeholder
-        //String data = event.getSender().getName() + ":" + event.getCommand();
-        //SocketIOClient.getInstance().emitServerCommand(data);
-    }
-
-    @EventHandler
     public void onServerListPing(final ServerListPingEvent event) {
         if (SocketIOClient.getSocket() == null) return;
 
@@ -146,5 +140,6 @@ public class NodeBBIntegrationListener implements Listener {
     public void onWorldSave(WorldSaveEvent event)
     {
         PlayerManager.saveConfig();
+        NodeBBIntegration.log("Saved player data.");
     }
 }
