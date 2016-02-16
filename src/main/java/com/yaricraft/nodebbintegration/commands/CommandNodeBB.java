@@ -24,10 +24,6 @@ public class CommandNodeBB implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
-        if (VotifierHook.votifier) {
-            VotifierHook.doThing();
-        }
-
         if (args.length == 0) {
             help(sender);
         } else if (args.length == 1) {
@@ -40,9 +36,9 @@ public class CommandNodeBB implements CommandExecutor {
                 PlayerManager.reloadConfig();
             } else if (args[0].equals("debug")) {
                 if (SocketIOClient.getSocket().connected()) {
-                    sender.sendMessage("Server is connected to " + plugin.getConfig().getString("FORUMNAME") + " at " + plugin.getConfig().getString("FORUMURL"));
+                    sender.sendMessage("MinecraftServer is connected to " + plugin.getConfig().getString("FORUMNAME") + " at " + plugin.getConfig().getString("FORUMURL"));
                 } else {
-                    sender.sendMessage("Server is NOT connected to " + plugin.getConfig().getString("FORUMNAME") + " at " + plugin.getConfig().getString("FORUMURL"));
+                    sender.sendMessage("MinecraftServer is NOT connected to " + plugin.getConfig().getString("FORUMNAME") + " at " + plugin.getConfig().getString("FORUMURL"));
                 }
                 sender.sendMessage("The forum API key is set to " + plugin.getConfig().getString("APIKEY"));
                 sender.sendMessage("Post bugs to https://goo.gl/qSy6BP");

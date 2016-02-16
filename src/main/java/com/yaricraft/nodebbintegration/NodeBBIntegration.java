@@ -3,6 +3,7 @@ package com.yaricraft.nodebbintegration;
 import com.yaricraft.nodebbintegration.commands.CommandNodeBB;
 import com.yaricraft.nodebbintegration.commands.CommandRegister;
 import com.yaricraft.nodebbintegration.hooks.OnTimeHook;
+import com.yaricraft.nodebbintegration.hooks.VanishNoPacketHook;
 import com.yaricraft.nodebbintegration.hooks.VaultHook;
 import com.yaricraft.nodebbintegration.hooks.VotifierHook;
 import com.yaricraft.nodebbintegration.socketio.SocketIOClient;
@@ -18,7 +19,7 @@ public class NodeBBIntegration extends JavaPlugin {
 
     public static NodeBBIntegration instance;
 
-    // Debug
+    // Logging
     public static boolean debug = true;
     public static void log(String message) { log(message, Level.INFO); }
     public static void log(String message, Level level) {
@@ -41,27 +42,16 @@ public class NodeBBIntegration extends JavaPlugin {
         // Create config.yml if new install.
         this.saveDefaultConfig();
 
-        // Setup Vault
-        if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
-            VaultHook.hook(this);
-        }
-        else log("Vault NOT found.");
-
-        // Setup OnTime
-        if (Bukkit.getPluginManager().isPluginEnabled("OnTime")) {
-            OnTimeHook.hook();
-        }
-        else log("OnTime NOT found.");
-
-        // Setup Votifier
-        if (Bukkit.getPluginManager().isPluginEnabled("Votifier")) {
-            VotifierHook.hook(this);
-        }
-        else log("Votifier NOT found.");
+        // Initialize Plugin Hooks
+        VaultHook.hook(this);
+        OnTimeHook.hook(this);
+        VotifierHook.hook(this);
+        VanishNoPacketHook.hook(this);
 
         // Listen for Bukkit events.
         getServer().getPluginManager().registerEvents(new NodeBBIntegrationListener(this), this);
 
+        // Register commands.
         this.getCommand("nodebb").setExecutor(new CommandNodeBB(this));
         this.getCommand("register").setExecutor(new CommandRegister(this));
 

@@ -2,6 +2,7 @@ package com.yaricraft.nodebbintegration.tasks;
 
 import com.github.nkzawa.socketio.client.Ack;
 import com.yaricraft.nodebbintegration.NodeBBIntegration;
+import com.yaricraft.nodebbintegration.hooks.VanishNoPacketHook;
 import com.yaricraft.nodebbintegration.socketio.SocketIOClient;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
@@ -60,6 +61,9 @@ public class TaskTick extends BukkitRunnable {
 
                     try {
                         for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+                            if (VanishNoPacketHook.isEnabled()) {
+                                if (VanishNoPacketHook.isVanished(player.getName())) continue;
+                            }
                             JSONObject _player = new JSONObject();
                             try {
                                 _player.put("name", player.getName());

@@ -14,9 +14,9 @@ public final class VaultHook
 
     public static void hook(NodeBBIntegration plugin)
     {
-        if (setupChat(plugin))        { NodeBBIntegration.log("Vault chat found.");        }else{ NodeBBIntegration.log("Vault chat NOT found."); }
-        if (setupPermissions(plugin)) { NodeBBIntegration.log("Vault permissions found."); }else{ NodeBBIntegration.log("Vault permissions NOT found."); }
-        if (setupEconomy(plugin))     { NodeBBIntegration.log("Vault economy found.");     }else{ NodeBBIntegration.log("Vault economy NOT found."); }
+        if (setupChat(plugin))        NodeBBIntegration.log("Hooked into Vault Chat.");
+        if (setupPermissions(plugin)) NodeBBIntegration.log("Hooked into Vault Permissions.");
+        if (setupEconomy(plugin))     NodeBBIntegration.log("Hooked into Vault Economy.");
     }
 
     private static boolean setupPermissions(NodeBBIntegration plugin)

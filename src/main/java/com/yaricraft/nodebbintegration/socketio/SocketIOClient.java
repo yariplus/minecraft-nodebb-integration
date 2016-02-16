@@ -1,18 +1,28 @@
 package com.yaricraft.nodebbintegration.socketio;
 
 import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.Ack;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 import com.yaricraft.nodebbintegration.NodeBBIntegration;
+import com.yaricraft.nodebbintegration.hooks.OnTimeHook;
+import com.yaricraft.nodebbintegration.hooks.VanishNoPacketHook;
+import com.yaricraft.nodebbintegration.hooks.VaultHook;
 import com.yaricraft.nodebbintegration.socketio.listeners.ListenerGetPlayerVotes;
 import com.yaricraft.nodebbintegration.socketio.listeners.ListenerWebChat;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
+import java.util.HashMap;
 
 public class SocketIOClient extends BukkitRunnable {
 
@@ -160,5 +170,78 @@ public class SocketIOClient extends BukkitRunnable {
 		NodeBBIntegration.log("Connected to the forum!");
 		id = socket.id();
 		((NodeBBIntegration)plugin).taskTick.run();
+	}
+
+	public static void sendPlayerJoin(Player player) {
+		if (getSocket() == null) return;
+		final String socketEvent = getNamespace() + "eventPlayerJoin";
+
+		if (VanishNoPacketHook.isEnabled()) {
+			if (VanishNoPacketHook.isVanished(player.getName())) return;
+		}
+
+		JSONObject obj = new JSONObject();
+		try {
+			obj.put("name", player.getName());
+			obj.put("id", player.getUniqueId());
+			obj.put("key", plugin.getConfig().getString("APIKEY"));
+
+			if (OnTimeHook.isEnabled()) {
+				if (OnTimeHook.isEnabled()) {
+					OnTimeHook.onTimeCheckTime(player, obj);
+				}
+			}
+
+			if (VaultHook.chat != null && VaultHook.permission != null) {
+				String[] groups = VaultHook.permission.getPlayerGroups(null, player);
+
+				World world = Bukkit.getWorlds().get(0);
+				HashMap<String,Object> groupsData = new HashMap<String,Object>();
+
+				for (int i = 0; i < groups.length; i++)
+				{
+					groupsData.put(groups[i], VaultHook.chat.getGroupPrefix(world, groups[i]));
+				}
+				obj.put("groups", groupsData);
+				obj.put("prefix", VaultHook.chat.getPlayerPrefix(player));
+			}
+
+		} catch (JSONException e) {
+			NodeBBIntegration.log("Error constructing JSON Object for " + socketEvent);
+			e.printStackTrace();
+			return;
+		}
+
+		NodeBBIntegration.log("Sending " + socketEvent);
+		SocketIOClient.getSocket().emit(socketEvent, obj, new Ack() {
+			@Override
+			public void call(Object... args) {
+				NodeBBIntegration.log(socketEvent + " callback received.");
+			}
+		});
+	}
+
+	public static void sendPlayerLeave(Player player) {
+		if (getSocket() == null) return;
+		final String socketEvent = getNamespace() + "eventPlayerQuit";
+
+		JSONObject obj = new JSONObject();
+		try {
+			obj.put("name", player.getName());
+			obj.put("id", player.getUniqueId());
+			obj.put("key", plugin.getConfig().getString("APIKEY"));
+		} catch (JSONException e) {
+			NodeBBIntegration.log("Error constructing JSON Object for " + socketEvent);
+			e.printStackTrace();
+			return;
+		}
+
+		NodeBBIntegration.log("Sending " + socketEvent);
+		SocketIOClient.getSocket().emit(socketEvent, obj, new Ack() {
+			@Override
+			public void call(Object... args) {
+				NodeBBIntegration.log(socketEvent + " callback received.");
+			}
+		});
 	}
 }

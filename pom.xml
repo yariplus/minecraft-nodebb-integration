@@ -6,7 +6,7 @@
 
     <groupId>com.yaricraft</groupId>
     <artifactId>nodebb-integration</artifactId>
-    <version>0.7.0-beta</version>
+    <version>0.7.0-beta.2</version>
 
     <repositories>
         <repository>
@@ -20,6 +20,10 @@
         <repository>
             <id>howaner</id>
             <url>http://repo.howaner.de</url>
+        </repository>
+        <repository>
+            <id>kitteh-repo</id>
+            <url>http://repo.kitteh.org/content/groups/public</url>
         </repository>
     </repositories>
 
@@ -126,6 +130,12 @@
             <groupId>com.vexsoftware</groupId>
             <artifactId>votifier</artifactId>
             <version>1.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kitteh</groupId>
+            <artifactId>VanishNoPacket</artifactId>
+            <version>3.19.1</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
