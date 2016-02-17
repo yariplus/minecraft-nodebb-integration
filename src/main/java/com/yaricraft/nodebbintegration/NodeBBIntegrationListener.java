@@ -78,25 +78,6 @@ public class NodeBBIntegrationListener implements Listener {
         });
     }
 
-    // TEMP
-    @EventHandler(priority= EventPriority.LOWEST)
-    public void onAsyncPlayerChatEvent(AsyncPlayerChatEvent event) {
-        Player player = event.getPlayer();
-        if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
-            String format = "";
-            if (VaultHook.chat != null && VaultHook.permission != null) {
-                String[] groups = VaultHook.permission.getPlayerGroups(null, player);
-                World world = Bukkit.getWorlds().get(0);
-
-                for (int i = 0; i < groups.length; i++) {
-                    format = format + ChatColor.translateAlternateColorCodes('&', VaultHook.chat.getGroupPrefix(world, groups[i]));
-                }
-                format = format + "%1$s" + ChatColor.RESET + ": %2$s";
-                event.setFormat(format);
-            }
-        }
-    }
-
     // TODO
     @EventHandler
     public void onServerListPing(final ServerListPingEvent event) {
