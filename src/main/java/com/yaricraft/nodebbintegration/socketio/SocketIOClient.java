@@ -1,9 +1,9 @@
 package com.yaricraft.nodebbintegration.socketio;
 
-import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.Ack;
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
+import io.socket.emitter.Emitter;
+import io.socket.client.Ack;
+import io.socket.client.IO;
+import io.socket.client.Socket;
 import com.yaricraft.nodebbintegration.NodeBBIntegration;
 import com.yaricraft.nodebbintegration.hooks.OnTimeHook;
 import com.yaricraft.nodebbintegration.hooks.VanishNoPacketHook;
@@ -13,10 +13,7 @@ import com.yaricraft.nodebbintegration.socketio.listeners.ListenerWebChat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,14 +21,15 @@ import org.json.JSONObject;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 
-public class SocketIOClient extends BukkitRunnable {
+public final class SocketIOClient {
 
 	private static SocketIOClient instance;
-
-	private static JavaPlugin plugin;
+	private static NodeBBIntegration plugin;
 	private static Socket socket;
+
 	public static String id;
 
+	// TODO: This doesn't belong here.
 	public static String getNamespace() {
 		String ns = plugin.getConfig().getString("SOCKETNAMESPACE");
 		String pl = plugin.getConfig().getString("PLUGINID");
@@ -39,111 +37,84 @@ public class SocketIOClient extends BukkitRunnable {
 		return ns + "." + pl + ".";
 	}
 
-	private SocketIOClient(JavaPlugin _plugin) {
+	// Initial connection when created.
+	private SocketIOClient(NodeBBIntegration _plugin) {
 		plugin = _plugin;
+		connect();
 	}
 
-	public static SocketIOClient create(JavaPlugin plugin) {
+	// Create instance during plugin load.
+	public static SocketIOClient create(NodeBBIntegration plugin) {
 		if (instance == null) instance = new SocketIOClient(plugin);
 		return instance;
 	}
 
-	public static Socket getSocket() {
-		return socket;
-	}
-
-	public static void closeSocket() {
-		try {
-			socket.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void run() {
-		if (socket == null) {
-			try {
-				socket = IO.socket(ChatColor.stripColor(plugin.getConfig().getString("FORUMURL")));
-				NodeBBIntegration.log("Success! The socket client was created.");
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
-			}
-		}else{
-			NodeBBIntegration.log("Oops, something went wrong with the socket client. I tried to start a duplicate instance.");
-		}
-
-		setOptions();
-		socket.connect();
-	}
-
-	public static void reconnect()
-	{
-		if(socket.connected()) closeSocket();
-		try {
-			socket = IO.socket(ChatColor.stripColor(plugin.getConfig().getString("FORUMURL")));
-			NodeBBIntegration.log("Success! The socket client was created.");
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-
-		setOptions();
-		socket.connect();
-	}
-
-	public static void reconnect(final CommandSender sender) {
-		new BukkitRunnable() {
+	// Closes any previous connection and creates a new one.
+	public static void connect() {
+		new BukkitRunnable(){
 			@Override
 			public void run() {
-				sender.sendMessage("Re-establishing socket connection...");
-				reconnect();
-
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						if(socket.connected()) {
-							sender.sendMessage("Successfully connected to the forum.");
-						}else{
-							sender.sendMessage("Error connecting to the forum.");
-						}
-					}
-				}.runTaskLater(plugin, 40);
+				try {
+					if (socket != null) socket.close();
+					socket = IO.socket(ChatColor.stripColor(plugin.getConfig().getString("FORUMURL")));
+					setOptions();
+					socket.connect();
+				} catch (URISyntaxException e) {
+					NodeBBIntegration.log("The forum URL was invalid.");
+				} catch (Exception e) {
+					NodeBBIntegration.log("The forum URL was invalid.");
+				}
 			}
-		}.runTaskLaterAsynchronously(plugin, 40);
+		}.runTaskLaterAsynchronously(plugin, 60);
+	}
+
+	public static boolean connected() {
+		if (socket == null) return false;
+		return socket.connected();
+	}
+
+	public static boolean disconnected() {
+		return !connected();
+	}
+
+	public static void close() {
+		socket.close();
 	}
 
 	private static void setOptions()
 	{
-		if (socket != null)
-		{
-			socket.on(Socket.EVENT_CONNECT, new Emitter.Listener()
+		socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+			@Override
+			public void call(Object... args) {
+				NodeBBIntegration.log("Connected to the forum.");
+				sync();
+			}
+		}).on(Socket.EVENT_RECONNECT, new Emitter.Listener() {
+			@Override
+			public void call(Object... args)
 			{
-				@Override
-				public void call(Object... args) {
-					sync();
-				}
-			}).on(Socket.EVENT_RECONNECT, new Emitter.Listener()
+				NodeBBIntegration.log("Connected to the forum.");
+				sync();
+			}
+		}).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+			@Override
+			public void call(Object... args)
 			{
-				@Override
-				public void call(Object... args)
-				{
-					NodeBBIntegration.log("Re-connected to the forum.");
-				}
-			}).on(Socket.EVENT_DISCONNECT, new Emitter.Listener()
-			{
-				@Override
-				public void call(Object... args)
-				{
-					NodeBBIntegration.log("Lost connection to the forum. Will try to re-connect later.");
-				}
-			});
+				NodeBBIntegration.log("Lost connection to the forum.");
+			}
+		}).on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
+			@Override
+			public void call(Object... objects) {
+				NodeBBIntegration.log("Error connecting to the forum.");
+			}
+		});
 
-			socket.on("eventWebChat", new ListenerWebChat());
-			socket.on("eventGetPlayerVotes", new ListenerGetPlayerVotes());
+		socket.on("eventWebChat", new ListenerWebChat());
+		socket.on("eventGetPlayerVotes", new ListenerGetPlayerVotes());
+	}
 
-		}else{
-			NodeBBIntegration.log("Uh Oh. I failed to create a socket client. Are you sure the forum url is correct?");
-		}
+	public static void emit(String event, JSONObject args, Ack ack) {
+		socket.emit(event, args, ack);
 	}
 
 	// Socket events are sent asynchronously.
@@ -166,14 +137,14 @@ public class SocketIOClient extends BukkitRunnable {
 		}.runTaskAsynchronously(plugin);
 	}
 
+	// Runs a tick once to update the forum status.
 	private static void sync() {
-		NodeBBIntegration.log("Connected to the forum!");
 		id = socket.id();
-		((NodeBBIntegration)plugin).taskTick.run();
+		plugin.taskTick.run();
 	}
 
 	public static void sendPlayerJoin(Player player) {
-		if (getSocket() == null) return;
+		if (socket == null) return;
 		final String socketEvent = getNamespace() + "eventPlayerJoin";
 
 		if (VanishNoPacketHook.isEnabled()) {
@@ -213,7 +184,7 @@ public class SocketIOClient extends BukkitRunnable {
 		}
 
 		NodeBBIntegration.log("Sending " + socketEvent);
-		SocketIOClient.getSocket().emit(socketEvent, obj, new Ack() {
+		socket.emit(socketEvent, obj, new Ack() {
 			@Override
 			public void call(Object... args) {
 				NodeBBIntegration.log(socketEvent + " callback received.");
@@ -222,7 +193,7 @@ public class SocketIOClient extends BukkitRunnable {
 	}
 
 	public static void sendPlayerLeave(Player player) {
-		if (getSocket() == null) return;
+		if (socket == null) return;
 		final String socketEvent = getNamespace() + "eventPlayerQuit";
 
 		JSONObject obj = new JSONObject();
@@ -237,7 +208,7 @@ public class SocketIOClient extends BukkitRunnable {
 		}
 
 		NodeBBIntegration.log("Sending " + socketEvent);
-		SocketIOClient.getSocket().emit(socketEvent, obj, new Ack() {
+		socket.emit(socketEvent, obj, new Ack() {
 			@Override
 			public void call(Object... args) {
 				NodeBBIntegration.log(socketEvent + " callback received.");

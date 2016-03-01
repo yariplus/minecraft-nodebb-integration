@@ -1,28 +1,20 @@
 package com.yaricraft.nodebbintegration;
 
-import com.github.nkzawa.socketio.client.Ack;
-import com.yaricraft.nodebbintegration.hooks.OnTimeHook;
-import com.yaricraft.nodebbintegration.hooks.VanishNoPacketHook;
-import com.yaricraft.nodebbintegration.hooks.VaultHook;
+import io.socket.client.Ack;
 import com.yaricraft.nodebbintegration.socketio.SocketIOClient;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
+import java.util.Date;
 
 /**
  * Created by Yari on 5/28/2015.
@@ -54,7 +46,7 @@ public class NodeBBIntegrationListener implements Listener {
 
     @EventHandler
     public void handlePlayerChat(AsyncPlayerChatEvent event) {
-        if (SocketIOClient.getSocket() == null) return;
+        if (SocketIOClient.disconnected()) return;
         final String socketEvent = getNamespace() + "eventPlayerChat";
 
         JSONObject obj = new JSONObject();
@@ -70,7 +62,7 @@ public class NodeBBIntegrationListener implements Listener {
         }
 
         NodeBBIntegration.log("Sending " + socketEvent);
-        SocketIOClient.getSocket().emit(socketEvent, obj, new Ack() {
+        SocketIOClient.emit(socketEvent, obj, new Ack() {
             @Override
             public void call(Object... args) {
                 NodeBBIntegration.log(socketEvent + " callback received.");
@@ -81,16 +73,26 @@ public class NodeBBIntegrationListener implements Listener {
     // TODO
     @EventHandler
     public void onServerListPing(final ServerListPingEvent event) {
-        if (SocketIOClient.getSocket() == null) return;
+        if (SocketIOClient.disconnected()) return;
 
         NodeBBIntegration.log("Server List Ping from: " + event.getAddress().toString());
     }
 
-    // TODO: Why does this throw errors?
+    // Allow the WorldSaveEvent to save the config once a minute.
+    private long stamp = 0;
     @EventHandler
     public void onWorldSave(WorldSaveEvent event)
     {
-        PlayerManager.saveConfig();
-        NodeBBIntegration.log("Saved player data.");
+        long now = new Date().getTime();
+        if (now - stamp > 60000) {
+            stamp = now;
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    PlayerManager.saveConfig();
+                    NodeBBIntegration.log("Saved player data.");
+                }
+            }.runTask(plugin);
+        }
     }
 }

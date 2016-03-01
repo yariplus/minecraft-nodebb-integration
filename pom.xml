@@ -51,9 +51,9 @@
                         <configuration>
                             <artifactSet>
                                 <includes>
-                                    <include>com.github.nkzawa:*</include>
+                                    <include>io.socket:*</include>
                                     <include>org.json:*</include>
-                                    <include>com.squareup.okhttp:*</include>
+                                    <include>com.squareup.okhttp3:*</include>
                                     <include>com.squareup.okio:*</include>
                                     <include>com.fasterxml.jackson.core:*</include>
                                     <include>commons-codec:*</include>
@@ -76,9 +76,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.nkzawa</groupId>
+            <groupId>io.socket</groupId>
             <artifactId>socket.io-client</artifactId>
-            <version>0.5.2</version>
+            <version>0.7.0</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
@@ -86,19 +86,19 @@
             <version>20090211</version>
         </dependency>
         <dependency>
-            <groupId>com.squareup.okhttp</groupId>
+            <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
-            <version>2.4.0</version>
+            <version>3.2.0</version>
         </dependency>
         <dependency>
-            <groupId>com.squareup.okhttp</groupId>
+            <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp-ws</artifactId>
-            <version>2.4.0</version>
+            <version>3.2.0</version>
         </dependency>
         <dependency>
             <groupId>com.squareup.okio</groupId>
             <artifactId>okio</artifactId>
-            <version>1.4.0</version>
+            <version>1.6.0</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -135,7 +135,6 @@
             <groupId>org.kitteh</groupId>
             <artifactId>VanishNoPacket</artifactId>
             <version>3.19.1</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

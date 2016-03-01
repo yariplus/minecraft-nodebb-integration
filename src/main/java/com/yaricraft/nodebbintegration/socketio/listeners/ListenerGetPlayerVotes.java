@@ -1,18 +1,13 @@
 package com.yaricraft.nodebbintegration.socketio.listeners;
 
-import com.github.nkzawa.emitter.Emitter;
 import com.yaricraft.nodebbintegration.NodeBBIntegration;
 import com.yaricraft.nodebbintegration.PlayerManager;
 import com.yaricraft.nodebbintegration.socketio.SocketIOClient;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import io.socket.emitter.Emitter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.xml.soap.Node;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by Yari on 1/6/2016.

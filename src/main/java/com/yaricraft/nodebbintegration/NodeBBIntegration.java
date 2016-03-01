@@ -34,13 +34,16 @@ public class NodeBBIntegration extends JavaPlugin {
         instance = this;
 
         // Start the socket client.
-        SocketIOClient.create(this).runTaskLaterAsynchronously(this, 60);
+        SocketIOClient.create(this);
 
         // Monitor the TPS.
         taskTick = new TaskTick(this);
 
         // Create config.yml if new install.
         this.saveDefaultConfig();
+
+        // Load player data.
+        PlayerManager.reloadConfig();
 
         // Initialize Plugin Hooks
         VaultHook.hook(this);
@@ -61,6 +64,11 @@ public class NodeBBIntegration extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        SocketIOClient.closeSocket();
+        try {
+            // Try to close the connection gracefully.
+            SocketIOClient.close();
+        } catch (Exception e) {
+            // Any error doesn't matter.
+        }
     }
 }

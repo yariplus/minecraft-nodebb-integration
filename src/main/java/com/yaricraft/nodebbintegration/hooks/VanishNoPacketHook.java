@@ -3,7 +3,6 @@ package com.yaricraft.nodebbintegration.hooks;
 import com.yaricraft.nodebbintegration.NodeBBIntegration;
 import com.yaricraft.nodebbintegration.listeners.ListenerVanishNoPacket;
 import org.bukkit.Bukkit;
-import org.kitteh.vanish.staticaccess.VanishNotLoadedException;
 
 /**
  * Created by Yari on 2/14/2016.
@@ -30,7 +29,7 @@ public final class VanishNoPacketHook {
     {
         try {
             return org.kitteh.vanish.staticaccess.VanishNoPacket.isVanished(player);
-        } catch (VanishNotLoadedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }

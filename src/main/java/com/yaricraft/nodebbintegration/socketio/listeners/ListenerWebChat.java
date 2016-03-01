@@ -1,6 +1,6 @@
 package com.yaricraft.nodebbintegration.socketio.listeners;
 
-import com.github.nkzawa.emitter.Emitter;
+import io.socket.emitter.Emitter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.json.JSONException;

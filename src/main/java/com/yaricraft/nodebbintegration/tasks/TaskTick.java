@@ -1,6 +1,6 @@
 package com.yaricraft.nodebbintegration.tasks;
 
-import com.github.nkzawa.socketio.client.Ack;
+import io.socket.client.Ack;
 import com.yaricraft.nodebbintegration.NodeBBIntegration;
 import com.yaricraft.nodebbintegration.hooks.VanishNoPacketHook;
 import com.yaricraft.nodebbintegration.socketio.SocketIOClient;
@@ -48,7 +48,7 @@ public class TaskTick extends BukkitRunnable {
         TPS = df.format(ticks);
         timeLast = timeNow;
 
-        if (SocketIOClient.getSocket().connected()) {
+        if (SocketIOClient.connected()) {
             new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -118,7 +118,7 @@ public class TaskTick extends BukkitRunnable {
                     }
 
                     NodeBBIntegration.log("Sending " + socketEvent);
-                    SocketIOClient.getSocket().emit(socketEvent, obj, new Ack() {
+                    SocketIOClient.emit(socketEvent, obj, new Ack() {
                         @Override
                         public void call(Object... args) {
                             NodeBBIntegration.log(socketEvent + " callback received.");

@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 public final class OnTimeHook {
 
     private OnTimeHook(){}

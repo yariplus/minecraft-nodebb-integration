@@ -1,6 +1,6 @@
 package com.yaricraft.nodebbintegration.commands;
 
-import com.github.nkzawa.socketio.client.Ack;
+import io.socket.client.Ack;
 import com.yaricraft.nodebbintegration.NodeBBIntegration;
 import com.yaricraft.nodebbintegration.socketio.SocketIOClient;
 import org.bukkit.ChatColor;
@@ -61,7 +61,7 @@ public class CommandRegister implements CommandExecutor
         }
 
         // If we're not connected, don't do anything.
-        if (SocketIOClient.getSocket() == null || !SocketIOClient.getSocket().connected()) {
+        if (SocketIOClient.disconnected()) {
             if (RegisterNotConnected == null) {
                 RegisterNotConnected = plugin.getConfig().getStringList("PluginMessages.Register.NotConnected");
             }
@@ -97,7 +97,7 @@ public class CommandRegister implements CommandExecutor
         // DEBUG
         NodeBBIntegration.log("Sending " + SocketIOClient.getNamespace() + "commandRegister");
 
-        SocketIOClient.getSocket().emit(SocketIOClient.getNamespace() + "commandRegister", obj, new Ack() {
+        SocketIOClient.emit(SocketIOClient.getNamespace() + "commandRegister", obj, new Ack() {
             @Override
             public void call(Object... args) {
 

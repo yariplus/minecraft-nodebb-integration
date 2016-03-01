@@ -27,15 +27,14 @@ public class CommandNodeBB implements CommandExecutor {
         if (args.length == 0) {
             help(sender);
         } else if (args.length == 1) {
-            NodeBBIntegration.log(String.valueOf(args[0].equals("reload")));
             if (args[0].equals("reload")) {
                 plugin.reloadConfig();
                 sender.sendMessage("Reloaded Config.");
                 NodeBBIntegration.log("Reloaded Config.");
-                SocketIOClient.reconnect(sender);
+                SocketIOClient.connect();
                 PlayerManager.reloadConfig();
             } else if (args[0].equals("debug")) {
-                if (SocketIOClient.getSocket().connected()) {
+                if (SocketIOClient.connected()) {
                     sender.sendMessage("MinecraftServer is connected to " + plugin.getConfig().getString("FORUMNAME") + " at " + plugin.getConfig().getString("FORUMURL"));
                 } else {
                     sender.sendMessage("MinecraftServer is NOT connected to " + plugin.getConfig().getString("FORUMNAME") + " at " + plugin.getConfig().getString("FORUMURL"));
@@ -58,7 +57,7 @@ public class CommandNodeBB implements CommandExecutor {
                 plugin.saveConfig();
                 sender.sendMessage("Set new API key.");
                 NodeBBIntegration.log("Set new API key.");
-                SocketIOClient.reconnect(sender);
+                SocketIOClient.connect();
             } else if (args[0].equals("name")) {
                 String forumname = ChatColor.translateAlternateColorCodes('&', args[1]);
                 for (int i = 2; i < args.length; i++) forumname += (" " + ChatColor.translateAlternateColorCodes('&', args[i]));
@@ -74,7 +73,7 @@ public class CommandNodeBB implements CommandExecutor {
                 plugin.saveConfig();
                 sender.sendMessage("Set forum url to " + url + ".");
                 NodeBBIntegration.log("Set forum url to " + url + ".");
-                SocketIOClient.reconnect(sender);
+                SocketIOClient.connect();
             } else if (args[0].equals("debug") && args[1].equals("toggle")) {
                 NodeBBIntegration.debug = !NodeBBIntegration.debug;
                 if (NodeBBIntegration.debug) {
