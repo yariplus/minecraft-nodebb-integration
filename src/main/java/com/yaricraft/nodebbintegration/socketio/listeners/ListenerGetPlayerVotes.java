@@ -3,6 +3,7 @@ package com.yaricraft.nodebbintegration.socketio.listeners;
 import com.yaricraft.nodebbintegration.NodeBBIntegration;
 import com.yaricraft.nodebbintegration.PlayerManager;
 import com.yaricraft.nodebbintegration.socketio.SocketIOClient;
+import io.socket.client.Ack;
 import io.socket.emitter.Emitter;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,7 +41,12 @@ public class ListenerGetPlayerVotes implements Emitter.Listener
 			}
 
 			NodeBBIntegration.log("Sending votes...");
-			SocketIOClient.send(SocketIOClient.getNamespace() + "PlayerVotes", res);
+			SocketIOClient.emit(SocketIOClient.getNamespace() + "PlayerVotes", res, new Ack() {
+				@Override
+				public void call(Object... objects) {
+
+				}
+			});
 		}
 		catch (JSONException e)
 		{
