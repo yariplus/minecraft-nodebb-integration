@@ -41,7 +41,7 @@ public class ListenerGetPlayerVotes implements Emitter.Listener
 			}
 
 			NodeBBIntegration.log("Sending votes...");
-			SocketIOClient.emit(SocketIOClient.getNamespace() + "PlayerVotes", res, new Ack() {
+			SocketIOClient.emit("PlayerVotes", res, new Ack() {
 				@Override
 				public void call(Object... objects) {
 

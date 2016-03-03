@@ -53,7 +53,7 @@ public class TaskTick extends BukkitRunnable {
                 @Override
                 public void run() {
 
-                    final String socketEvent = SocketIOClient.getNamespace() + "eventStatus";
+                    final String socketEvent = "eventStatus";
 
                     JSONObject obj = new JSONObject();
                     final ArrayList<JSONObject> players = new ArrayList<JSONObject>();

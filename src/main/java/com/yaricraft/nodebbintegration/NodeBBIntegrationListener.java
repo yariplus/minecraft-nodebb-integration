@@ -27,13 +27,6 @@ public class NodeBBIntegrationListener implements Listener {
         this.plugin = plugin;
     }
 
-    private String getNamespace() {
-        String ns = plugin.getConfig().getString("SOCKETNAMESPACE");
-        String pl = plugin.getConfig().getString("PLUGINID");
-
-        return ns + "." + pl + ".";
-    }
-
     @EventHandler
     public void handlePlayerJoin(PlayerJoinEvent event) {
         SocketIOClient.sendPlayerJoin(event.getPlayer());
@@ -47,7 +40,7 @@ public class NodeBBIntegrationListener implements Listener {
     @EventHandler
     public void handlePlayerChat(AsyncPlayerChatEvent event) {
         if (SocketIOClient.disconnected()) return;
-        final String socketEvent = getNamespace() + "eventPlayerChat";
+        final String socketEvent = "eventPlayerChat";
 
         JSONObject obj = new JSONObject();
         try {

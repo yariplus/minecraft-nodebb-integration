@@ -95,9 +95,9 @@ public class CommandRegister implements CommandExecutor
         }
 
         // DEBUG
-        NodeBBIntegration.log("Sending " + SocketIOClient.getNamespace() + "commandRegister");
+        NodeBBIntegration.log("Sending commandRegister");
 
-        SocketIOClient.emit(SocketIOClient.getNamespace() + "commandRegister", obj, new Ack() {
+        SocketIOClient.emit("commandRegister", obj, new Ack() {
             @Override
             public void call(Object... args) {
 

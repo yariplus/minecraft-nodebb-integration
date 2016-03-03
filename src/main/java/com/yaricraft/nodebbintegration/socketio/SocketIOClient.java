@@ -43,14 +43,6 @@ public final class SocketIOClient {
 	private String url;
 	private String namespace;
 
-	// TODO: This doesn't belong here.
-	public static String getNamespace() {
-		String ns = instance.plugin.getConfig().getString("SOCKETNAMESPACE");
-		String pl = instance.plugin.getConfig().getString("PLUGINID");
-
-		return ns + "." + pl + ".";
-	}
-
 	// Create instance during plugin load.
 	public static SocketIOClient create(NodeBBIntegration plugin) {
 		if (instance == null) instance = new SocketIOClient(plugin);
@@ -107,9 +99,10 @@ public final class SocketIOClient {
 			@Override
 			public void run() {
 				try {
-					// Close previous sockets, and get the forum url.
+					// Close previous sockets, and get the forum url and namespace.
 					if (socket != null) socket.close();
 					url = ChatColor.stripColor(plugin.getConfig().getString("FORUMURL"));
+					namespace = instance.plugin.getConfig().getString("SOCKETNAMESPACE") + "." + instance.plugin.getConfig().getString("PLUGINID") + ".";
 
 					// Get a session cookie.
 					getCookie();
@@ -170,12 +163,12 @@ public final class SocketIOClient {
 	}
 
 	public static void emit(String event, JSONObject args, Ack ack) {
-		if (connected()) instance.socket.emit(event, args, ack);
+		if (connected()) instance.socket.emit(instance.namespace + event, args, ack);
 	}
 
 	public static void sendPlayerJoin(Player player) {
 		if (disconnected()) return;
-		final String socketEvent = getNamespace() + "eventPlayerJoin";
+		final String socketEvent = "eventPlayerJoin";
 
 		if (VanishNoPacketHook.isEnabled()) {
 			if (VanishNoPacketHook.isVanished(player.getName())) return;
@@ -224,7 +217,7 @@ public final class SocketIOClient {
 
 	public static void sendPlayerLeave(Player player) {
 		if (disconnected()) return;
-		final String socketEvent = getNamespace() + "eventPlayerQuit";
+		final String socketEvent = "eventPlayerQuit";
 
 		JSONObject obj = new JSONObject();
 		try {
