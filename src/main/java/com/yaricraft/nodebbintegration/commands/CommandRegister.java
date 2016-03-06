@@ -26,14 +26,32 @@ public class CommandRegister implements CommandExecutor
     List<String> RegisterAlert = null;
     List<String> RegisterNotConnected = null;
     List<String> RegisterAssertParameters = null;
+    List<String> RegisterGiveProfile = null;
     List<String> RegisterParsingError = null;
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
     {
+        // Sender needs to be a player.
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("Command needs to be run by a player.");
+            return true;
+        }
+
         final CommandSender commandSender = sender;
         final String forumname;
         final String forumurl;
+
+        // Assert parameters.
+        if (args.length != 1) {
+            if (RegisterAssertParameters == null) {
+                RegisterAssertParameters = plugin.getConfig().getStringList("PluginMessages.Register.AssertParameters");
+            }
+            for (String str : RegisterAssertParameters) {
+                sender.sendMessage(p(str));
+            }
+            return true;
+        }
 
         // Get config
         try {
@@ -44,11 +62,18 @@ public class CommandRegister implements CommandExecutor
             return true;
         }
 
-        // Sender needs to be a player.
-        if (!(sender instanceof Player)) {
-            sender.sendMessage("Command needs to be run by a player.");
+        // Give profile link.
+        if (!args[0].substring(0,4).equals("key-")) {
+            if (RegisterGiveProfile == null) {
+                RegisterGiveProfile = plugin.getConfig().getStringList("PluginMessages.Register.GiveProfile");
+            }
+            for (String str : RegisterGiveProfile) {
+                // TODO: Proper config parsing module.
+                sender.sendMessage(p(str).replace("$1", forumurl).replace("$2", args[0]));
+            }
             return true;
         }
+        args[0] = args[0].substring(4);
 
         // Alert
         if (RegisterAlert == null) {
@@ -71,24 +96,13 @@ public class CommandRegister implements CommandExecutor
             return true;
         }
 
-        // Assert parameters.
-        if (args.length != 2) {
-            if (RegisterAssertParameters == null) {
-                RegisterAssertParameters = plugin.getConfig().getStringList("PluginMessages.Register.AssertParameters");
-            }
-            for (String str : RegisterAssertParameters) {
-                sender.sendMessage(p(str));
-            }
-            return true;
-        }
-
+        //
         JSONObject obj = new JSONObject();
         try {
-            obj.put("email", args[0]);
-            obj.put("password", args[1]);
-            obj.put("name", sender.getName());
-            obj.put("id", ((Player) sender).getUniqueId().toString());
             obj.put("key", plugin.getConfig().getString("APIKEY"));
+            obj.put("id", ((Player) sender).getUniqueId().toString());
+            obj.put("name", sender.getName());
+            obj.put("pkey", args[0]);
         } catch (JSONException e) {
             e.printStackTrace();
             return true;

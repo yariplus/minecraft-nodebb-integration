@@ -39,8 +39,8 @@ public class NodeBBIntegration extends JavaPlugin {
         // Monitor the TPS.
         taskTick = new TaskTick(this);
 
-        // Create config.yml if new install.
-        this.saveDefaultConfig();
+        // Loads config and updates if necessary.
+        Config.load();
 
         // Load player data.
         PlayerManager.reloadConfig();

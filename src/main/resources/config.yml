@@ -21,13 +21,17 @@ PluginMessages:
         NotConnected:
             - "Sorry! The server isn't currently connected to the forum."
         AssertParameters:
-            - "Error: Please use '/register [email] [password]'"
+            - "Enter your forum username using /register [username]"
+        GiveProfile:
+            - "Copy your player key from"
+            - "$1user/$2/minecraft"
+            - "then use the command /register [key]"
         RegSuccess:
             - "Success! Registered your player on %forumname%"
         CreatedNewAccount:
             - "Success! Created a new account on %forumname%"
         FailPass:
-            - "Invalid Password"
+            - "Invalid Key"
         FailDB:
             - "Error on forum. Please inform an administrator."
         FailEmail:
