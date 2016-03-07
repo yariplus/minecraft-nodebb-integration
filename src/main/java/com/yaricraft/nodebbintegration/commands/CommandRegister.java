@@ -115,6 +115,8 @@ public class CommandRegister implements CommandExecutor
             @Override
             public void call(Object... args) {
 
+                NodeBBIntegration.log("Received commandRegister callback");
+
                 String result;
                 List<String> message;
 
