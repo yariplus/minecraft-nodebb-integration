@@ -62,8 +62,8 @@ public class CommandRegister implements CommandExecutor
             return true;
         }
 
-        // Give profile link.
-        if (!args[0].substring(0,4).equals("key-")) {
+        // Give the user a link to their profile page if they don't have a player key yet.
+        if (!(args[0].length() > 4 && args[0].substring(0,4).equals("key-"))) {
             if (RegisterGiveProfile == null) {
                 RegisterGiveProfile = plugin.getConfig().getStringList("PluginMessages.Register.GiveProfile");
             }
