@@ -76,11 +76,13 @@ public final class SocketIOClient {
 			@Override
 			public void call(Object... args) {
 				NodeBBIntegration.log("Lost connection to the forum.");
+				NodeBBIntegration.log(args[0].toString());
 			}
 		}).on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
 			@Override
 			public void call(Object... objects) {
 				NodeBBIntegration.log("Error connecting to the forum.");
+				NodeBBIntegration.log(objects[0].toString());
 			}
 		});
 
@@ -109,7 +111,9 @@ public final class SocketIOClient {
 					NodeBBIntegration.log("Got Cookie: " + cookie);
 
 					// Create a new socket.
-					socket = IO.socket(url);
+					IO.Options options = new IO.Options();
+					options.transports = new String[]{"websocket", "polling"};
+					socket = IO.socket(url, options);
 
 					// Send the session cookie with requests.
 					socket.io().on(Manager.EVENT_TRANSPORT, new Emitter.Listener() {
