@@ -56,7 +56,10 @@ public class CommandRegister implements CommandExecutor
         // Get config
         try {
             forumname = plugin.getConfig().getString("FORUMNAME");
-            forumurl  = plugin.getConfig().getString("FORUMURL");
+            String u = plugin.getConfig().getString("FORUMURL");
+            String last = u.substring(u.length()-1);
+            if (!last.equals("/")) u += "/";
+            forumurl = u;
         } catch (Exception e) {
             e.printStackTrace();
             return true;
