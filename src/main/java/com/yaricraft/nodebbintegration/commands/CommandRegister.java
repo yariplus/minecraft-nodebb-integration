@@ -26,7 +26,6 @@ public class CommandRegister implements CommandExecutor
     List<String> RegisterAlert = null;
     List<String> RegisterNotConnected = null;
     List<String> RegisterAssertParameters = null;
-    List<String> RegisterGiveProfile = null;
     List<String> RegisterParsingError = null;
 
     @Override
@@ -42,22 +41,12 @@ public class CommandRegister implements CommandExecutor
         final String forumname;
         final String forumurl;
 
-        // Assert parameters.
-        if (args.length != 1) {
-            if (RegisterAssertParameters == null) {
-                RegisterAssertParameters = plugin.getConfig().getStringList("PluginMessages.Register.AssertParameters");
-            }
-            for (String str : RegisterAssertParameters) {
-                sender.sendMessage(p(str));
-            }
-            return true;
-        }
-
         // Get config
         try {
             forumname = plugin.getConfig().getString("FORUMNAME");
             String u = plugin.getConfig().getString("FORUMURL");
-            String last = u.substring(u.length()-1);
+            String plain = ChatColor.stripColor(u);
+            String last = plain.substring(plain.length()-1);
             if (!last.equals("/")) u += "/";
             forumurl = u;
         } catch (Exception e) {
@@ -65,18 +54,20 @@ public class CommandRegister implements CommandExecutor
             return true;
         }
 
-        // Give the user a link to their profile page if they don't have a player key yet.
-        if (!(args[0].length() > 4 && args[0].substring(0,4).equals("key-"))) {
-            if (RegisterGiveProfile == null) {
-                RegisterGiveProfile = plugin.getConfig().getStringList("PluginMessages.Register.GiveProfile");
+        // Assert parameters.
+        if (args.length != 1) {
+            if (RegisterAssertParameters == null) {
+                RegisterAssertParameters = plugin.getConfig().getStringList("PluginMessages.Register.AssertParameters");
             }
-            for (String str : RegisterGiveProfile) {
+            for (String str : RegisterAssertParameters) {
                 // TODO: Proper config parsing module.
-                sender.sendMessage(p(str).replace("$1", forumurl).replace("$2", args[0]));
+                sender.sendMessage(p(str).replace("$1", forumurl));
             }
             return true;
         }
-        args[0] = args[0].substring(4);
+
+        // Trim key.
+        if (args[0].length() > 4) args[0] = args[0].substring(4);
 
         // Alert
         if (RegisterAlert == null) {
@@ -158,9 +149,8 @@ public class CommandRegister implements CommandExecutor
     {
         REGISTER  ("PluginMessages.Register.RegSuccess"),
         CREATE    ("PluginMessages.Register.CreatedNewAccount"),
-        FAILPASS  ("PluginMessages.Register.FailPass"),
-        FAILDB    ("PluginMessages.Register.FailPass"),
-        FAILEMAIL ("PluginMessages.Register.FailEmail"),
+        FAILKEY   ("PluginMessages.Register.FailKey"),
+        FAILDB    ("PluginMessages.Register.FailDB"),
         BADRES    ("PluginMessages.Register.BadRes"),
         FAILDATA  ("PluginMessages.Register.FailData"),
         ERROR     ("PluginMessages.Register.ParsingError");

@@ -61,18 +61,16 @@ public class CommandNodeBB implements CommandExecutor {
             } else if (args[0].equals("name")) {
                 String forumname = ChatColor.translateAlternateColorCodes('&', args[1]);
                 for (int i = 2; i < args.length; i++) forumname += (" " + ChatColor.translateAlternateColorCodes('&', args[i]));
-                forumname += ChatColor.RESET;
                 plugin.getConfig().set("FORUMNAME", forumname);
                 plugin.saveConfig();
-                sender.sendMessage("Set forum name to " + forumname + ".");
-                NodeBBIntegration.log("Set forum name to " + forumname + ".");
+                sender.sendMessage("Set forum name to " + forumname);
+                NodeBBIntegration.log("Set forum name to " + forumname);
             } else if (args[0].equals("url")) {
                 String url = ChatColor.translateAlternateColorCodes('&', args[1]);
-                url += ChatColor.RESET;
                 plugin.getConfig().set("FORUMURL", url);
                 plugin.saveConfig();
-                sender.sendMessage("Set forum url to " + url + ".");
-                NodeBBIntegration.log("Set forum url to " + url + ".");
+                sender.sendMessage("Set forum url to " + url);
+                NodeBBIntegration.log("Set forum url to " + url);
                 SocketIOClient.connect();
             } else if (args[0].equals("debug") && args[1].equals("toggle")) {
                 NodeBBIntegration.debug = !NodeBBIntegration.debug;

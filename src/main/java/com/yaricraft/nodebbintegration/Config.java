@@ -13,17 +13,14 @@ public class Config {
 
         String version = plugin.getConfig().getString("version");
 
-        if (version == null) {
-            // Save current defaults.
-            saveCurrent();
-        }
+        // TEMP
+        saveCurrent();
     }
 
     private static void saveCurrent() {
-        plugin.getConfig().set("version", "1.0.0");
+        plugin.getConfig().set("PluginMessages.Register.Alert", plugin.getConfig().getDefaults().get("PluginMessages.Register.Alert"));
         plugin.getConfig().set("PluginMessages.Register.AssertParameters", plugin.getConfig().getDefaults().get("PluginMessages.Register.AssertParameters"));
-        plugin.getConfig().set("PluginMessages.Register.GiveProfile", plugin.getConfig().getDefaults().get("PluginMessages.Register.GiveProfile"));
-        plugin.getConfig().set("PluginMessages.Register.FailPass", plugin.getConfig().getDefaults().get("PluginMessages.Register.FailPass"));
+        plugin.getConfig().set("PluginMessages.Register.FailKey", plugin.getConfig().getDefaults().get("PluginMessages.Register.FailKey"));
         plugin.saveConfig();
     }
 }

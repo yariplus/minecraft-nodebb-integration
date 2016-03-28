@@ -3,7 +3,6 @@ FORUMNAME: My Minecraft Forum
 APIKEY: SECRETPASSWORD
 SOCKETNAMESPACE: plugins
 PLUGINID: MinecraftIntegration
-
 PluginMessages:
     NodeBB:
         Help:
@@ -17,25 +16,21 @@ PluginMessages:
             - "&e/nodebb debug &r- Displays information useful for fixing errors."
     Register:
         Alert:
-            - "Registering your player on %forumname% (%forumurl%)"
+            - "Registering your player on %forumname% (%forumurl%&r)"
         NotConnected:
             - "Sorry! The server isn't currently connected to the forum."
         AssertParameters:
-            - "Enter your forum username using /register [username]"
-        GiveProfile:
             - "Copy your player key from"
-            - "$1user/$2/minecraft"
+            - "$1minecraft/register&r"
             - "then use the command /register [key]"
         RegSuccess:
             - "Success! Registered your player on %forumname%"
         CreatedNewAccount:
             - "Success! Created a new account on %forumname%"
-        FailPass:
+        FailKey:
             - "Invalid Key"
         FailDB:
             - "Error on forum. Please inform an administrator."
-        FailEmail:
-            - "Invalid email."
         BadRes:
             - "Internal error. Please inform an administrator."
         FailData:
