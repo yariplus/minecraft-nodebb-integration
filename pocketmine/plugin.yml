@@ -1,0 +1,21 @@
+name: NodeBBIntegration
+main: NodeBBIntegration\NodeBBIntegration
+version: 0.7.0-beta.8
+api: [1.0.0]
+
+load: POSTWORLD
+author: yariplus
+description: NodeBBIntegration
+website: https://github.com/yariplus/bukkit-plugin-nodebb-integration
+commands:
+ register:
+  description: Register your Minecraft account with your forum account.
+  usage: "/register [email] [password]"
+ nodebb:
+  description: NodeBB Integration parent command.
+  usage: "/nodebb"
+  permission: nodebb.admin
+permissions:
+ nodebb.admin:
+  description: "Allows using the NodeBB Integration admin command."
+  default: false
