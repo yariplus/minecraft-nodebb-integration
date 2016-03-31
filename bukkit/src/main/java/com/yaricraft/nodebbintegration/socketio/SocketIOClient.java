@@ -110,11 +110,14 @@ public final class SocketIOClient {
 					getCookie();
 					NodeBBIntegration.log("Got Cookie: " + cookie);
 
-					// Create a new socket.
+					// Get config.
 					String live = plugin.getConfig().getString("socketio.address");
+					if (live.equals(plugin.getConfig().getDefaults().getString("socketio.address"))) live = plugin.getConfig().getString("FORUMURL");
 					String[] transports = plugin.getConfig().getStringList("socketio.transports").toArray(new String[0]);
 					IO.Options options = new IO.Options();
 					options.transports = transports;
+
+					// Create a new socket.
 					socket = IO.socket(live, options);
 
 					// Send the session cookie with requests.
