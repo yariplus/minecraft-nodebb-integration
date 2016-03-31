@@ -5,7 +5,7 @@ APIKEY: SECRETPASSWORD
 SOCKETNAMESPACE: plugins
 PLUGINID: MinecraftIntegration
 socketio:
-    address: "live.domain.tld"
+    address: "https://live.example.com/"
     transports: ["polling", "websocket"]
 messages:
     nodebb:
