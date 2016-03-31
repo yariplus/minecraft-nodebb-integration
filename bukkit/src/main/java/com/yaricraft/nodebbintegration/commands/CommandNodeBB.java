@@ -48,6 +48,8 @@ public class CommandNodeBB implements CommandExecutor {
                 sender.sendMessage("The forum name is set to " + plugin.getConfig().getString("FORUMNAME"));
             } else if (args[0].equals("url")) {
                 sender.sendMessage("The forum url is set to " + plugin.getConfig().getString("FORUMURL"));
+            } else if (args[0].equals("live")) {
+                sender.sendMessage(plugin.getConfig().getString("messages.nodebb.live.get").replace("%live%", plugin.getConfig().getString("socketio.address")));
             } else {
                 help(sender);
             }
@@ -71,6 +73,13 @@ public class CommandNodeBB implements CommandExecutor {
                 plugin.saveConfig();
                 sender.sendMessage("Set forum url to " + url);
                 NodeBBIntegration.log("Set forum url to " + url);
+                SocketIOClient.connect();
+            } else if (args[0].equals("live")) {
+                plugin.getConfig().set("socketio.address", args[1]);
+                plugin.saveConfig();
+                String msg = plugin.getConfig().getString("messages.nodebb.live.set").replace("%live%", args[1]);
+                sender.sendMessage(msg);
+                NodeBBIntegration.log(msg);
                 SocketIOClient.connect();
             } else if (args[0].equals("debug") && args[1].equals("toggle")) {
                 NodeBBIntegration.debug = !NodeBBIntegration.debug;

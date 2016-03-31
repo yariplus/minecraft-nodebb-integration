@@ -1,8 +1,25 @@
+---
 FORUMURL: https://community.example.com/
 FORUMNAME: My Minecraft Forum
 APIKEY: SECRETPASSWORD
 SOCKETNAMESPACE: plugins
 PLUGINID: MinecraftIntegration
+socketio:
+    address: "live.domain.tld"
+    transports: ["polling", "websocket"]
+messages:
+    nodebb:
+        live:
+            get:
+                - "The websocket domain is set to %live%"
+            set:
+                - "Set the websocket domain to %live%"
+        transport:
+            get:
+                - "Websocket transports are %transports%"
+            add:
+                - "Removed websocket transport %transport%"
+version: "0.7.0-beta.8"
 PluginMessages:
     NodeBB:
         Help:

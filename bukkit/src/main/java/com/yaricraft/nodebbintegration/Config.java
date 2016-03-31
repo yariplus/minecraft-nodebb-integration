@@ -11,13 +11,11 @@ public class Config {
 
         plugin.saveDefaultConfig();
 
-        String version = plugin.getConfig().getString("version");
-
-        // TEMP
-        saveCurrent();
+        if (!plugin.getConfig().getString("version").equals(plugin.getConfig().getDefaults().get("version"))) saveCurrent();
     }
 
     private static void saveCurrent() {
+        plugin.getConfig().set("messages", plugin.getConfig().getDefaults().get("messages"));
         plugin.getConfig().set("PluginMessages.Register.Alert", plugin.getConfig().getDefaults().get("PluginMessages.Register.Alert"));
         plugin.getConfig().set("PluginMessages.Register.AssertParameters", plugin.getConfig().getDefaults().get("PluginMessages.Register.AssertParameters"));
         plugin.getConfig().set("PluginMessages.Register.FailKey", plugin.getConfig().getDefaults().get("PluginMessages.Register.FailKey"));

@@ -111,9 +111,11 @@ public final class SocketIOClient {
 					NodeBBIntegration.log("Got Cookie: " + cookie);
 
 					// Create a new socket.
+					String live = plugin.getConfig().getString("socketio.address");
+					String[] transports = plugin.getConfig().getStringList("socketio.transports").toArray(new String[0]);
 					IO.Options options = new IO.Options();
-					options.transports = new String[]{"websocket", "polling"};
-					socket = IO.socket(url, options);
+					options.transports = transports;
+					socket = IO.socket(live, options);
 
 					// Send the session cookie with requests.
 					socket.io().on(Manager.EVENT_TRANSPORT, new Emitter.Listener() {
