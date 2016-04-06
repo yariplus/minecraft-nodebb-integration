@@ -1,23 +1,23 @@
-package com.yaricraft.nodebbintegration;
+package com.radiofreederp.nodebbintegration;
 
-import com.yaricraft.nodebbintegration.commands.CommandNodeBB;
-import com.yaricraft.nodebbintegration.commands.CommandRegister;
-import com.yaricraft.nodebbintegration.hooks.OnTimeHook;
-import com.yaricraft.nodebbintegration.hooks.VanishNoPacketHook;
-import com.yaricraft.nodebbintegration.hooks.VaultHook;
-import com.yaricraft.nodebbintegration.hooks.VotifierHook;
-import com.yaricraft.nodebbintegration.socketio.SocketIOClient;
-import com.yaricraft.nodebbintegration.tasks.TaskTick;
+import com.radiofreederp.nodebbintegration.commands.CommandRegister;
+import com.radiofreederp.nodebbintegration.commands.CommandNodeBB;
+import com.radiofreederp.nodebbintegration.hooks.OnTimeHook;
+import com.radiofreederp.nodebbintegration.hooks.VanishNoPacketHook;
+import com.radiofreederp.nodebbintegration.hooks.VaultHook;
+import com.radiofreederp.nodebbintegration.hooks.VotifierHook;
+import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
+import com.radiofreederp.nodebbintegration.tasks.TaskTick;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Level;
 
-public class NodeBBIntegration extends JavaPlugin {
+public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegrationPlugin {
 
     public TaskTick taskTick;
 
-    public static NodeBBIntegration instance;
+    public static NodeBBIntegrationBukkit instance;
 
     // Logging
     public static boolean debug = true;

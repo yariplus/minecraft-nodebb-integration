@@ -1,6 +1,6 @@
-package com.yaricraft.nodebbintegration.hooks;
+package com.radiofreederp.nodebbintegration.hooks;
 
-import com.yaricraft.nodebbintegration.NodeBBIntegration;
+import com.radiofreederp.nodebbintegration.NodeBBIntegrationBukkit;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -12,14 +12,14 @@ public final class VaultHook
     public static Economy economy = null;
     public static Chat chat = null;
 
-    public static void hook(NodeBBIntegration plugin)
+    public static void hook(NodeBBIntegrationBukkit plugin)
     {
-        if (setupChat(plugin))        NodeBBIntegration.log("Hooked into Vault Chat.");
-        if (setupPermissions(plugin)) NodeBBIntegration.log("Hooked into Vault Permissions.");
-        if (setupEconomy(plugin))     NodeBBIntegration.log("Hooked into Vault Economy.");
+        if (setupChat(plugin))        NodeBBIntegrationBukkit.log("Hooked into Vault Chat.");
+        if (setupPermissions(plugin)) NodeBBIntegrationBukkit.log("Hooked into Vault Permissions.");
+        if (setupEconomy(plugin))     NodeBBIntegrationBukkit.log("Hooked into Vault Economy.");
     }
 
-    private static boolean setupPermissions(NodeBBIntegration plugin)
+    private static boolean setupPermissions(NodeBBIntegrationBukkit plugin)
     {
         RegisteredServiceProvider<Permission> permissionProvider = plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
         if (permissionProvider != null) {
@@ -28,7 +28,7 @@ public final class VaultHook
         return (permission != null);
     }
 
-    private static boolean setupChat(NodeBBIntegration plugin)
+    private static boolean setupChat(NodeBBIntegrationBukkit plugin)
     {
         RegisteredServiceProvider<Chat> chatProvider = plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.chat.Chat.class);
         if (chatProvider != null) {
@@ -38,7 +38,7 @@ public final class VaultHook
         return (chat != null);
     }
 
-    private static boolean setupEconomy(NodeBBIntegration plugin)
+    private static boolean setupEconomy(NodeBBIntegrationBukkit plugin)
     {
         RegisteredServiceProvider<Economy> economyProvider = plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
         if (economyProvider != null) {

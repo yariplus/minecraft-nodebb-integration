@@ -1,11 +1,11 @@
-package com.yaricraft.nodebbintegration.socketio;
+package com.radiofreederp.nodebbintegration.socketio;
 
-import com.yaricraft.nodebbintegration.NodeBBIntegration;
-import com.yaricraft.nodebbintegration.hooks.OnTimeHook;
-import com.yaricraft.nodebbintegration.hooks.VanishNoPacketHook;
-import com.yaricraft.nodebbintegration.hooks.VaultHook;
-import com.yaricraft.nodebbintegration.socketio.listeners.ListenerGetPlayerVotes;
-import com.yaricraft.nodebbintegration.socketio.listeners.ListenerWebChat;
+import com.radiofreederp.nodebbintegration.NodeBBIntegrationBukkit;
+import com.radiofreederp.nodebbintegration.hooks.VaultHook;
+import com.radiofreederp.nodebbintegration.hooks.OnTimeHook;
+import com.radiofreederp.nodebbintegration.hooks.VanishNoPacketHook;
+import com.radiofreederp.nodebbintegration.socketio.listeners.ListenerGetPlayerVotes;
+import com.radiofreederp.nodebbintegration.socketio.listeners.ListenerWebChat;
 import io.socket.client.Ack;
 import io.socket.client.IO;
 import io.socket.client.Manager;
@@ -37,20 +37,20 @@ public final class SocketIOClient {
 
 	private OkHttpClient client;
 	private Socket socket;
-	private NodeBBIntegration plugin;
+	private NodeBBIntegrationBukkit plugin;
 
 	private String cookie;
 	private String url;
 	private String namespace;
 
 	// Create instance during plugin load.
-	public static SocketIOClient create(NodeBBIntegration plugin) {
+	public static SocketIOClient create(NodeBBIntegrationBukkit plugin) {
 		if (instance == null) instance = new SocketIOClient(plugin);
 		return instance;
 	}
 
 	// Initial connection when created.
-	private SocketIOClient(NodeBBIntegration _plugin) {
+	private SocketIOClient(NodeBBIntegrationBukkit _plugin) {
 		plugin = _plugin;
 		client = new OkHttpClient();
 		connectSocket();
@@ -58,7 +58,7 @@ public final class SocketIOClient {
 
 	// Get the express session cookie.
 	private void getCookie() throws IOException {
-		NodeBBIntegration.log("Getting Cookie.");
+		NodeBBIntegrationBukkit.log("Getting Cookie.");
 		Request request = new Request.Builder().url(url).build();
 		Response response = client.newCall(request).execute();
 		cookie = response.headers().get("Set-Cookie");
@@ -69,20 +69,20 @@ public final class SocketIOClient {
 		socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
 			@Override
 			public void call(Object... args) {
-				NodeBBIntegration.log("Connected to the forum.");
+				NodeBBIntegrationBukkit.log("Connected to the forum.");
 				plugin.taskTick.run();
 			}
 		}).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
 			@Override
 			public void call(Object... args) {
-				NodeBBIntegration.log("Lost connection to the forum.");
-				NodeBBIntegration.log(args[0].toString());
+				NodeBBIntegrationBukkit.log("Lost connection to the forum.");
+				NodeBBIntegrationBukkit.log(args[0].toString());
 			}
 		}).on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
 			@Override
 			public void call(Object... objects) {
-				NodeBBIntegration.log("Error connecting to the forum.");
-				NodeBBIntegration.log(objects[0].toString());
+				NodeBBIntegrationBukkit.log("Error connecting to the forum.");
+				NodeBBIntegrationBukkit.log(objects[0].toString());
 			}
 		});
 
@@ -96,7 +96,7 @@ public final class SocketIOClient {
 
 	// Disconnect the socket and reconnect asynchronously.
 	private void connectSocket() {
-		NodeBBIntegration.log("Reconnecting socket...");
+		NodeBBIntegrationBukkit.log("Reconnecting socket...");
 		new BukkitRunnable(){
 			@Override
 			public void run() {
@@ -108,7 +108,7 @@ public final class SocketIOClient {
 
 					// Get a session cookie.
 					getCookie();
-					NodeBBIntegration.log("Got Cookie: " + cookie);
+					NodeBBIntegrationBukkit.log("Got Cookie: " + cookie);
 
 					// Get config.
 					String live = plugin.getConfig().getString("socketio.address");
@@ -144,10 +144,10 @@ public final class SocketIOClient {
 					socket.connect();
 
 				} catch (URISyntaxException e) {
-					NodeBBIntegration.log("The forum URL was invalid.");
+					NodeBBIntegrationBukkit.log("The forum URL was invalid.");
 					e.printStackTrace();
 				} catch (Exception e) {
-					NodeBBIntegration.log("The forum URL was invalid.");
+					NodeBBIntegrationBukkit.log("The forum URL was invalid.");
 					e.printStackTrace();
 				}
 			}
@@ -210,16 +210,16 @@ public final class SocketIOClient {
 			}
 
 		} catch (JSONException e) {
-			NodeBBIntegration.log("Error constructing JSON Object for " + socketEvent);
+			NodeBBIntegrationBukkit.log("Error constructing JSON Object for " + socketEvent);
 			e.printStackTrace();
 			return;
 		}
 
-		NodeBBIntegration.log("Sending " + socketEvent);
+		NodeBBIntegrationBukkit.log("Sending " + socketEvent);
 		instance.emit(socketEvent, obj, new Ack() {
 			@Override
 			public void call(Object... args) {
-				NodeBBIntegration.log(socketEvent + " callback received.");
+				NodeBBIntegrationBukkit.log(socketEvent + " callback received.");
 			}
 		});
 	}
@@ -234,16 +234,16 @@ public final class SocketIOClient {
 			obj.put("id", player.getUniqueId());
 			obj.put("key", instance.plugin.getConfig().getString("APIKEY"));
 		} catch (JSONException e) {
-			NodeBBIntegration.log("Error constructing JSON Object for " + socketEvent);
+			NodeBBIntegrationBukkit.log("Error constructing JSON Object for " + socketEvent);
 			e.printStackTrace();
 			return;
 		}
 
-		NodeBBIntegration.log("Sending " + socketEvent);
+		NodeBBIntegrationBukkit.log("Sending " + socketEvent);
 		instance.emit(socketEvent, obj, new Ack() {
 			@Override
 			public void call(Object... args) {
-				NodeBBIntegration.log(socketEvent + " callback received.");
+				NodeBBIntegrationBukkit.log(socketEvent + " callback received.");
 			}
 		});
 	}

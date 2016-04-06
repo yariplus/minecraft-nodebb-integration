@@ -1,13 +1,13 @@
-package com.yaricraft.nodebbintegration;
+package com.radiofreederp.nodebbintegration;
 
 /**
  * Created by Yari on 3/6/2016.
  */
 public class Config {
-    private static NodeBBIntegration plugin = null;
+    private static NodeBBIntegrationBukkit plugin = null;
 
     public static void load() {
-        plugin = NodeBBIntegration.instance;
+        plugin = NodeBBIntegrationBukkit.instance;
 
         plugin.saveDefaultConfig();
 

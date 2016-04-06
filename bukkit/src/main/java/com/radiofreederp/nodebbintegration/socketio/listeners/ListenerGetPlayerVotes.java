@@ -1,8 +1,8 @@
-package com.yaricraft.nodebbintegration.socketio.listeners;
+package com.radiofreederp.nodebbintegration.socketio.listeners;
 
-import com.yaricraft.nodebbintegration.NodeBBIntegration;
-import com.yaricraft.nodebbintegration.PlayerManager;
-import com.yaricraft.nodebbintegration.socketio.SocketIOClient;
+import com.radiofreederp.nodebbintegration.NodeBBIntegrationBukkit;
+import com.radiofreederp.nodebbintegration.PlayerManager;
+import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
 import io.socket.client.Ack;
 import io.socket.emitter.Emitter;
 import org.json.JSONException;
@@ -18,12 +18,12 @@ public class ListenerGetPlayerVotes implements Emitter.Listener
 	@Override
 	public void call(Object... args)
 	{
-		NodeBBIntegration.log("Got eventGetPlayerVotes");
+		NodeBBIntegrationBukkit.log("Got eventGetPlayerVotes");
 
 		// Interpret message.
 		if (args[0] == null) return;
 
-		NodeBBIntegration.log("Compiling votes...");
+		NodeBBIntegrationBukkit.log("Compiling votes...");
 
 		try
 		{
@@ -32,7 +32,7 @@ public class ListenerGetPlayerVotes implements Emitter.Listener
 
 			JSONObject res = new JSONObject();
 			res.put("name", name);
-			res.put("key", NodeBBIntegration.instance.getConfig().getString("APIKEY"));
+			res.put("key", NodeBBIntegrationBukkit.instance.getConfig().getString("APIKEY"));
 
 			if (PlayerManager.getPlayerData().isConfigurationSection(name + ".voted"))
 			{
@@ -40,7 +40,7 @@ public class ListenerGetPlayerVotes implements Emitter.Listener
 				res.put("votes", vm);
 			}
 
-			NodeBBIntegration.log("Sending votes...");
+			NodeBBIntegrationBukkit.log("Sending votes...");
 			SocketIOClient.emit("PlayerVotes", res, new Ack() {
 				@Override
 				public void call(Object... objects) {

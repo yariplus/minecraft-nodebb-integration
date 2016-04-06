@@ -1,22 +1,22 @@
-package com.yaricraft.nodebbintegration.tasks;
+package com.radiofreederp.nodebbintegration.tasks;
 
+import com.google.common.io.Files;
+import com.radiofreederp.nodebbintegration.NodeBBIntegrationBukkit;
+import com.radiofreederp.nodebbintegration.hooks.VanishNoPacketHook;
+import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
 import io.socket.client.Ack;
-import com.yaricraft.nodebbintegration.NodeBBIntegration;
-import com.yaricraft.nodebbintegration.hooks.VanishNoPacketHook;
-import com.yaricraft.nodebbintegration.socketio.SocketIOClient;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.File;
+import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 
 /**
  * Created by Yari on 6/12/2015.
@@ -25,12 +25,12 @@ public class TaskTick extends BukkitRunnable {
 
     private static TaskTick instance;
 
-    private static NodeBBIntegration plugin;
+    private static NodeBBIntegrationBukkit plugin;
 
     private long timeLast;
     private String TPS;
 
-    public TaskTick(NodeBBIntegration _plugin){
+    public TaskTick(NodeBBIntegrationBukkit _plugin){
         plugin = _plugin;
         if (instance != null) instance.cancel();
         timeLast = System.currentTimeMillis();
@@ -101,27 +101,29 @@ public class TaskTick extends BukkitRunnable {
                         obj.put("maxPlayers", Bukkit.getMaxPlayers());
                         obj.put("pluginList", pluginList);
 
-                        File file = new File("server-icon.png");
-
-                        if (file.isFile()) {
-                            try {
-                                obj.put("icon", "data:image/png;base64," + Base64.encodeBase64String(FileUtils.readFileToByteArray(file)));
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                        // Server Icon
+                        try {
+                            File file = new File("server-icon.png");
+                            if (file.isFile()) {
+                                String icon = Base64.getEncoder().encodeToString(Files.toByteArray(file));
+                                obj.put("icon", "data:image/png;base64," + icon);
                             }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-
                     } catch (JSONException e) {
-                        NodeBBIntegration.log("Error constructing JSON Object for " + socketEvent);
+                        NodeBBIntegrationBukkit.log("Error constructing JSON Object for " + socketEvent);
                         e.printStackTrace();
                         return;
                     }
 
-                    NodeBBIntegration.log("Sending " + socketEvent);
+                    NodeBBIntegrationBukkit.log("Sending " + socketEvent);
                     SocketIOClient.emit(socketEvent, obj, new Ack() {
                         @Override
                         public void call(Object... args) {
-                            NodeBBIntegration.log(socketEvent + " callback received.");
+                            NodeBBIntegrationBukkit.log(socketEvent + " callback received.");
                         }
                     });
                 }

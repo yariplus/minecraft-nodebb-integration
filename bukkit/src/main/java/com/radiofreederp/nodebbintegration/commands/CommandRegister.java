@@ -1,8 +1,8 @@
-package com.yaricraft.nodebbintegration.commands;
+package com.radiofreederp.nodebbintegration.commands;
 
 import io.socket.client.Ack;
-import com.yaricraft.nodebbintegration.NodeBBIntegration;
-import com.yaricraft.nodebbintegration.socketio.SocketIOClient;
+import com.radiofreederp.nodebbintegration.NodeBBIntegrationBukkit;
+import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,9 +18,9 @@ import java.util.List;
  */
 public class CommandRegister implements CommandExecutor
 {
-    protected static NodeBBIntegration plugin;
+    protected static NodeBBIntegrationBukkit plugin;
 
-    public CommandRegister(NodeBBIntegration plugin) { CommandRegister.plugin = plugin; }
+    public CommandRegister(NodeBBIntegrationBukkit plugin) { CommandRegister.plugin = plugin; }
 
     // Since I can't use getConfig up here, I've set these to null so that I can reduce disk IO later.
     List<String> RegisterAlert = null;
@@ -103,13 +103,13 @@ public class CommandRegister implements CommandExecutor
         }
 
         // DEBUG
-        NodeBBIntegration.log("Sending commandRegister");
+        NodeBBIntegrationBukkit.log("Sending commandRegister");
 
         SocketIOClient.emit("commandRegister", obj, new Ack() {
             @Override
             public void call(Object... args) {
 
-                NodeBBIntegration.log("Received commandRegister callback");
+                NodeBBIntegrationBukkit.log("Received commandRegister callback");
 
                 String result;
                 List<String> message;

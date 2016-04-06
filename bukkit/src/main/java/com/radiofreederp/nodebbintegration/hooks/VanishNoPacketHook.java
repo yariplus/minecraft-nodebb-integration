@@ -1,7 +1,7 @@
-package com.yaricraft.nodebbintegration.hooks;
+package com.radiofreederp.nodebbintegration.hooks;
 
-import com.yaricraft.nodebbintegration.NodeBBIntegration;
-import com.yaricraft.nodebbintegration.listeners.ListenerVanishNoPacket;
+import com.radiofreederp.nodebbintegration.NodeBBIntegrationBukkit;
+import com.radiofreederp.nodebbintegration.listeners.ListenerVanishNoPacket;
 import org.bukkit.Bukkit;
 
 /**
@@ -17,11 +17,11 @@ public final class VanishNoPacketHook {
         return enabled;
     }
 
-    public static void hook(NodeBBIntegration plugin) {
+    public static void hook(NodeBBIntegrationBukkit plugin) {
         if (Bukkit.getPluginManager().isPluginEnabled("VanishNoPacket")) {
             enabled = true;
             plugin.getServer().getPluginManager().registerEvents(new ListenerVanishNoPacket(), plugin);
-            NodeBBIntegration.log("Hooked into VanishNoPacket.");
+            NodeBBIntegrationBukkit.log("Hooked into VanishNoPacket.");
         }
     }
 

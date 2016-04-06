@@ -1,25 +1,22 @@
-package com.yaricraft.nodebbintegration.commands;
+package com.radiofreederp.nodebbintegration.commands;
 
-import com.yaricraft.nodebbintegration.NodeBBIntegration;
-import com.yaricraft.nodebbintegration.PlayerManager;
-import com.yaricraft.nodebbintegration.socketio.SocketIOClient;
-import com.yaricraft.nodebbintegration.hooks.VotifierHook;
-import com.yaricraft.nodebbintegration.socketio.listeners.ListenerGetPlayerVotes;
+import com.radiofreederp.nodebbintegration.NodeBBIntegrationBukkit;
+import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
+import com.radiofreederp.nodebbintegration.PlayerManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Yari on 10/5/2015.
  */
 public class CommandNodeBB implements CommandExecutor {
-    private final NodeBBIntegration plugin;
+    private final NodeBBIntegrationBukkit plugin;
     List<String> NodeBBMessage = null;
-    public CommandNodeBB(NodeBBIntegration plugin) { this.plugin = plugin; }
+    public CommandNodeBB(NodeBBIntegrationBukkit plugin) { this.plugin = plugin; }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -30,7 +27,7 @@ public class CommandNodeBB implements CommandExecutor {
             if (args[0].equals("reload")) {
                 plugin.reloadConfig();
                 sender.sendMessage("Reloaded Config.");
-                NodeBBIntegration.log("Reloaded Config.");
+                NodeBBIntegrationBukkit.log("Reloaded Config.");
                 SocketIOClient.connect();
                 PlayerManager.reloadConfig();
             } else if (args[0].equals("debug")) {
@@ -60,7 +57,7 @@ public class CommandNodeBB implements CommandExecutor {
                 plugin.getConfig().set("APIKEY", args[1]);
                 plugin.saveConfig();
                 sender.sendMessage("Set new API key.");
-                NodeBBIntegration.log("Set new API key.");
+                NodeBBIntegrationBukkit.log("Set new API key.");
                 SocketIOClient.connect();
             } else if (args[0].equals("name")) {
                 String forumname = ChatColor.translateAlternateColorCodes('&', args[1]);
@@ -68,25 +65,25 @@ public class CommandNodeBB implements CommandExecutor {
                 plugin.getConfig().set("FORUMNAME", forumname);
                 plugin.saveConfig();
                 sender.sendMessage("Set forum name to " + forumname);
-                NodeBBIntegration.log("Set forum name to " + forumname);
+                NodeBBIntegrationBukkit.log("Set forum name to " + forumname);
             } else if (args[0].equals("url")) {
                 String url = ChatColor.translateAlternateColorCodes('&', args[1]);
                 plugin.getConfig().set("FORUMURL", url);
                 plugin.saveConfig();
                 sender.sendMessage("Set forum url to " + url);
-                NodeBBIntegration.log("Set forum url to " + url);
+                NodeBBIntegrationBukkit.log("Set forum url to " + url);
                 SocketIOClient.connect();
             } else if (args[0].equals("live")) {
                 plugin.getConfig().set("socketio.address", args[1]);
                 plugin.saveConfig();
                 for (String str : plugin.getConfig().getStringList("messages.nodebb.live.set")) {
                     sender.sendMessage(str.replace("%live%", args[1]));
-                    NodeBBIntegration.log(str.replace("%live%", args[1]));
+                    NodeBBIntegrationBukkit.log(str.replace("%live%", args[1]));
                 }
                 SocketIOClient.connect();
             } else if (args[0].equals("debug") && args[1].equals("toggle")) {
-                NodeBBIntegration.debug = !NodeBBIntegration.debug;
-                if (NodeBBIntegration.debug) {
+                NodeBBIntegrationBukkit.debug = !NodeBBIntegrationBukkit.debug;
+                if (NodeBBIntegrationBukkit.debug) {
                     sender.sendMessage("Turned on verbose logging.");
                 } else {
                     sender.sendMessage("Turned off verbose logging.");

@@ -1,6 +1,6 @@
-package com.yaricraft.nodebbintegration.listeners;
+package com.radiofreederp.nodebbintegration.listeners;
 
-import com.yaricraft.nodebbintegration.socketio.SocketIOClient;
+import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;

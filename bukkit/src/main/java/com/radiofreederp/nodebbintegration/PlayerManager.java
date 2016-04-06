@@ -1,4 +1,4 @@
-package com.yaricraft.nodebbintegration;
+package com.radiofreederp.nodebbintegration;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -27,16 +27,16 @@ public class PlayerManager
 
 	public static void reloadConfig()
 	{
-		file = new File(NodeBBIntegration.instance.getDataFolder(), "players.yml");
+		file = new File(NodeBBIntegrationBukkit.instance.getDataFolder(), "players.yml");
 		playerData = YamlConfiguration.loadConfiguration(file);
 	}
 
 	public static void saveConfig() {
-		NodeBBIntegration.log("Saving player data.");
+		NodeBBIntegrationBukkit.log("Saving player data.");
 		try {
 			playerData.save(file);
 		} catch (IOException ex) {
-			NodeBBIntegration.log("Could not save player data to " + file.getName(), Level.SEVERE);
+			NodeBBIntegrationBukkit.log("Could not save player data to " + file.getName(), Level.SEVERE);
 			ex.printStackTrace();
 		}
 	}

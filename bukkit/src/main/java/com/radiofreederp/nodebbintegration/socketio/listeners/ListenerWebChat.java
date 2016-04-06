@@ -1,4 +1,4 @@
-package com.yaricraft.nodebbintegration.socketio.listeners;
+package com.radiofreederp.nodebbintegration.socketio.listeners;
 
 import io.socket.emitter.Emitter;
 import org.bukkit.Bukkit;

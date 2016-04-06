@@ -1,7 +1,7 @@
-package com.yaricraft.nodebbintegration.hooks;
+package com.radiofreederp.nodebbintegration.hooks;
 
-import com.yaricraft.nodebbintegration.NodeBBIntegration;
-import com.yaricraft.nodebbintegration.listeners.ListenerVotifier;
+import com.radiofreederp.nodebbintegration.NodeBBIntegrationBukkit;
+import com.radiofreederp.nodebbintegration.listeners.ListenerVotifier;
 import org.bukkit.Bukkit;
 
 /**
@@ -17,12 +17,12 @@ public final class VotifierHook {
         return enabled;
     }
 
-    public static void hook(NodeBBIntegration plugin)
+    public static void hook(NodeBBIntegrationBukkit plugin)
     {
         if (Bukkit.getPluginManager().isPluginEnabled("Votifier")) {
             enabled = true;
             plugin.getServer().getPluginManager().registerEvents(new ListenerVotifier(), plugin);
-            NodeBBIntegration.log("Hooked into Votifier.");
+            NodeBBIntegrationBukkit.log("Hooked into Votifier.");
         }
     }
 }

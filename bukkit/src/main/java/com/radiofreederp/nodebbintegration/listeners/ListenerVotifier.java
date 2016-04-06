@@ -1,8 +1,8 @@
-package com.yaricraft.nodebbintegration.listeners;
+package com.radiofreederp.nodebbintegration.listeners;
 
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.model.VotifierEvent;
-import com.yaricraft.nodebbintegration.PlayerManager;
+import com.radiofreederp.nodebbintegration.PlayerManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;

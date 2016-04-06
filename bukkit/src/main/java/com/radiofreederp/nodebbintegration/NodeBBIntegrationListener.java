@@ -1,7 +1,7 @@
-package com.yaricraft.nodebbintegration;
+package com.radiofreederp.nodebbintegration;
 
+import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
 import io.socket.client.Ack;
-import com.yaricraft.nodebbintegration.socketio.SocketIOClient;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -49,16 +49,16 @@ public class NodeBBIntegrationListener implements Listener {
             obj.put("message", event.getMessage());
             obj.put("key", plugin.getConfig().getString("APIKEY"));
         } catch (JSONException e) {
-            NodeBBIntegration.log("Error constructing JSON Object for " + socketEvent);
+            NodeBBIntegrationBukkit.log("Error constructing JSON Object for " + socketEvent);
             e.printStackTrace();
             return;
         }
 
-        NodeBBIntegration.log("Sending " + socketEvent);
+        NodeBBIntegrationBukkit.log("Sending " + socketEvent);
         SocketIOClient.emit(socketEvent, obj, new Ack() {
             @Override
             public void call(Object... args) {
-                NodeBBIntegration.log(socketEvent + " callback received.");
+                NodeBBIntegrationBukkit.log(socketEvent + " callback received.");
             }
         });
     }
@@ -68,7 +68,7 @@ public class NodeBBIntegrationListener implements Listener {
     public void onServerListPing(final ServerListPingEvent event) {
         if (SocketIOClient.disconnected()) return;
 
-        NodeBBIntegration.log("Server List Ping from: " + event.getAddress().toString());
+        NodeBBIntegrationBukkit.log("Server List Ping from: " + event.getAddress().toString());
     }
 
     // Allow the WorldSaveEvent to save the config once a minute.
@@ -83,7 +83,7 @@ public class NodeBBIntegrationListener implements Listener {
                 @Override
                 public void run() {
                     PlayerManager.saveConfig();
-                    NodeBBIntegration.log("Saved player data.");
+                    NodeBBIntegrationBukkit.log("Saved player data.");
                 }
             }.runTask(plugin);
         }
