@@ -16,7 +16,7 @@ import java.util.logging.Level;
 
 @Plugin(id = "com.radiofreederp.nodebbintegration.NodeBBIntegration",
         name = "NodeBBIntegration",
-        version = "0.7.0-beta.9")
+        version = "0.7.0-beta.10")
 public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
     @Listener
     public void onServerStart(GameStartedServerEvent event) {

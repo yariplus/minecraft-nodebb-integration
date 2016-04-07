@@ -11,35 +11,35 @@ import java.util.logging.Level;
  */
 public class PlayerManager
 {
-	private NodeBBIntegrationBukkit plugin = NodeBBIntegrationBukkit.instance;
+    private NodeBBIntegrationBukkit plugin = NodeBBIntegrationBukkit.instance;
 
-	private static File file;
-	private static YamlConfiguration playerData;
+    private static File file;
+    private static YamlConfiguration playerData;
 
-	private PlayerManager() {}
+    private PlayerManager() {}
 
-	private static PlayerManager playerManager;
+    private static PlayerManager playerManager;
 
-	public static YamlConfiguration getPlayerData()
-	{
-		if (playerData == null) reloadConfig();
+    public static YamlConfiguration getPlayerData()
+    {
+        if (playerData == null) reloadConfig();
 
-		return playerData;
-	}
+        return playerData;
+    }
 
-	public static void reloadConfig()
-	{
-		file = new File(NodeBBIntegrationBukkit.instance.getDataFolder(), "players.yml");
-		playerData = YamlConfiguration.loadConfiguration(file);
-	}
+    public static void reloadConfig()
+    {
+        file = new File(NodeBBIntegrationBukkit.instance.getDataFolder(), "players.yml");
+        playerData = YamlConfiguration.loadConfiguration(file);
+    }
 
-	public static void saveConfig() {
-		NodeBBIntegrationBukkit.instance.log("Saving player data.");
-		try {
-			playerData.save(file);
-		} catch (IOException ex) {
-			NodeBBIntegrationBukkit.instance.log("Could not save player data to " + file.getName(), Level.SEVERE);
-			ex.printStackTrace();
-		}
-	}
+    public static void saveConfig() {
+        NodeBBIntegrationBukkit.instance.log("Saving player data.");
+        try {
+            playerData.save(file);
+        } catch (IOException ex) {
+            NodeBBIntegrationBukkit.instance.log("Could not save player data to " + file.getName(), Level.SEVERE);
+            ex.printStackTrace();
+        }
+    }
 }

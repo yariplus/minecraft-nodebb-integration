@@ -12,13 +12,13 @@ import org.bukkit.event.Listener;
  */
 public class ListenerVotifier implements Listener
 {
-	@EventHandler(priority=EventPriority.NORMAL)
-	public void onVotifierEvent(VotifierEvent event)
-	{
-		Vote vote = event.getVote();
-		String service = vote.getServiceName().replace('.', '_');
-		String timestamp = vote.getTimeStamp();
+    @EventHandler(priority=EventPriority.NORMAL)
+    public void onVotifierEvent(VotifierEvent event)
+    {
+        Vote vote = event.getVote();
+        String service = vote.getServiceName().replace('.', '_');
+        String timestamp = vote.getTimeStamp();
 
-		PlayerManager.getPlayerData().set(vote.getUsername() + ".voted." + service, timestamp);
-	}
+        PlayerManager.getPlayerData().set(vote.getUsername() + ".voted." + service, timestamp);
+    }
 }
