@@ -21,7 +21,7 @@ public final class VanishNoPacketHook {
         if (Bukkit.getPluginManager().isPluginEnabled("VanishNoPacket")) {
             enabled = true;
             plugin.getServer().getPluginManager().registerEvents(new ListenerVanishNoPacket(), plugin);
-            NodeBBIntegrationBukkit.log("Hooked into VanishNoPacket.");
+            NodeBBIntegrationBukkit.instance.log("Hooked into VanishNoPacket.");
         }
     }
 

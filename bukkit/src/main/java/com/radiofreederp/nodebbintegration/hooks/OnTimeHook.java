@@ -20,7 +20,7 @@ public final class OnTimeHook {
     public static void hook(NodeBBIntegrationBukkit plugin) {
         if (Bukkit.getPluginManager().isPluginEnabled("OnTime")) {
             enabled = true;
-            NodeBBIntegrationBukkit.log("Hooked into OnTime.");
+            NodeBBIntegrationBukkit.instance.log("Hooked into OnTime.");
         }
     }
 

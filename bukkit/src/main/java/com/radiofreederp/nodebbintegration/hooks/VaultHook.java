@@ -14,9 +14,9 @@ public final class VaultHook
 
     public static void hook(NodeBBIntegrationBukkit plugin)
     {
-        if (setupChat(plugin))        NodeBBIntegrationBukkit.log("Hooked into Vault Chat.");
-        if (setupPermissions(plugin)) NodeBBIntegrationBukkit.log("Hooked into Vault Permissions.");
-        if (setupEconomy(plugin))     NodeBBIntegrationBukkit.log("Hooked into Vault Economy.");
+        if (setupChat(plugin))        NodeBBIntegrationBukkit.instance.log("Hooked into Vault Chat.");
+        if (setupPermissions(plugin)) NodeBBIntegrationBukkit.instance.log("Hooked into Vault Permissions.");
+        if (setupEconomy(plugin))     NodeBBIntegrationBukkit.instance.log("Hooked into Vault Economy.");
     }
 
     private static boolean setupPermissions(NodeBBIntegrationBukkit plugin)

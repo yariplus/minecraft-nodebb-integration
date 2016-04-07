@@ -114,16 +114,16 @@ public class TaskTick extends BukkitRunnable {
                             e.printStackTrace();
                         }
                     } catch (JSONException e) {
-                        NodeBBIntegrationBukkit.log("Error constructing JSON Object for " + socketEvent);
+                        plugin.log("Error constructing JSON Object for " + socketEvent);
                         e.printStackTrace();
                         return;
                     }
 
-                    NodeBBIntegrationBukkit.log("Sending " + socketEvent);
+                    plugin.log("Sending " + socketEvent);
                     SocketIOClient.emit(socketEvent, obj, new Ack() {
                         @Override
                         public void call(Object... args) {
-                            NodeBBIntegrationBukkit.log(socketEvent + " callback received.");
+                            plugin.log(socketEvent + " callback received.");
                         }
                     });
                 }

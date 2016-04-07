@@ -22,7 +22,7 @@ public final class VotifierHook {
         if (Bukkit.getPluginManager().isPluginEnabled("Votifier")) {
             enabled = true;
             plugin.getServer().getPluginManager().registerEvents(new ListenerVotifier(), plugin);
-            NodeBBIntegrationBukkit.log("Hooked into Votifier.");
+            NodeBBIntegrationBukkit.instance.log("Hooked into Votifier.");
         }
     }
 }

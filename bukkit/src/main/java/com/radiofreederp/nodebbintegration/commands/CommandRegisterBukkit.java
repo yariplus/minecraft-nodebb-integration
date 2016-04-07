@@ -16,11 +16,11 @@ import java.util.List;
 /**
  * Created by Yari on 10/5/2015.
  */
-public class CommandRegister implements CommandExecutor
+public class CommandRegisterBukkit implements CommandExecutor
 {
-    protected static NodeBBIntegrationBukkit plugin;
+    private NodeBBIntegrationBukkit plugin;
 
-    public CommandRegister(NodeBBIntegrationBukkit plugin) { CommandRegister.plugin = plugin; }
+    public CommandRegisterBukkit(NodeBBIntegrationBukkit _plugin) { plugin = _plugin; }
 
     // Since I can't use getConfig up here, I've set these to null so that I can reduce disk IO later.
     List<String> RegisterAlert = null;
@@ -103,13 +103,13 @@ public class CommandRegister implements CommandExecutor
         }
 
         // DEBUG
-        NodeBBIntegrationBukkit.log("Sending commandRegister");
+        plugin.log("Sending commandRegister");
 
         SocketIOClient.emit("commandRegister", obj, new Ack() {
             @Override
             public void call(Object... args) {
 
-                NodeBBIntegrationBukkit.log("Received commandRegister callback");
+                plugin.log("Received commandRegister callback");
 
                 String result;
                 List<String> message;
@@ -161,7 +161,7 @@ public class CommandRegister implements CommandExecutor
         RegisterResponse(String key) { this.key = key; }
 
         public List<String> getMessage() {
-            if (this.message == null) this.message = plugin.getConfig().getStringList(this.key);
+            if (this.message == null) this.message = NodeBBIntegrationBukkit.instance.getConfig().getStringList(this.key);
             return this.message;
         }
     }

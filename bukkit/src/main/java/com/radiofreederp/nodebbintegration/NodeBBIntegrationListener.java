@@ -1,7 +1,13 @@
 package com.radiofreederp.nodebbintegration;
 
+import com.radiofreederp.nodebbintegration.hooks.OnTimeHook;
+import com.radiofreederp.nodebbintegration.hooks.VanishNoPacketHook;
+import com.radiofreederp.nodebbintegration.hooks.VaultHook;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
 import io.socket.client.Ack;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -15,26 +21,84 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * Created by Yari on 5/28/2015.
  */
 public class NodeBBIntegrationListener implements Listener {
 
-    private JavaPlugin plugin;
+    private NodeBBIntegrationBukkit plugin;
 
-    public NodeBBIntegrationListener(JavaPlugin plugin) {
-        this.plugin = plugin;
+    public NodeBBIntegrationListener(NodeBBIntegrationPlugin plugin) {
+        this.plugin = (NodeBBIntegrationBukkit)plugin;
     }
 
     @EventHandler
     public void handlePlayerJoin(PlayerJoinEvent event) {
-        SocketIOClient.sendPlayerJoin(event.getPlayer());
+        String socketEvent = SocketIOClient.Events.onPlayerJoin;
+
+        if (VanishNoPacketHook.isEnabled()) {
+            if (VanishNoPacketHook.isVanished(event.getPlayer().getName())) return;
+        }
+
+        SocketIOClient.emit(socketEvent, getPlayerJoinData(event.getPlayer()), (Object... args) -> plugin.log(socketEvent + " callback received."));
+    }
+
+    public static JSONObject getPlayerJoinData(Player player) {
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("name", player.getName());
+            obj.put("id", player.getUniqueId());
+            obj.put("key", NodeBBIntegrationBukkit.instance.getAPIKey());
+
+            if (OnTimeHook.isEnabled()) {
+                if (OnTimeHook.isEnabled()) {
+                    OnTimeHook.onTimeCheckTime(player, obj);
+                }
+            }
+
+            if (VaultHook.chat != null && VaultHook.permission != null) {
+                String[] groups = VaultHook.permission.getPlayerGroups(null, player);
+
+                World world = Bukkit.getWorlds().get(0);
+                HashMap<String,Object> groupsData = new HashMap<String,Object>();
+
+                for (int i = 0; i < groups.length; i++)
+                {
+                    groupsData.put(groups[i], VaultHook.chat.getGroupPrefix(world, groups[i]));
+                }
+                obj.put("groups", groupsData);
+                obj.put("prefix", VaultHook.chat.getPlayerPrefix(player));
+            }
+        } catch (JSONException e) {
+            NodeBBIntegrationBukkit.instance.log("Error constructing JSON Object for " + SocketIOClient.Events.onPlayerJoin);
+            e.printStackTrace();
+        }
+
+        return obj;
     }
 
     @EventHandler
     public void handlePlayerQuit(PlayerQuitEvent event) {
-        SocketIOClient.sendPlayerLeave(event.getPlayer());
+        String socketEvent = SocketIOClient.Events.onPlayerQuit;
+        SocketIOClient.emit(socketEvent, getPlayerQuitData(event.getPlayer()), (Object... args) -> plugin.log(socketEvent + " callback received."));
+    }
+
+    public static JSONObject getPlayerQuitData(Player player) {
+        JSONObject obj = new JSONObject();
+
+        try {
+            obj.put("name", player.getName());
+            obj.put("id", player.getUniqueId());
+            obj.put("key", NodeBBIntegrationBukkit.instance.getAPIKey());
+        } catch (JSONException e) {
+            NodeBBIntegrationBukkit.instance.log("Error constructing JSON Object for " + SocketIOClient.Events.onPlayerQuit);
+            e.printStackTrace();
+        }
+
+        return obj;
     }
 
     @EventHandler
@@ -49,16 +113,16 @@ public class NodeBBIntegrationListener implements Listener {
             obj.put("message", event.getMessage());
             obj.put("key", plugin.getConfig().getString("APIKEY"));
         } catch (JSONException e) {
-            NodeBBIntegrationBukkit.log("Error constructing JSON Object for " + socketEvent);
+            plugin.log("Error constructing JSON Object for " + socketEvent);
             e.printStackTrace();
             return;
         }
 
-        NodeBBIntegrationBukkit.log("Sending " + socketEvent);
+        plugin.log("Sending " + socketEvent);
         SocketIOClient.emit(socketEvent, obj, new Ack() {
             @Override
             public void call(Object... args) {
-                NodeBBIntegrationBukkit.log(socketEvent + " callback received.");
+                plugin.log(socketEvent + " callback received.");
             }
         });
     }
@@ -68,7 +132,7 @@ public class NodeBBIntegrationListener implements Listener {
     public void onServerListPing(final ServerListPingEvent event) {
         if (SocketIOClient.disconnected()) return;
 
-        NodeBBIntegrationBukkit.log("Server List Ping from: " + event.getAddress().toString());
+        plugin.log("Server List Ping from: " + event.getAddress().toString());
     }
 
     // Allow the WorldSaveEvent to save the config once a minute.
@@ -83,7 +147,7 @@ public class NodeBBIntegrationListener implements Listener {
                 @Override
                 public void run() {
                     PlayerManager.saveConfig();
-                    NodeBBIntegrationBukkit.log("Saved player data.");
+                    plugin.log("Saved player data.");
                 }
             }.runTask(plugin);
         }

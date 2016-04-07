@@ -11,6 +11,8 @@ import java.util.logging.Level;
  */
 public class PlayerManager
 {
+	private NodeBBIntegrationBukkit plugin = NodeBBIntegrationBukkit.instance;
+
 	private static File file;
 	private static YamlConfiguration playerData;
 
@@ -32,11 +34,11 @@ public class PlayerManager
 	}
 
 	public static void saveConfig() {
-		NodeBBIntegrationBukkit.log("Saving player data.");
+		NodeBBIntegrationBukkit.instance.log("Saving player data.");
 		try {
 			playerData.save(file);
 		} catch (IOException ex) {
-			NodeBBIntegrationBukkit.log("Could not save player data to " + file.getName(), Level.SEVERE);
+			NodeBBIntegrationBukkit.instance.log("Could not save player data to " + file.getName(), Level.SEVERE);
 			ex.printStackTrace();
 		}
 	}
