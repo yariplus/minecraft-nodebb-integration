@@ -1,7 +1,9 @@
 package com.radiofreederp.nodebbintegration;
 
 import com.radiofreederp.nodebbintegration.commands.CommandNodeBBSponge;
+import com.radiofreederp.nodebbintegration.commands.CommandRegisterSponge;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
@@ -26,10 +28,13 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
             .description(Text.of("NodeBB Integration parent command."))
             .permission("nodebb.admin")
             .executor(new CommandNodeBBSponge())
+            .arguments(
+                    GenericArguments.optional(GenericArguments.string(Text.of("command")), Text.of("help"))
+            )
             .build();
         CommandSpec specRegister = CommandSpec.builder()
             .description(Text.of("Register your Minecraft account with your forum account."))
-            .executor(new CommandNodeBBSponge())
+            .executor(new CommandRegisterSponge())
             .build();
 
         Sponge.getCommandManager().register(this, specNodeBB, "nodebb");

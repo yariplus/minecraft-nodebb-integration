@@ -12,7 +12,7 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 public class CommandRegisterSponge implements CommandExecutor {
 
     @Override
-    public CommandResult execute(CommandSource commandSource, CommandContext commandContext) throws CommandException {
-        return null;
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+        return CommandResult.success();
     }
 }
