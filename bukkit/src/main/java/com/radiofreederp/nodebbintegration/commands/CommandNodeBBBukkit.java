@@ -15,8 +15,9 @@ import java.util.List;
  */
 public class CommandNodeBBBukkit implements CommandExecutor {
     private final NodeBBIntegrationBukkit plugin;
-    List<String> NodeBBMessage = null;
     public CommandNodeBBBukkit(NodeBBIntegrationBukkit plugin) { this.plugin = plugin; }
+
+    List<String> NodeBBMessage = null;
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

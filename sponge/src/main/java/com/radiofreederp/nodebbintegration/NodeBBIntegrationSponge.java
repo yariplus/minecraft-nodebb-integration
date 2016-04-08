@@ -63,6 +63,9 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
     private ConfigurationNode defaultConfig;
     private ConfigurationNode config;
 
+    public ConfigurationNode getConfig() {
+        return this.config;
+    }
     public ConfigurationNode getDefaultConfig() {
         return this.defaultConfig;
     }
@@ -108,17 +111,18 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
 
         // Register commands.
         CommandSpec specNodeBB = CommandSpec.builder()
-            .description(Text.of("NodeBB Integration parent command."))
-            .permission("nodebb.admin")
-            .executor(new CommandNodeBBSponge())
-            .arguments(
-                    GenericArguments.optional(GenericArguments.string(Text.of("command")), Text.of("help"))
-            )
-            .build();
+                .description(Text.of("NodeBB Integration parent command."))
+                .permission("nodebb.admin")
+                .executor(new CommandNodeBBSponge(this))
+                .arguments(
+                        GenericArguments.optional(GenericArguments.string(Text.of("command")), Text.of("help")),
+                        GenericArguments.optional(GenericArguments.string(Text.of("value")))
+                )
+                .build();
         CommandSpec specRegister = CommandSpec.builder()
-            .description(Text.of("Register your Minecraft account with your forum account."))
-            .executor(new CommandRegisterSponge())
-            .build();
+                .description(Text.of("Register your Minecraft account with your forum account."))
+                .executor(new CommandRegisterSponge())
+                .build();
 
         Sponge.getCommandManager().register(this, specNodeBB, "nodebb");
         Sponge.getCommandManager().register(this, specRegister, "register");
