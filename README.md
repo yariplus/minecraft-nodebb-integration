@@ -1,6 +1,10 @@
 # NodeBB Integration
 This Bukkit plugin is a companion app for [Minecraft Integration](https://community.nodebb.org/topic/3559/nodebb-plugin-minecraft-integration-minecraft-integration), a [NodeBB](https://nodebb.org/) forum plugin. It establishes a WebSocket connection to the forum which allows communication between the forum and your Minecraft server. This allows information on your Minecraft server and players to be displayed on your forum via widgets, user profiles, posts, shoutboxes, etc.. Your forum can also send events back to the server such as posts, messages, awards, groups. The plugin is a WebSocket client only and exposes it's API only to the Minecraft Integration plugin. The WebSocket client is run asynchronously to prevent network lag from interfering with normal server processes. If your forum uses a secure connection, this plugin's connection will be secure as well.
 
+## Requirements
+
+Requires Java 8 or higher.
+
 ### What is NodeBB?
 
 Form the [NodeBB](https://nodebb.org/) Docs:

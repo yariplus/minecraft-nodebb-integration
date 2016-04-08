@@ -33,7 +33,7 @@ import java.util.logging.Level;
  * Created by Yari on 4/5/2016.
  */
 
-@Plugin(id = "nodebbintegration", name = "NodeBBIntegration", version = "0.7.0-beta.11")
+@Plugin(id = "nodebbintegration", name = "NodeBBIntegration", version = "0.7.0-beta.12")
 public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
 
     @Inject
