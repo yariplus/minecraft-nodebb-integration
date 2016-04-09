@@ -9,11 +9,9 @@ import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 import org.slf4j.Logger;
-import org.slf4j.Marker;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
-import org.spongepowered.api.config.ConfigManager;
 import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
@@ -24,9 +22,6 @@ import org.spongepowered.api.text.Text;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Path;
-import java.util.Iterator;
 import java.util.logging.Level;
 
 /**
@@ -36,11 +31,23 @@ import java.util.logging.Level;
 @Plugin(id = "nodebbintegration", name = "NodeBBIntegration", version = "0.7.0-beta.12")
 public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
 
+    // Logger
     @Inject
     private Logger logger;
     @Inject
     public Logger getLogger() {
         return logger;
+    }
+
+    // Debug is initially true until the plugin is done loading.
+    private boolean debug = true;
+    @Override
+    public boolean isDebug() {
+        return debug;
+    }
+    @Override
+    public void toggleDebug() {
+        debug = !debug;
     }
 
     @Inject
@@ -60,14 +67,19 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
     private ConfigurationLoader<CommentedConfigurationNode> loader;
     private YAMLConfigurationLoader jarLoader;
 
+    private PluginConfig pluginConfig;
     private ConfigurationNode defaultConfig;
-    private ConfigurationNode config;
+    private ConfigurationNode spongeConfig;
 
-    public ConfigurationNode getConfig() {
-        return this.config;
+    @Override
+    public PluginConfig getPluginConfig() {
+        return this.pluginConfig;
     }
     public ConfigurationNode getDefaultConfig() {
         return this.defaultConfig;
+    }
+    public ConfigurationNode getSpongeConfig() {
+        return this.spongeConfig;
     }
 
     public ConfigurationLoader<CommentedConfigurationNode> getConfigManager() {
@@ -76,11 +88,6 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
 
     @Listener
     public void onPreInitialization(GamePreInitializationEvent event) {
-
-    }
-
-    @Listener
-    public void onServerStart(GameStartedServerEvent event) {
         getLogger().info("Starting NodeBB Integration.");
 
         jarLoader = YAMLConfigurationLoader.builder().setURL(this.getClass().getResource("/config.yml")).build();
@@ -94,21 +101,26 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
         loader = HoconConfigurationLoader.builder().setPath(defaultConfigFile.toPath()).build();
         if (defaultConfigFile.exists()) {
             try {
-                config = loader.load();
+                spongeConfig = loader.load();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }else{
             try {
-                config = defaultConfig;
+                spongeConfig = getDefaultConfig();
                 loader.save(defaultConfig);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        getLogger().info(config.getNode("version").getString());
+        getLogger().info(spongeConfig.getNode("version").getString());
 
+        pluginConfig = new PluginConfigSponge(this);
+    }
+
+    @Listener
+    public void onServerStart(GameStartedServerEvent event) {
         // Register commands.
         CommandSpec specNodeBB = CommandSpec.builder()
                 .description(Text.of("NodeBB Integration parent command."))
@@ -146,31 +158,6 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
     @Override
     public void runTask(Runnable task) {
 
-    }
-
-    @Override
-    public String getUrl() {
-        return null;
-    }
-
-    @Override
-    public String getNamespace() {
-        return null;
-    }
-
-    @Override
-    public String getLive() {
-        return null;
-    }
-
-    @Override
-    public String[] getTransports() {
-        return new String[0];
-    }
-
-    @Override
-    public String getAPIKey() {
-        return null;
     }
 
     @Override

@@ -8,8 +8,6 @@ import com.radiofreederp.nodebbintegration.hooks.VaultHook;
 import com.radiofreederp.nodebbintegration.hooks.VotifierHook;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
 import com.radiofreederp.nodebbintegration.tasks.TaskTick;
-import io.socket.client.Ack;
-import io.socket.client.Socket;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -26,8 +24,23 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
 
     public static NodeBBIntegrationBukkit instance;
 
-    // Debug is true until the plugin is done loading.
-    public static boolean debug = true;
+    private PluginConfig pluginConfig;
+
+    @Override
+    public PluginConfig getPluginConfig() {
+        return pluginConfig;
+    }
+
+    // Debug is initially true until the plugin is done loading.
+    private boolean debug = true;
+    @Override
+    public boolean isDebug() {
+        return debug;
+    }
+    @Override
+    public void toggleDebug() {
+        debug = !debug;
+    }
 
     @Override
     public void log(String message) { log(message, Level.INFO); }
@@ -57,33 +70,6 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
                 task.run();
             }
         }.runTask(this);
-    }
-
-    @Override
-    public String getUrl() {
-        return ChatColor.stripColor(getConfig().getString("FORUMURL"));
-    }
-
-    @Override
-    public String getNamespace() {
-        return getConfig().getString("SOCKETNAMESPACE") + "." + getConfig().getString("PLUGINID") + ".";
-    }
-
-    @Override
-    public String getLive() {
-        String live = getConfig().getString("socketio.address");
-        if (live.equals(getConfig().getDefaults().getString("socketio.address"))) live = getConfig().getString("FORUMURL");
-        return live;
-    }
-
-    @Override
-    public String[] getTransports() {
-        return getConfig().getStringList("socketio.transports").toArray(new String[0]);
-    }
-
-    @Override
-    public String getAPIKey() {
-        return getConfig().getString("APIKEY");
     }
 
     @Override
@@ -149,7 +135,7 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
         taskTick = new TaskTick(this);
 
         // Loads config and updates if necessary.
-        Config.load();
+        pluginConfig = new PluginConfigBukkit(this);
 
         // Load player data.
         PlayerManager.reloadConfig();

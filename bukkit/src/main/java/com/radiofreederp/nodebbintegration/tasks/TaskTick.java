@@ -87,7 +87,7 @@ public class TaskTick extends BukkitRunnable {
                         }
 
                         obj.put("tps", TaskTick.getTPS());
-                        obj.put("key", plugin.getConfig().getString("APIKEY"));
+                        obj.put("key", plugin.getPluginConfig().getForumAPIKey());
                         obj.put("players", players);
 
                         obj.put("version", Bukkit.getVersion());

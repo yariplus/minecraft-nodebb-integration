@@ -15,14 +15,12 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.event.world.WorldSaveEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Objects;
 
 /**
  * Created by Yari on 5/28/2015.
@@ -51,7 +49,7 @@ public class NodeBBIntegrationListener implements Listener {
         try {
             obj.put("name", player.getName());
             obj.put("id", player.getUniqueId());
-            obj.put("key", NodeBBIntegrationBukkit.instance.getAPIKey());
+            obj.put("key", NodeBBIntegrationBukkit.instance.getPluginConfig().getForumAPIKey());
 
             if (OnTimeHook.isEnabled()) {
                 if (OnTimeHook.isEnabled()) {
@@ -92,7 +90,7 @@ public class NodeBBIntegrationListener implements Listener {
         try {
             obj.put("name", player.getName());
             obj.put("id", player.getUniqueId());
-            obj.put("key", NodeBBIntegrationBukkit.instance.getAPIKey());
+            obj.put("key", NodeBBIntegrationBukkit.instance.getPluginConfig().getForumAPIKey());
         } catch (JSONException e) {
             NodeBBIntegrationBukkit.instance.log("Error constructing JSON Object for " + SocketIOClient.Events.onPlayerQuit);
             e.printStackTrace();
@@ -111,7 +109,7 @@ public class NodeBBIntegrationListener implements Listener {
             obj.put("name", event.getPlayer().getName());
             obj.put("id", event.getPlayer().getUniqueId());
             obj.put("message", event.getMessage());
-            obj.put("key", plugin.getConfig().getString("APIKEY"));
+            obj.put("key", plugin.getPluginConfig().getForumAPIKey());
         } catch (JSONException e) {
             plugin.log("Error constructing JSON Object for " + socketEvent);
             e.printStackTrace();

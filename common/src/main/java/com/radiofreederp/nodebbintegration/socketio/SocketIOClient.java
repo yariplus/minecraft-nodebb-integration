@@ -84,10 +84,10 @@ public final class SocketIOClient {
                 if (socket != null) socket.close();
 
                 // Get config.
-                live = plugin.getLive();
-                transports = plugin.getTransports();
-                url = plugin.getUrl();
-                namespace = plugin.getNamespace();
+                live = plugin.getPluginConfig().getSocketAddress();
+                transports = plugin.getPluginConfig().getSocketTransports();
+                url = plugin.getPluginConfig().getForumURL();
+                namespace = plugin.getPluginConfig().getSocketNamespace();
 
                 // Get a session cookie.
                 getCookie();
