@@ -7,7 +7,7 @@ import com.radiofreederp.nodebbintegration.hooks.VanishNoPacketHook;
 import com.radiofreederp.nodebbintegration.hooks.VaultHook;
 import com.radiofreederp.nodebbintegration.hooks.VotifierHook;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
-import com.radiofreederp.nodebbintegration.tasks.TaskTick;
+import com.radiofreederp.nodebbintegration.tasks.TaskTickBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,7 +20,7 @@ import java.util.logging.Level;
 
 public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegrationPlugin {
 
-    public TaskTick taskTick;
+    public TaskTickBukkit taskTickBukkit;
 
     public static NodeBBIntegrationBukkit instance;
 
@@ -60,6 +60,16 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
                 task.run();
             }
         }.runTaskAsynchronously(this);
+    }
+
+    @Override
+    public void runTaskTimerAsynchronously(Runnable task) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                task.run();
+            }
+        }.runTaskTimerAsynchronously(this, 20 * 60, 20 * 60);
     }
 
     @Override
@@ -124,6 +134,11 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
     }
 
     @Override
+    public void doTaskTick() {
+        taskTickBukkit.run();
+    }
+
+    @Override
     public void onEnable() {
 
         instance = this;
@@ -132,7 +147,7 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
         SocketIOClient.create(this);
 
         // Monitor the TPS.
-        taskTick = new TaskTick(this);
+        taskTickBukkit = new TaskTickBukkit(this);
 
         // Loads config and updates if necessary.
         pluginConfig = new PluginConfigBukkit(this);

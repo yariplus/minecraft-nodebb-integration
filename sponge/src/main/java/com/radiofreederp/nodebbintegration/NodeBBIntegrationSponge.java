@@ -3,12 +3,15 @@ package com.radiofreederp.nodebbintegration;
 import com.google.inject.Inject;
 import com.radiofreederp.nodebbintegration.commands.CommandNodeBBSponge;
 import com.radiofreederp.nodebbintegration.commands.CommandRegisterSponge;
+import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
+import com.radiofreederp.nodebbintegration.tasks.TaskTickSponge;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 import org.slf4j.Logger;
+import org.slf4j.Marker;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -18,10 +21,24 @@ import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.scheduler.Scheduler;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLHandshakeException;
+import javax.net.ssl.TrustManagerFactory;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.KeyStore;
+import java.security.cert.*;
 import java.util.logging.Level;
 
 /**
@@ -31,12 +48,24 @@ import java.util.logging.Level;
 @Plugin(id = "nodebbintegration", name = "NodeBBIntegration", version = "0.7.0-beta.12")
 public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
 
+    public static NodeBBIntegrationSponge instance;
+
+    private TaskTickSponge taskTick;
+
     // Logger
     @Inject
     private Logger logger;
     @Inject
     public Logger getLogger() {
         return logger;
+    }
+    @Override
+    public void log(String message) {
+        logger.info(message);
+    }
+    @Override
+    public void log(String message, Level level) {
+        logger.info(message);
     }
 
     // Debug is initially true until the plugin is done loading.
@@ -121,6 +150,13 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
 
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
+        instance = this;
+
+        taskTick = new TaskTickSponge(this);
+
+        // Start the socket client.
+        SocketIOClient.create(this);
+
         // Register commands.
         CommandSpec specNodeBB = CommandSpec.builder()
                 .description(Text.of("NodeBB Integration parent command."))
@@ -141,23 +177,18 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
     }
 
     @Override
-    public void log(String message) {
-
-    }
-
-    @Override
-    public void log(String message, Level level) {
-
-    }
-
-    @Override
     public void runTaskAsynchronously(Runnable task) {
+        Sponge.getScheduler().createTaskBuilder().execute(task).async().submit(this);
+    }
 
+    @Override
+    public void runTaskTimerAsynchronously(Runnable task) {
+        Sponge.getScheduler().createTaskBuilder().execute(task).intervalTicks(20 * 60).intervalTicks(20 * 60).async().submit(this);
     }
 
     @Override
     public void runTask(Runnable task) {
-
+        Sponge.getScheduler().createTaskBuilder().execute(task).submit(this);
     }
 
     @Override
@@ -168,5 +199,10 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
     @Override
     public void eventGetPlayerVotes(Object... args) {
 
+    }
+
+    @Override
+    public void doTaskTick() {
+        taskTick.run();
     }
 }

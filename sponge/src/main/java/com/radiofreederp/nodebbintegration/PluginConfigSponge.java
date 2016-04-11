@@ -3,6 +3,7 @@ package com.radiofreederp.nodebbintegration;
 import org.spongepowered.api.text.Text;
 
 import java.io.IOException;
+import java.util.function.Function;
 
 /**
  * Created by Yari on 4/8/2016.
@@ -75,12 +76,12 @@ public class PluginConfigSponge implements PluginConfig {
 
     @Override
     public String[] getSocketTransports() {
-        return plugin.getSpongeConfig().getNode(ConfigOptions.SOCKETTRANSPORTS).getList(obj -> (String)obj).toArray(new String[0]);
+        return plugin.getSpongeConfig().getNode(ConfigOptions.SOCKETTRANSPORTS.getKey().split("\\.")).getList(obj -> (String)obj).toArray(new String[0]);
     }
 
     @Override
     public String getSocketNamespace() {
-        return getStripedKey(ConfigOptions.SOCKETNAMESPACE.getKey());
+        return getStripedKey(ConfigOptions.SOCKETNAMESPACE.getKey()) + ".";
     }
 
     @Override

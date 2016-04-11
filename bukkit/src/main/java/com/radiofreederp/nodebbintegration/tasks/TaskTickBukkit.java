@@ -21,23 +21,30 @@ import java.util.Base64;
 /**
  * Created by Yari on 6/12/2015.
  */
-public class TaskTick extends BukkitRunnable {
+public class TaskTickBukkit extends BukkitRunnable {
 
-    private static TaskTick instance;
+    private static TaskTickBukkit instance;
 
     private static NodeBBIntegrationBukkit plugin;
 
     private long timeLast;
+
     private String TPS;
 
-    public TaskTick(NodeBBIntegrationBukkit _plugin){
+    public static String getTPS() {
+        return instance.TPS;
+    }
+
+    public TaskTickBukkit(NodeBBIntegrationBukkit _plugin){
         plugin = _plugin;
         if (instance != null) instance.cancel();
         timeLast = System.currentTimeMillis();
         instance = this;
-        instance.runTaskTimerAsynchronously(plugin, 20 * 60, 20 * 60);
+        plugin.runTaskTimerAsynchronously(instance);
     }
 
+    // TODO: With a little work, this could be made universal.
+    // TODO: Replace literals with consts or enums.
     @Override
     public void run() {
         long timeNow = System.currentTimeMillis();
@@ -86,7 +93,7 @@ public class TaskTick extends BukkitRunnable {
                             }
                         }
 
-                        obj.put("tps", TaskTick.getTPS());
+                        obj.put("tps", TaskTickBukkit.getTPS());
                         obj.put("key", plugin.getPluginConfig().getForumAPIKey());
                         obj.put("players", players);
 
@@ -108,9 +115,7 @@ public class TaskTick extends BukkitRunnable {
                                 String icon = Base64.getEncoder().encodeToString(Files.toByteArray(file));
                                 obj.put("icon", "data:image/png;base64," + icon);
                             }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (JSONException e) {
+                        } catch (IOException|JSONException e) {
                             e.printStackTrace();
                         }
                     } catch (JSONException e) {
@@ -120,18 +125,9 @@ public class TaskTick extends BukkitRunnable {
                     }
 
                     plugin.log("Sending " + socketEvent);
-                    SocketIOClient.emit(socketEvent, obj, new Ack() {
-                        @Override
-                        public void call(Object... args) {
-                            plugin.log(socketEvent + " callback received.");
-                        }
-                    });
+                    SocketIOClient.emit(socketEvent, obj, args -> plugin.log(socketEvent + " callback received."));
                 }
             }.runTask(plugin);
         }
-    }
-
-    public static String getTPS() {
-        return instance.TPS;
     }
 }
