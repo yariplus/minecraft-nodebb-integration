@@ -1,10 +1,8 @@
-package com.radiofreederp.nodebbintegration.commands;
+package com.radiofreederp.nodebbintegration.bukkit.commands;
 
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationBukkit;
 import com.radiofreederp.nodebbintegration.PluginConfig;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
-import com.radiofreederp.nodebbintegration.PlayerManager;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

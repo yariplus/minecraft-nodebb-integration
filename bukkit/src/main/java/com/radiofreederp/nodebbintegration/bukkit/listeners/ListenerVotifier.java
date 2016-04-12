@@ -1,4 +1,4 @@
-package com.radiofreederp.nodebbintegration.listeners;
+package com.radiofreederp.nodebbintegration.bukkit.listeners;
 
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.model.VotifierEvent;

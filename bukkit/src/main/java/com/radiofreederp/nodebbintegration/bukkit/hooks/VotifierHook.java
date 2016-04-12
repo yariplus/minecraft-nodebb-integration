@@ -1,7 +1,7 @@
-package com.radiofreederp.nodebbintegration.hooks;
+package com.radiofreederp.nodebbintegration.bukkit.hooks;
 
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationBukkit;
-import com.radiofreederp.nodebbintegration.listeners.ListenerVotifier;
+import com.radiofreederp.nodebbintegration.bukkit.listeners.ListenerVotifier;
 import org.bukkit.Bukkit;
 
 /**

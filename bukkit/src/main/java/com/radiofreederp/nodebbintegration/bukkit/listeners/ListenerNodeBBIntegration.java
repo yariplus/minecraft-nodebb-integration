@@ -1,8 +1,11 @@
-package com.radiofreederp.nodebbintegration;
+package com.radiofreederp.nodebbintegration.bukkit.listeners;
 
-import com.radiofreederp.nodebbintegration.hooks.OnTimeHook;
-import com.radiofreederp.nodebbintegration.hooks.VanishNoPacketHook;
-import com.radiofreederp.nodebbintegration.hooks.VaultHook;
+import com.radiofreederp.nodebbintegration.NodeBBIntegrationBukkit;
+import com.radiofreederp.nodebbintegration.NodeBBIntegrationPlugin;
+import com.radiofreederp.nodebbintegration.PlayerManager;
+import com.radiofreederp.nodebbintegration.bukkit.hooks.OnTimeHook;
+import com.radiofreederp.nodebbintegration.bukkit.hooks.VanishNoPacketHook;
+import com.radiofreederp.nodebbintegration.bukkit.hooks.VaultHook;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
 import io.socket.client.Ack;
 import org.bukkit.Bukkit;
@@ -25,16 +28,16 @@ import java.util.HashMap;
 /**
  * Created by Yari on 5/28/2015.
  */
-public class NodeBBIntegrationListener implements Listener {
+public class ListenerNodeBBIntegration implements Listener {
 
     private NodeBBIntegrationBukkit plugin;
 
-    public NodeBBIntegrationListener(NodeBBIntegrationPlugin plugin) {
+    public ListenerNodeBBIntegration(NodeBBIntegrationPlugin plugin) {
         this.plugin = (NodeBBIntegrationBukkit)plugin;
     }
 
     @EventHandler
-    public void handlePlayerJoin(PlayerJoinEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         String socketEvent = SocketIOClient.Events.onPlayerJoin;
 
         if (VanishNoPacketHook.isEnabled()) {
@@ -79,7 +82,7 @@ public class NodeBBIntegrationListener implements Listener {
     }
 
     @EventHandler
-    public void handlePlayerQuit(PlayerQuitEvent event) {
+    public void onPlayerQuit(PlayerQuitEvent event) {
         String socketEvent = SocketIOClient.Events.onPlayerQuit;
         SocketIOClient.emit(socketEvent, getPlayerQuitData(event.getPlayer()), (Object... args) -> plugin.log(socketEvent + " callback received."));
     }
@@ -100,7 +103,7 @@ public class NodeBBIntegrationListener implements Listener {
     }
 
     @EventHandler
-    public void handlePlayerChat(AsyncPlayerChatEvent event) {
+    public void onPlayerChat(AsyncPlayerChatEvent event) {
         if (SocketIOClient.disconnected()) return;
         final String socketEvent = "eventPlayerChat";
 

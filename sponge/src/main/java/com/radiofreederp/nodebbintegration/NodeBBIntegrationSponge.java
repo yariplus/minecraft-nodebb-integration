@@ -1,17 +1,17 @@
 package com.radiofreederp.nodebbintegration;
 
 import com.google.inject.Inject;
-import com.radiofreederp.nodebbintegration.commands.CommandNodeBBSponge;
-import com.radiofreederp.nodebbintegration.commands.CommandRegisterSponge;
+import com.radiofreederp.nodebbintegration.sponge.commands.CommandNodeBBSponge;
+import com.radiofreederp.nodebbintegration.sponge.commands.CommandRegisterSponge;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
-import com.radiofreederp.nodebbintegration.tasks.TaskTickSponge;
+import com.radiofreederp.nodebbintegration.sponge.listeners.ListenerNodeBBIntegration;
+import com.radiofreederp.nodebbintegration.sponge.tasks.TaskTickSponge;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 import org.slf4j.Logger;
-import org.slf4j.Marker;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -21,24 +21,10 @@ import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.scheduler.Scheduler;
-import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLHandshakeException;
-import javax.net.ssl.TrustManagerFactory;
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.KeyStore;
-import java.security.cert.*;
 import java.util.logging.Level;
 
 /**
@@ -157,6 +143,9 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
         // Start the socket client.
         SocketIOClient.create(this);
 
+        // Register listeners.
+        Sponge.getEventManager().registerListeners(this, new ListenerNodeBBIntegration(this));
+
         // Register commands.
         CommandSpec specNodeBB = CommandSpec.builder()
                 .description(Text.of("NodeBB Integration parent command."))
@@ -171,7 +160,6 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
                 .description(Text.of("Register your Minecraft account with your forum account."))
                 .executor(new CommandRegisterSponge())
                 .build();
-
         Sponge.getCommandManager().register(this, specNodeBB, "nodebb");
         Sponge.getCommandManager().register(this, specRegister, "register");
     }

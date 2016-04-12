@@ -1,4 +1,4 @@
-package com.radiofreederp.nodebbintegration.hooks;
+package com.radiofreederp.nodebbintegration.bukkit.hooks;
 
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationBukkit;
 import net.milkbowl.vault.chat.Chat;

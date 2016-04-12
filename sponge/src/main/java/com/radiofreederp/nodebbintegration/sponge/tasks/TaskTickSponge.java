@@ -1,22 +1,16 @@
-package com.radiofreederp.nodebbintegration.tasks;
+package com.radiofreederp.nodebbintegration.sponge.tasks;
 
-import com.google.common.io.Files;
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationSponge;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
-import io.socket.client.Ack;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 
-import java.io.File;
-import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Base64;
 
 /**
  * Created by Yari on 4/10/2016.

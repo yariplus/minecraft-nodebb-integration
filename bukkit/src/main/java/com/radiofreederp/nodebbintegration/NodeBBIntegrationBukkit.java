@@ -1,11 +1,12 @@
 package com.radiofreederp.nodebbintegration;
 
-import com.radiofreederp.nodebbintegration.commands.CommandRegisterBukkit;
-import com.radiofreederp.nodebbintegration.commands.CommandNodeBBBukkit;
-import com.radiofreederp.nodebbintegration.hooks.OnTimeHook;
-import com.radiofreederp.nodebbintegration.hooks.VanishNoPacketHook;
-import com.radiofreederp.nodebbintegration.hooks.VaultHook;
-import com.radiofreederp.nodebbintegration.hooks.VotifierHook;
+import com.radiofreederp.nodebbintegration.bukkit.commands.CommandRegisterBukkit;
+import com.radiofreederp.nodebbintegration.bukkit.commands.CommandNodeBBBukkit;
+import com.radiofreederp.nodebbintegration.bukkit.hooks.OnTimeHook;
+import com.radiofreederp.nodebbintegration.bukkit.hooks.VanishNoPacketHook;
+import com.radiofreederp.nodebbintegration.bukkit.hooks.VaultHook;
+import com.radiofreederp.nodebbintegration.bukkit.hooks.VotifierHook;
+import com.radiofreederp.nodebbintegration.bukkit.listeners.ListenerNodeBBIntegration;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
 import com.radiofreederp.nodebbintegration.tasks.TaskTickBukkit;
 import org.bukkit.Bukkit;
@@ -161,8 +162,8 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
         VotifierHook.hook(this);
         VanishNoPacketHook.hook(this);
 
-        // Listen for Bukkit events.
-        getServer().getPluginManager().registerEvents(new NodeBBIntegrationListener(this), this);
+        // Register listeners.
+        getServer().getPluginManager().registerEvents(new ListenerNodeBBIntegration(this), this);
 
         // Register commands.
         this.getCommand("nodebb").setExecutor(new CommandNodeBBBukkit(this));

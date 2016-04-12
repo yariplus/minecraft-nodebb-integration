@@ -1,4 +1,4 @@
-package com.radiofreederp.nodebbintegration.commands;
+package com.radiofreederp.nodebbintegration.sponge.commands;
 
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;

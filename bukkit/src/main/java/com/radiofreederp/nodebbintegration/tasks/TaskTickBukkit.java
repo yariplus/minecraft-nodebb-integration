@@ -2,9 +2,8 @@ package com.radiofreederp.nodebbintegration.tasks;
 
 import com.google.common.io.Files;
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationBukkit;
-import com.radiofreederp.nodebbintegration.hooks.VanishNoPacketHook;
+import com.radiofreederp.nodebbintegration.bukkit.hooks.VanishNoPacketHook;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
-import io.socket.client.Ack;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;

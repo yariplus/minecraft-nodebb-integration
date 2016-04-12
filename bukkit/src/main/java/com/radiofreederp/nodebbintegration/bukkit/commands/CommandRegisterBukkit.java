@@ -1,4 +1,4 @@
-package com.radiofreederp.nodebbintegration.commands;
+package com.radiofreederp.nodebbintegration.bukkit.commands;
 
 import io.socket.client.Ack;
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationBukkit;
