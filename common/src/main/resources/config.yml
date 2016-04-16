@@ -9,16 +9,24 @@ socketio:
     namespace: "plugins.MinecraftIntegration"
 messages:
     nodebb:
-        live:
-            get:
-                - "The websocket domain is set to %live%"
-            set:
-                - "Set the websocket domain to %live%"
-        transport:
-            get:
-                - "Websocket transports are %transports%"
-            add:
-                - "Removed websocket transport %transport%"
+        socketio:
+            address:
+                get:
+                    - "The websocket domain is set to %live%"
+                set:
+                    - "Set the websocket domain to %live%"
+            transports:
+                get:
+                    - "Websocket transports are %transports%"
+                add:
+                    - "Added websocket transport %transport%"
+                remove:
+                    - "Removed websocket transport %transport%"
+            namespace:
+                get:
+                    - "Websocket namespace is %transports%"
+                set:
+                    - "Removed websocket transport %transport%"
         help:
             - "&f[&6NodeBB Integration&f]"
             - "&4=&c=&6=&e=&a=&3=&b=&9=&1=&d=&5=&4=&c=&6=&e=&a=&2=&3=&b="

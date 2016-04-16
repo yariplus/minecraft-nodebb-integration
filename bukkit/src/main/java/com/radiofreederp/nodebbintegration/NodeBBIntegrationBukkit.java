@@ -117,7 +117,7 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
 
             JSONObject res = new JSONObject();
             res.put("name", name);
-            res.put("key", NodeBBIntegrationBukkit.instance.getConfig().getString("APIKEY"));
+            res.put("key", NodeBBIntegrationBukkit.instance.getPluginConfig().getForumAPIKey());
 
             if (PlayerManager.getPlayerData().isConfigurationSection(name + ".voted"))
             {

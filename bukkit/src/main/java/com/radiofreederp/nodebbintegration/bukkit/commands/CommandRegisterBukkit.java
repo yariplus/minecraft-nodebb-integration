@@ -22,12 +22,6 @@ public class CommandRegisterBukkit implements CommandExecutor
 
     public CommandRegisterBukkit(NodeBBIntegrationBukkit _plugin) { plugin = _plugin; }
 
-    // Since I can't use getConfig up here, I've set these to null so that I can reduce disk IO later.
-    List<String> RegisterAlert = null;
-    List<String> RegisterNotConnected = null;
-    List<String> RegisterAssertParameters = null;
-    List<String> RegisterParsingError = null;
-
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
     {
@@ -43,8 +37,8 @@ public class CommandRegisterBukkit implements CommandExecutor
 
         // Get config
         try {
-            forumname = plugin.getConfig().getString("FORUMNAME");
-            String u = plugin.getConfig().getString("FORUMURL");
+            forumname = plugin.getPluginConfig().getForumName();
+            String u = plugin.getPluginConfig().getForumURL();
             String plain = ChatColor.stripColor(u);
             String last = plain.substring(plain.length()-1);
             if (!last.equals("/")) u += "/";
@@ -56,10 +50,7 @@ public class CommandRegisterBukkit implements CommandExecutor
 
         // Assert parameters.
         if (args.length != 1) {
-            if (RegisterAssertParameters == null) {
-                RegisterAssertParameters = plugin.getConfig().getStringList("PluginMessages.Register.AssertParameters");
-            }
-            for (String str : RegisterAssertParameters) {
+            for (String str : plugin.getPluginConfig().getMessage("messages.register.AssertParameters")) {
                 // TODO: Proper config parsing module.
                 sender.sendMessage(p(str).replace("$1", forumurl));
             }
@@ -70,10 +61,7 @@ public class CommandRegisterBukkit implements CommandExecutor
         if (args[0].length() > 4) args[0] = args[0].substring(4);
 
         // Alert
-        if (RegisterAlert == null) {
-            RegisterAlert = plugin.getConfig().getStringList("PluginMessages.Register.Alert");
-        }
-        for (String str : RegisterAlert) {
+        for (String str : plugin.getPluginConfig().getMessage("messages.register.Alert")) {
             str = str.replaceAll("%forumname%", forumname);
             str = str.replaceAll("%forumurl%",forumurl);
             sender.sendMessage(p(str));
@@ -81,10 +69,7 @@ public class CommandRegisterBukkit implements CommandExecutor
 
         // If we're not connected, don't do anything.
         if (SocketIOClient.disconnected()) {
-            if (RegisterNotConnected == null) {
-                RegisterNotConnected = plugin.getConfig().getStringList("PluginMessages.Register.NotConnected");
-            }
-            for (String str : RegisterNotConnected) {
+            for (String str : plugin.getPluginConfig().getMessage("messages.register.NotConnected")) {
                 sender.sendMessage(p(str));
             }
             return true;
@@ -93,7 +78,7 @@ public class CommandRegisterBukkit implements CommandExecutor
         //
         JSONObject obj = new JSONObject();
         try {
-            obj.put("key", plugin.getConfig().getString("APIKEY"));
+            obj.put("key", plugin.getPluginConfig().getForumAPIKey());
             obj.put("id", ((Player) sender).getUniqueId().toString());
             obj.put("name", sender.getName());
             obj.put("pkey", args[0]);
@@ -112,7 +97,7 @@ public class CommandRegisterBukkit implements CommandExecutor
                 plugin.log("Received commandRegister callback");
 
                 String result;
-                List<String> message;
+                String[] message;
 
                 try {
                     if (args[0] != null) {
@@ -131,7 +116,7 @@ public class CommandRegisterBukkit implements CommandExecutor
                 }
                 else
                 {
-                    message = RegisterParsingError;
+                    message = RegisterResponse.ERROR.getMessage();
                 }
 
                 for (String str : message) {
@@ -147,21 +132,21 @@ public class CommandRegisterBukkit implements CommandExecutor
 
     private enum RegisterResponse
     {
-        REGISTER  ("PluginMessages.Register.RegSuccess"),
-        CREATE    ("PluginMessages.Register.CreatedNewAccount"),
-        FAILKEY   ("PluginMessages.Register.FailKey"),
-        FAILDB    ("PluginMessages.Register.FailDB"),
-        BADRES    ("PluginMessages.Register.BadRes"),
-        FAILDATA  ("PluginMessages.Register.FailData"),
-        ERROR     ("PluginMessages.Register.ParsingError");
+        REGISTER  ("messages.register.RegSuccess"),
+        CREATE    ("messages.register.CreatedNewAccount"),
+        FAILKEY   ("messages.register.FailKey"),
+        FAILDB    ("messages.register.FailDB"),
+        BADRES    ("messages.register.BadRes"),
+        FAILDATA  ("messages.register.FailData"),
+        ERROR     ("messages.register.ParsingError");
 
         private String key;
-        private List<String> message = null;
+        private String[] message = null;
 
         RegisterResponse(String key) { this.key = key; }
 
-        public List<String> getMessage() {
-            if (this.message == null) this.message = NodeBBIntegrationBukkit.instance.getConfig().getStringList(this.key);
+        public String[] getMessage() {
+            if (this.message == null) this.message = NodeBBIntegrationBukkit.instance.getPluginConfig().getMessage(this.key);
             return this.message;
         }
     }

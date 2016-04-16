@@ -102,7 +102,7 @@ public class CommandNodeBBBukkit implements CommandExecutor {
                         break;
                     case "live":
                         plugin.getPluginConfig().setSocketAddress(value);
-                        for (String str : plugin.getConfig().getStringList("messages.nodebb.live.set")) {
+                        for (String str : plugin.getPluginConfig().getMessage("messages.nodebb.live.set")) {
                             sender.sendMessage(str.replace("%live%", value));
                             plugin.log(str.replace("%live%", value));
                         }
@@ -120,10 +120,7 @@ public class CommandNodeBBBukkit implements CommandExecutor {
     }
 
     private void help(CommandSender sender) {
-        if (NodeBBMessage == null) {
-            NodeBBMessage = plugin.getConfig().getStringList("PluginMessages.NodeBB.Help");
-        }
-        for (String str : NodeBBMessage) {
+        for (String str : plugin.getPluginConfig().getMessage("messages.nodebb.help")) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', str));
         }
     }

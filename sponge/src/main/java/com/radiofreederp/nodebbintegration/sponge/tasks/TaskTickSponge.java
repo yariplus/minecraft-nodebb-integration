@@ -1,5 +1,6 @@
 package com.radiofreederp.nodebbintegration.sponge.tasks;
 
+import com.google.common.io.Files;
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationSponge;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
 import org.json.JSONException;
@@ -8,9 +9,12 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.plugin.PluginContainer;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 
 /**
  * Created by Yari on 4/10/2016.
@@ -79,15 +83,16 @@ public class TaskTickSponge implements Runnable{
                         obj.put("players", players);
 
                         obj.put("version", Sponge.getPlatform().getMinecraftVersion().getName());
+                        // TODO
                         obj.put("name", "name");
 
-                        /*
-                        obj.put("gametype", Bukkit.getServer().getWorldType());
-                        obj.put("map", Bukkit.getWorlds().get(0).getName());
+                        // TODO
+                        //obj.put("gametype", Sponge.getServer());
+                        obj.put("map", Sponge.getServer().getDefaultWorld().get().getWorldName());
 
-                        obj.put("motd", Bukkit.getServer().getMotd());
-                        obj.put("onlinePlayers", Bukkit.getOnlinePlayers().size());
-                        obj.put("maxPlayers", Bukkit.getMaxPlayers());
+                        obj.put("motd", Sponge.getServer().getMotd());
+                        obj.put("onlinePlayers", Sponge.getServer().getOnlinePlayers().size());
+                        obj.put("maxPlayers", Sponge.getServer().getMaxPlayers());
                         obj.put("pluginList", pluginList);
 
                         // Server Icon
@@ -97,11 +102,9 @@ public class TaskTickSponge implements Runnable{
                                 String icon = Base64.getEncoder().encodeToString(Files.toByteArray(file));
                                 obj.put("icon", "data:image/png;base64," + icon);
                             }
-                        } catch (IOException|JSONException e) {
+                        } catch (IOException |JSONException e) {
                             e.printStackTrace();
                         }
-                        */
-
                     } catch (JSONException e) {
                         plugin.log("Error constructing JSON Object for " + socketEvent);
                         e.printStackTrace();
