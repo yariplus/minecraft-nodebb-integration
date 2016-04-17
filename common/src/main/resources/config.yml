@@ -39,7 +39,7 @@ messages:
     register:
         Alert:
             - "Registering your player on %forumname% (%forumurl%&r)"
-        NotConnected:
+        Disconnected:
             - "Sorry! The server isn't currently connected to the forum."
         AssertParameters:
             - "Copy your player key from"

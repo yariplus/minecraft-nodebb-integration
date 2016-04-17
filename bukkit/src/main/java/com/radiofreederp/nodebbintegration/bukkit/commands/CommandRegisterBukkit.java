@@ -1,5 +1,6 @@
 package com.radiofreederp.nodebbintegration.bukkit.commands;
 
+import com.radiofreederp.nodebbintegration.PluginConfig;
 import io.socket.client.Ack;
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationBukkit;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
@@ -50,7 +51,7 @@ public class CommandRegisterBukkit implements CommandExecutor
 
         // Assert parameters.
         if (args.length != 1) {
-            for (String str : plugin.getPluginConfig().getMessage("messages.register.AssertParameters")) {
+            for (String str : plugin.getPluginConfig().getArray(PluginConfig.ConfigOption.MSG_REG_ASSERTPARAMS)) {
                 // TODO: Proper config parsing module.
                 sender.sendMessage(p(str).replace("$1", forumurl));
             }
@@ -61,7 +62,7 @@ public class CommandRegisterBukkit implements CommandExecutor
         if (args[0].length() > 4) args[0] = args[0].substring(4);
 
         // Alert
-        for (String str : plugin.getPluginConfig().getMessage("messages.register.Alert")) {
+        for (String str : plugin.getPluginConfig().getArray(PluginConfig.ConfigOption.MSG_REG_ALERT)) {
             str = str.replaceAll("%forumname%", forumname);
             str = str.replaceAll("%forumurl%",forumurl);
             sender.sendMessage(p(str));
@@ -69,7 +70,7 @@ public class CommandRegisterBukkit implements CommandExecutor
 
         // If we're not connected, don't do anything.
         if (SocketIOClient.disconnected()) {
-            for (String str : plugin.getPluginConfig().getMessage("messages.register.NotConnected")) {
+            for (String str : plugin.getPluginConfig().getArray(PluginConfig.ConfigOption.MSG_REG_DISCONNECTED)) {
                 sender.sendMessage(p(str));
             }
             return true;
@@ -90,65 +91,30 @@ public class CommandRegisterBukkit implements CommandExecutor
         // DEBUG
         plugin.log("Sending commandRegister");
 
-        SocketIOClient.emit("commandRegister", obj, new Ack() {
-            @Override
-            public void call(Object... args) {
+        SocketIOClient.emit("commandRegister", obj, res -> {
 
-                plugin.log("Received commandRegister callback");
+            plugin.log("Received commandRegister callback");
 
-                String result;
-                String[] message;
+            String result = "ERROR";
 
-                try {
-                    if (args[0] != null) {
-                        result = ((JSONObject)args[0]).getString("message");
-                    }else{
-                        result = ((JSONObject)args[1]).getString("result");
-                    }
-                }catch (Exception e) {
-                    result = "BADRES";
+            try {
+                if (args[0] != null) {
+                    result = ((JSONObject) res[0]).getString("message");
+                } else {
+                    result = ((JSONObject) res[1]).getString("result");
                 }
+            } catch (Exception e) {
+                result = "BADRES";
+            }
 
-                RegisterResponse response = RegisterResponse.valueOf(result);
-
-                if (response != null) {
-                    message = response.getMessage();
-                }
-                else
-                {
-                    message = RegisterResponse.ERROR.getMessage();
-                }
-
-                for (String str : message) {
-                    str = str.replaceAll("%forumname%", forumname);
-                    str = str.replaceAll("%forumurl%",forumurl);
-                    commandSender.sendMessage(p(str));
-                }
+            for (String str : plugin.getPluginConfig().getArray(PluginConfig.ConfigOption.valueOf("MSG_REG_" + result))) {
+                str = str.replaceAll("%forumname%", forumname);
+                str = str.replaceAll("%forumurl%", forumurl);
+                commandSender.sendMessage(p(str));
             }
         });
 
         return true;
-    }
-
-    private enum RegisterResponse
-    {
-        REGISTER  ("messages.register.RegSuccess"),
-        CREATE    ("messages.register.CreatedNewAccount"),
-        FAILKEY   ("messages.register.FailKey"),
-        FAILDB    ("messages.register.FailDB"),
-        BADRES    ("messages.register.BadRes"),
-        FAILDATA  ("messages.register.FailData"),
-        ERROR     ("messages.register.ParsingError");
-
-        private String key;
-        private String[] message = null;
-
-        RegisterResponse(String key) { this.key = key; }
-
-        public String[] getMessage() {
-            if (this.message == null) this.message = NodeBBIntegrationBukkit.instance.getPluginConfig().getMessage(this.key);
-            return this.message;
-        }
     }
 
     private String p(String s) {

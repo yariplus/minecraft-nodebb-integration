@@ -35,7 +35,7 @@ public final class SocketIOClient {
     private Socket socket;
     private NodeBBIntegrationPlugin plugin;
     private String live;
-    private String[] transports;
+    private List<String> transports;
     private String cookie;
     private String url;
     private String namespace;
@@ -103,7 +103,7 @@ public final class SocketIOClient {
 
                 // Set SocketIO options.
                 IO.Options options = new IO.Options();
-                options.transports = transports;
+                options.transports = transports.toArray(new String[transports.size()]);
 
                 // Create a new socket.
                 socket = IO.socket(live, options);

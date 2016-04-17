@@ -57,7 +57,7 @@ public class CommandNodeBBBukkit implements CommandExecutor {
                         sender.sendMessage("Forum API Key is " + plugin.getPluginConfig().getForumAPIKey());
                         break;
                     case "live":
-                        for (String str : plugin.getPluginConfig().getMessage(PluginConfig.ConfigOptions.MSG_SOCKETADDRESS_GET.getKey())) {
+                        for (String str : plugin.getPluginConfig().getArray(PluginConfig.ConfigOption.MSG_SOCKETADDRESS_GET)) {
                             sender.sendMessage(str.replace("%live%", plugin.getPluginConfig().getSocketAddress()));
                         }
                         break;
@@ -102,7 +102,7 @@ public class CommandNodeBBBukkit implements CommandExecutor {
                         break;
                     case "live":
                         plugin.getPluginConfig().setSocketAddress(value);
-                        for (String str : plugin.getPluginConfig().getMessage("messages.nodebb.live.set")) {
+                        for (String str : plugin.getPluginConfig().getArray(PluginConfig.ConfigOption.MSG_SOCKETADDRESS_SET)) {
                             sender.sendMessage(str.replace("%live%", value));
                             plugin.log(str.replace("%live%", value));
                         }
@@ -120,7 +120,7 @@ public class CommandNodeBBBukkit implements CommandExecutor {
     }
 
     private void help(CommandSender sender) {
-        for (String str : plugin.getPluginConfig().getMessage("messages.nodebb.help")) {
+        for (String str : plugin.getPluginConfig().getArray(PluginConfig.ConfigOption.MSG_HELP)) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', str));
         }
     }
