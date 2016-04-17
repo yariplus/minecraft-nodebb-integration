@@ -2,7 +2,6 @@ package com.radiofreederp.nodebbintegration.bukkit.listeners;
 
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationBukkit;
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationPlugin;
-import com.radiofreederp.nodebbintegration.PlayerManager;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.OnTimeHook;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VanishNoPacketHook;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VaultHook;
@@ -147,7 +146,7 @@ public class ListenerNodeBBIntegration implements Listener {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    PlayerManager.saveConfig();
+                    plugin.getPluginConfig().save();
                     plugin.log("Saved player data.");
                 }
             }.runTask(plugin);

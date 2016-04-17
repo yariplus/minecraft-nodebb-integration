@@ -1,5 +1,7 @@
 package com.radiofreederp.nodebbintegration;
 
+import org.json.JSONObject;
+
 import java.util.List;
 
 /**
@@ -8,6 +10,7 @@ import java.util.List;
 public abstract class PluginConfig {
 
     protected NodeBBIntegrationPlugin plugin;
+    protected MinecraftServer server;
 
     abstract public String getString(ConfigOption option);
     abstract public List<String> getArray(ConfigOption option);
@@ -17,6 +20,9 @@ public abstract class PluginConfig {
     abstract public void reload();
     abstract public void save();
     abstract public void updateMessages();
+
+    abstract public Object getPlayerData();
+    abstract public JSONObject getPlayerVotes(JSONObject req);
 
     // Get
 

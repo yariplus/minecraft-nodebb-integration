@@ -36,6 +36,8 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
 
     public static NodeBBIntegrationSponge instance;
 
+    private final SpongeServer server = new SpongeServer(this);
+
     private TaskTickSponge taskTick;
 
     // Logger
@@ -90,6 +92,12 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
     public PluginConfig getPluginConfig() {
         return this.pluginConfig;
     }
+
+    @Override
+    public MinecraftServer getMinecraftServer() {
+        return server;
+    }
+
     public ConfigurationNode getDefaultConfig() {
         return this.defaultConfig;
     }

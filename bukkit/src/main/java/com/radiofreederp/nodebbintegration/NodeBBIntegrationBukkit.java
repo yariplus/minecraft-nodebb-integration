@@ -25,6 +25,13 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
 
     public static NodeBBIntegrationBukkit instance;
 
+    private MinecraftServer minecraftServer = new BukkitServer(this);
+
+    @Override
+    public MinecraftServer getMinecraftServer() {
+        return minecraftServer;
+    }
+
     private PluginConfig pluginConfig;
 
     @Override
@@ -102,36 +109,19 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
     }
 
     @Override
-    public void eventGetPlayerVotes(Object... args) {
+    public void eventGetPlayerVotes(Object... req) {
         log("Got eventGetPlayerVotes");
 
         // Interpret message.
-        if (args[0] == null) return;
+        // TODO: Should be an error object.
+        if (req[0] == null) return;
 
         log("Compiling votes...");
+        JSONObject res = getPluginConfig().getPlayerVotes((JSONObject)req[0]);
 
-        try
-        {
-            JSONObject json = (JSONObject)args[0];
-            final String name = json.getString("name");
+        log("Sending votes...");
+        SocketIOClient.emit("PlayerVotes", res, cb -> {});
 
-            JSONObject res = new JSONObject();
-            res.put("name", name);
-            res.put("key", NodeBBIntegrationBukkit.instance.getPluginConfig().getForumAPIKey());
-
-            if (PlayerManager.getPlayerData().isConfigurationSection(name + ".voted"))
-            {
-                HashMap<String,Object> vm = (HashMap<String,Object>)PlayerManager.getPlayerData().getConfigurationSection(name + ".voted").getValues(false);
-                res.put("votes", vm);
-            }
-
-            log("Sending votes...");
-            SocketIOClient.emit("PlayerVotes", res, (Object... argsCB) -> {});
-        }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -152,9 +142,6 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
 
         // Loads config and updates if necessary.
         pluginConfig = new PluginConfigBukkit(this);
-
-        // Load player data.
-        PlayerManager.reloadConfig();
 
         // Initialize Plugin Hooks
         VaultHook.hook(this);

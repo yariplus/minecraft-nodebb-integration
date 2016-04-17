@@ -1,6 +1,7 @@
 package com.radiofreederp.nodebbintegration.sponge.commands;
 
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationSponge;
+import com.radiofreederp.nodebbintegration.commands.CommandNodeBB;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -17,13 +18,18 @@ import java.io.IOException;
  * Created by Yari on 4/5/2016.
  */
 public class CommandNodeBBSponge implements CommandExecutor {
-    private NodeBBIntegrationSponge plugin;
+
+    private final NodeBBIntegrationSponge plugin;
+    private final CommandNodeBB command;
+
     public CommandNodeBBSponge(NodeBBIntegrationSponge plugin) {
         this.plugin = plugin;
+        this.command = new CommandNodeBB(plugin);
     }
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+
         if (!(src instanceof Player || src instanceof ConsoleSource)) return CommandResult.empty();
 
         if (args.getOne("value").isPresent()) {

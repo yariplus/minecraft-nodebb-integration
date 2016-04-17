@@ -1,6 +1,7 @@
 package com.radiofreederp.nodebbintegration;
 
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
@@ -60,5 +61,16 @@ public class PluginConfigSponge extends PluginConfig {
     @Override
     public void setArray(PluginConfig.ConfigOption option, List<String> value) {
         getPlugin().getSpongeConfig().getNode(option.getKey().split("\\.")).setValue(value);
+    }
+
+
+    @Override
+    public Object getPlayerData() {
+        return null;
+    }
+
+    @Override
+    public JSONObject getPlayerVotes(JSONObject req) {
+        return null;
     }
 }

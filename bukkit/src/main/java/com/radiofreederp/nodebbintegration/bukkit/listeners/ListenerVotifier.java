@@ -1,8 +1,10 @@
 package com.radiofreederp.nodebbintegration.bukkit.listeners;
 
+import com.radiofreederp.nodebbintegration.NodeBBIntegrationBukkit;
+import com.radiofreederp.nodebbintegration.NodeBBIntegrationPlugin;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.model.VotifierEvent;
-import com.radiofreederp.nodebbintegration.PlayerManager;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -19,6 +21,6 @@ public class ListenerVotifier implements Listener
         String service = vote.getServiceName().replace('.', '_');
         String timestamp = vote.getTimeStamp();
 
-        PlayerManager.getPlayerData().set(vote.getUsername() + ".voted." + service, timestamp);
+        ((YamlConfiguration)NodeBBIntegrationBukkit.instance.getPluginConfig().getPlayerData()).set(vote.getUsername() + ".voted." + service, timestamp);
     }
 }

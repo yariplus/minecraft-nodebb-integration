@@ -1,13 +1,23 @@
 package com.radiofreederp.nodebbintegration;
 
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Created by Yari on 4/8/2016.
  */
 public class PluginConfigBukkit extends PluginConfig {
+
+    private YamlConfiguration playerData;
+    private File playerFile;
 
     public PluginConfigBukkit(NodeBBIntegrationBukkit plugin) {
         this.plugin = plugin;
@@ -25,13 +35,25 @@ public class PluginConfigBukkit extends PluginConfig {
     public void reload() {
         getPlugin().reloadConfig();
         SocketIOClient.connect();
-        PlayerManager.reloadConfig();
+
+        // Player Data
+        playerFile = new File(((NodeBBIntegrationBukkit)plugin).getDataFolder(), "players.yml");
+        playerData = YamlConfiguration.loadConfiguration(playerFile);
     }
 
     @Override
     public void save() {
         getPlugin().saveConfig();
         SocketIOClient.connect();
+
+        // Player Data
+        plugin.log("Saving player data.");
+        try {
+            playerData.save(playerFile);
+        } catch (IOException ex) {
+            plugin.log("Could not save player data to " + playerFile.getName(), Level.SEVERE);
+            ex.printStackTrace();
+        }
     }
 
     @Override
@@ -59,5 +81,38 @@ public class PluginConfigBukkit extends PluginConfig {
     @Override
     public void setArray(ConfigOption option, List<String> value) {
         getPlugin().getConfig().set(option.getKey(), value);
+    }
+
+    @Override
+    public Object getPlayerData()
+    {
+        if (playerData == null) reload();
+        return playerData;
+    }
+
+    @Override
+    public JSONObject getPlayerVotes(JSONObject req) {
+        if (playerData == null) reload();
+
+        JSONObject res = new JSONObject();
+
+        try {
+            final String name = req.getString("name");
+
+            res.put("key", plugin.getPluginConfig().getForumAPIKey());
+            res.put("name", name);
+
+            if (playerData.isConfigurationSection(name + ".voted"))
+            {
+                HashMap<String,Object> vm = (HashMap<String,Object>)playerData.getConfigurationSection(name + ".voted").getValues(false);
+                res.put("votes", vm);
+            }
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+
+        return res;
     }
 }

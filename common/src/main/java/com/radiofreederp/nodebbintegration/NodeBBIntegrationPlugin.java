@@ -28,6 +28,8 @@ public interface NodeBBIntegrationPlugin {
 
     PluginConfig getPluginConfig();
 
+    MinecraftServer getMinecraftServer();
+
     void runTaskAsynchronously(Runnable task);
 
     void runTaskTimerAsynchronously(Runnable task);
