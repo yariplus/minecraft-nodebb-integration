@@ -10,6 +10,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,19 +21,20 @@ import java.util.UUID;
  */
 public class CommandNodeBBBukkit implements CommandExecutor {
 
-    private final NodeBBIntegrationBukkit plugin;
-    private final MinecraftServer server;
     private final CommandNodeBB command;
 
     public CommandNodeBBBukkit(NodeBBIntegrationBukkit plugin) {
-        this.plugin = plugin;
-        this.server = plugin.getMinecraftServer();
         this.command = new CommandNodeBB(plugin);
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+
+        // Make sure source can receive messages back.
+        if (!(sender instanceof Player || sender instanceof ConsoleCommandSender)) return false;
+
         String action;
+        String option = null;
         String value = null;
 
         switch (args.length) {
@@ -41,13 +44,16 @@ public class CommandNodeBBBukkit implements CommandExecutor {
                 break;
             case 1:
                 action = "get";
+                option = args[0];
                 break;
             case 2:
                 action = "set";
+                option = args[0];
+                value = args[1].replace('_', ' ');
                 break;
         }
 
-        boolean success = this.command.doCommand(action, value, null, null);
+        boolean success = this.command.doCommand(sender, action, option, value);
 
         return success;
     }

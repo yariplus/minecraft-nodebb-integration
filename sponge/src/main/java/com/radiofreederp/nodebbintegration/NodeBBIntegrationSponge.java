@@ -160,8 +160,9 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
                 .permission("nodebb.admin")
                 .executor(new CommandNodeBBSponge(this))
                 .arguments(
-                        GenericArguments.optional(GenericArguments.string(Text.of("command")), Text.of("help")),
-                        GenericArguments.optional(GenericArguments.string(Text.of("value")))
+                        GenericArguments.optional(GenericArguments.string(Text.of("option")), Text.of("help")),
+                        GenericArguments.optional(GenericArguments.string(Text.of("value"))),
+                        GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("remaining")))
                 )
                 .build();
         CommandSpec specRegister = CommandSpec.builder()

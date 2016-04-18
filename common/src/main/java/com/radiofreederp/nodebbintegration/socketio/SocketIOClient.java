@@ -93,10 +93,16 @@ public final class SocketIOClient {
                 if (socket != null) socket.close();
 
                 // Get config.
-                live = plugin.getPluginConfig().getSocketAddress();
+                live = plugin.getMinecraftServer().removeColors(plugin.getPluginConfig().getSocketAddress());
                 transports = plugin.getPluginConfig().getSocketTransports();
-                url = plugin.getPluginConfig().getForumURL();
-                namespace = plugin.getPluginConfig().getSocketNamespace();
+                url = plugin.getMinecraftServer().removeColors(plugin.getPluginConfig().getForumURL());
+                namespace = plugin.getMinecraftServer().removeColors(plugin.getPluginConfig().getSocketNamespace());
+
+                // ID-10T checks.
+                if (url.length() > 10) {
+                    if (url.charAt(url.length() - 1) != '/') url = url + "/";
+                    if (!url.substring(0, 4).equals("http")) url = "http://" + url;
+                }
 
                 // Get a session cookie.
                 getCookie(url);

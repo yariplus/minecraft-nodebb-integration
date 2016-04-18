@@ -1,67 +1,36 @@
 package com.radiofreederp.nodebbintegration;
 
-import com.flowpowered.noise.module.combiner.Min;
-
-import java.util.HashMap;
-import java.util.List;
+import org.spongepowered.api.text.channel.MessageReceiver;
+import org.spongepowered.api.text.serializer.TextSerializers;
 
 /**
  * Created by Yari on 4/17/2016.
  */
-public class SpongeServer implements MinecraftServer {
+public class SpongeServer extends MinecraftServer {
 
     private final NodeBBIntegrationPlugin plugin;
     public SpongeServer(NodeBBIntegrationPlugin plugin) {
         this.plugin = plugin;
     }
 
+    // Handle messaging.
     @Override
     public void sendMessage(Object receiver, String message) {
-
+        ((MessageReceiver)receiver).sendMessage(TextSerializers.FORMATTING_CODE.deserialize(message));
     }
-
-    @Override
-    public void sendMessage(Object receiver, String message, HashMap<String, String> vars) {
-
-    }
-
-    @Override
-    public void sendMessage(Object receiver, List<String> messages) {
-
-    }
-
-    @Override
-    public void sendMessage(Object receiver, List<String> messages, HashMap<String, String> vars) {
-
-    }
-
     @Override
     public void sendConsoleMessage(String message) {
 
     }
 
-    @Override
-    public void sendConsoleMessage(String message, HashMap<String, String> vars) {
-
-    }
-
-    @Override
-    public void sendConsoleMessage(List<String> messages) {
-
-    }
-
-    @Override
-    public void sendConsoleMessage(List<String> messages, HashMap<String, String> vars) {
-
-    }
-
+    // Handle colors.
     @Override
     public String translateColors(String string) {
-        return null;
+        return TextSerializers.FORMATTING_CODE.deserialize(string).toString();
     }
 
     @Override
     public String removeColors(String string) {
-        return null;
+        return TextSerializers.FORMATTING_CODE.deserialize(string).toPlain();
     }
 }

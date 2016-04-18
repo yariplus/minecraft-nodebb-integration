@@ -38,8 +38,11 @@ public abstract class PluginConfig {
         return getString(ConfigOption.FORUMAPIKEY);
     }
 
+    // TODO: Better defaults setup.
     public String getSocketAddress() {
-        return getString(ConfigOption.SOCKETADDRESS);
+        String address = getString(ConfigOption.SOCKETADDRESS);
+        if (address.equals("https://live.example.com/")) address = getString(ConfigOption.FORUMURL);
+        return address;
     }
 
     public List<String> getSocketTransports() {

@@ -22,8 +22,15 @@ public class PluginConfigBukkit extends PluginConfig {
     public PluginConfigBukkit(NodeBBIntegrationBukkit plugin) {
         this.plugin = plugin;
 
+        // Main config.
         plugin.saveDefaultConfig();
 
+        // Player data.
+        playerFile = new File(this.getPlugin().getDataFolder(), "players.yml");
+        playerData = YamlConfiguration.loadConfiguration(playerFile);
+
+        // Re-write messages if version updated.
+        // TODO: Preserve custom messages.
         if (!plugin.getConfig().getString("version").equals(plugin.getConfig().getDefaults().get("version"))) updateMessages();
     }
 
@@ -33,20 +40,23 @@ public class PluginConfigBukkit extends PluginConfig {
 
     @Override
     public void reload() {
+        // Main config.
         getPlugin().reloadConfig();
-        SocketIOClient.connect();
 
-        // Player Data
+        // Player data
         playerFile = new File(((NodeBBIntegrationBukkit)plugin).getDataFolder(), "players.yml");
         playerData = YamlConfiguration.loadConfiguration(playerFile);
+
+        // Reconnect socket.
+        SocketIOClient.connect();
     }
 
     @Override
     public void save() {
+        // Main config.
         getPlugin().saveConfig();
-        SocketIOClient.connect();
 
-        // Player Data
+        // Player data.
         plugin.log("Saving player data.");
         try {
             playerData.save(playerFile);
@@ -54,6 +64,9 @@ public class PluginConfigBukkit extends PluginConfig {
             plugin.log("Could not save player data to " + playerFile.getName(), Level.SEVERE);
             ex.printStackTrace();
         }
+
+        // Reconnect socket.
+        SocketIOClient.connect();
     }
 
     @Override

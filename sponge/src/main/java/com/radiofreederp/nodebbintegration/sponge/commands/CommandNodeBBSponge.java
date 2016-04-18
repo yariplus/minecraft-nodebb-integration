@@ -19,81 +19,36 @@ import java.io.IOException;
  */
 public class CommandNodeBBSponge implements CommandExecutor {
 
-    private final NodeBBIntegrationSponge plugin;
     private final CommandNodeBB command;
 
     public CommandNodeBBSponge(NodeBBIntegrationSponge plugin) {
-        this.plugin = plugin;
         this.command = new CommandNodeBB(plugin);
     }
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 
+        // Make sure source can receive messages back.
         if (!(src instanceof Player || src instanceof ConsoleSource)) return CommandResult.empty();
 
+        String action;
+        String option = args.getOne("option").orElse("help").toString().toLowerCase();
+        String value = null;
+
         if (args.getOne("value").isPresent()) {
+            action = "set";
+            value = args.getOne("value").get().toString();
 
-            // Set a config value.
-            String value = args.getOne("value").get().toString();
-            switch (args.getOne("command").get().toString().toLowerCase()) {
-                case "name":
-                    plugin.getPluginConfig().setForumName(value);
-                    src.sendMessage(Text.builder("Set name to " + value).color(TextColors.AQUA).build());
-                    break;
-                case "url":
-                    plugin.getPluginConfig().setForumURL(value);
-                    src.sendMessage(Text.builder("Set url to " + value).color(TextColors.AQUA).build());
-                    break;
-                case "key":
-                    plugin.getPluginConfig().setForumAPIKey(value);
-                    src.sendMessage(Text.builder("Set key to " + value).color(TextColors.AQUA).build());
-                    break;
-                case "live":
-                    plugin.getPluginConfig().setSocketAddress(value);
-                    src.sendMessage(Text.builder("Set live to " + value).color(TextColors.AQUA).build());
-                    break;
-                case "debug":
-                    src.sendMessage(Text.builder("set debug").color(TextColors.AQUA).build());
-                    break;
-                default:
-                case "help":
-                    src.sendMessage(Text.builder("display help").color(TextColors.AQUA).build());
-                    break;
+            // Add remaining text to value.
+            if (args.getOne("remaining").isPresent()) {
+                value += " " + args.getOne("remaining").get().toString();
             }
-
-            // Save config.
-            plugin.getPluginConfig().save();
-
-        } else {
-
-            // Get a value.
-            switch (args.getOne("command").get().toString().toLowerCase()) {
-                case "name":
-                    src.sendMessage(Text.builder(plugin.getPluginConfig().getForumName()).color(TextColors.AQUA).build());
-                    break;
-                case "url":
-                    src.sendMessage(Text.builder(plugin.getPluginConfig().getForumURL()).color(TextColors.AQUA).build());
-                    break;
-                case "live":
-                    src.sendMessage(Text.builder(plugin.getPluginConfig().getSocketAddress()).color(TextColors.AQUA).build());
-                    break;
-                case "key":
-                    src.sendMessage(Text.builder(plugin.getPluginConfig().getForumAPIKey()).color(TextColors.AQUA).build());
-                    break;
-                case "debug":
-                    src.sendMessage(Text.builder("TODO get debug").color(TextColors.AQUA).build());
-                    break;
-                case "reload":
-                    src.sendMessage(Text.builder("TODO reloading").color(TextColors.AQUA).build());
-                    break;
-                default:
-                case "help":
-                    src.sendMessage(Text.builder("TODO display help").color(TextColors.AQUA).build());
-                    break;
-            }
+        }else{
+            action = "get";
         }
 
-        return CommandResult.success();
+        boolean success = this.command.doCommand(src, action, option, value);
+
+        return success ? CommandResult.success() : CommandResult.empty();
     }
 }
