@@ -167,7 +167,10 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
                 .build();
         CommandSpec specRegister = CommandSpec.builder()
                 .description(Text.of("Register your Minecraft account with your forum account."))
-                .executor(new CommandRegisterSponge())
+                .executor(new CommandRegisterSponge(this))
+                .arguments(
+                        GenericArguments.optional(GenericArguments.string(Text.of("pkey")))
+                )
                 .build();
         Sponge.getCommandManager().register(this, specNodeBB, "nodebb");
         Sponge.getCommandManager().register(this, specRegister, "register");

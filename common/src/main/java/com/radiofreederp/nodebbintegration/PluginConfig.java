@@ -2,6 +2,7 @@ package com.radiofreederp.nodebbintegration;
 
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -128,5 +129,9 @@ public abstract class PluginConfig {
         ConfigOption(String key) {
             this.key = key;
         }
+    }
+
+    public ConfigMap<String, String> getConfigMap() {
+        return new ConfigMap<String, String>().add("%forumurl%", getForumURL()).add("%forumname%", getForumName());
     }
 }

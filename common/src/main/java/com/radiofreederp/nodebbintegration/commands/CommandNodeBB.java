@@ -6,19 +6,14 @@ import com.radiofreederp.nodebbintegration.PluginConfig;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
 
 import java.util.HashMap;
-import java.util.UUID;
 
 /**
  * Created by Yari on 4/17/2016.
  */
-public class CommandNodeBB implements MinecraftCommand {
-
-    private final NodeBBIntegrationPlugin plugin;
-    private final MinecraftServer server;
+public class CommandNodeBB extends MinecraftCommand {
 
     public CommandNodeBB(NodeBBIntegrationPlugin plugin) {
-        this.plugin = plugin;
-        this.server = plugin.getMinecraftServer();
+        super(plugin);
     }
 
     @Override
