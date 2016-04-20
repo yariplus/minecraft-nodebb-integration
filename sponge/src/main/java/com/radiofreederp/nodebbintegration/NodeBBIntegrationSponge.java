@@ -1,11 +1,11 @@
 package com.radiofreederp.nodebbintegration;
 
 import com.google.inject.Inject;
+import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
 import com.radiofreederp.nodebbintegration.sponge.commands.CommandNodeBBSponge;
 import com.radiofreederp.nodebbintegration.sponge.commands.CommandRegisterSponge;
-import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
 import com.radiofreederp.nodebbintegration.sponge.listeners.ListenerNodeBBIntegration;
-import com.radiofreederp.nodebbintegration.sponge.tasks.TaskTickSponge;
+import com.radiofreederp.nodebbintegration.tasks.TaskTick;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
@@ -37,8 +37,6 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
     public static NodeBBIntegrationSponge instance;
 
     private final SpongeServer server = new SpongeServer(this);
-
-    private TaskTickSponge taskTick;
 
     // Logger
     @Inject
@@ -146,10 +144,11 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
     public void onServerStart(GameStartedServerEvent event) {
         instance = this;
 
-        taskTick = new TaskTickSponge(this);
-
         // Start the socket client.
         SocketIOClient.create(this);
+
+        // Init tick task.
+        initTaskTick();
 
         // Register listeners.
         Sponge.getEventManager().registerListeners(this, new ListenerNodeBBIntegration(this));
@@ -192,6 +191,11 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
     }
 
     @Override
+    public void initTaskTick() {
+        new TaskTick(this);
+    }
+
+    @Override
     public void eventWebChat(Object... args) {
 
     }
@@ -199,10 +203,5 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
     @Override
     public void eventGetPlayerVotes(Object... args) {
 
-    }
-
-    @Override
-    public void doTaskTick() {
-        taskTick.run();
     }
 }

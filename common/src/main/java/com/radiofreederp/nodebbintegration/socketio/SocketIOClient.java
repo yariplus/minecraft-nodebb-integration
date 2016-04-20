@@ -1,6 +1,7 @@
 package com.radiofreederp.nodebbintegration.socketio;
 
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationPlugin;
+import com.radiofreederp.nodebbintegration.tasks.TaskTick;
 import io.socket.client.Ack;
 import io.socket.client.IO;
 import io.socket.client.Manager;
@@ -71,7 +72,7 @@ public final class SocketIOClient {
     private void setupSocket() {
         socket.on(Socket.EVENT_CONNECT, args -> {
             plugin.log("Connected to the forum.");
-            plugin.doTaskTick();
+            plugin.runTask(TaskTick.getTask());
         }).on(Socket.EVENT_DISCONNECT, args -> {
             plugin.log("Lost connection to the forum.");
             plugin.log(args[0].toString());

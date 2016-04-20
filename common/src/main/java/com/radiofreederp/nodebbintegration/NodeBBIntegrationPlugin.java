@@ -1,5 +1,7 @@
 package com.radiofreederp.nodebbintegration;
 
+import com.radiofreederp.nodebbintegration.tasks.TaskTick;
+
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.TrustManagerFactory;
@@ -36,9 +38,9 @@ public interface NodeBBIntegrationPlugin {
 
     void runTask(Runnable task);
 
+    void initTaskTick();
+
     void eventWebChat(Object... args);
 
     void eventGetPlayerVotes(Object... args);
-
-    void doTaskTick();
 }

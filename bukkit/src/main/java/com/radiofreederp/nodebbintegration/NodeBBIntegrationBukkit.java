@@ -8,7 +8,7 @@ import com.radiofreederp.nodebbintegration.bukkit.hooks.VaultHook;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VotifierHook;
 import com.radiofreederp.nodebbintegration.bukkit.listeners.ListenerNodeBBIntegration;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
-import com.radiofreederp.nodebbintegration.tasks.TaskTickBukkit;
+import com.radiofreederp.nodebbintegration.tasks.TaskTick;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,12 +16,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.logging.Level;
 
 public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegrationPlugin {
-
-    public TaskTickBukkit taskTickBukkit;
 
     public static NodeBBIntegrationBukkit instance;
 
@@ -91,6 +88,11 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
     }
 
     @Override
+    public void initTaskTick() {
+        new TaskTick(this);
+    }
+
+    @Override
     public void eventWebChat(Object... args) {
         // Interpret message.
         if (args[0] != null)
@@ -125,11 +127,6 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
     }
 
     @Override
-    public void doTaskTick() {
-        taskTickBukkit.run();
-    }
-
-    @Override
     public void onEnable() {
 
         instance = this;
@@ -138,7 +135,7 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
         SocketIOClient.create(this);
 
         // Monitor the TPS.
-        taskTickBukkit = new TaskTickBukkit(this);
+        initTaskTick();
 
         // Loads config and updates if necessary.
         pluginConfig = new PluginConfigBukkit(this);

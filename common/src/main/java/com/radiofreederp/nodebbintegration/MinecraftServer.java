@@ -1,5 +1,7 @@
 package com.radiofreederp.nodebbintegration;
 
+import com.radiofreederp.nodebbintegration.tasks.TaskTick;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,12 +18,14 @@ public abstract class MinecraftServer implements IMinecraftServer {
     abstract public String removeColors(String string);
 
     // Send single message.
+    @Override
     public final void sendMessage(Object receiver, String message, HashMap<String, String> vars) {
         for (Map.Entry<String, String> entry : vars.entrySet()) {
             message = message.replaceAll(entry.getKey(), entry.getValue());
         }
         sendMessage(receiver, message);
     }
+    @Override
     public final void sendConsoleMessage(String message, HashMap<String, String> vars) {
         for (Map.Entry<String, String> entry : vars.entrySet()) {
             message = message.replaceAll(entry.getKey(), entry.getValue());
@@ -30,16 +34,25 @@ public abstract class MinecraftServer implements IMinecraftServer {
     }
 
     // Send message list.
+    @Override
     public final void sendMessage(Object receiver, List<String> messages) {
         messages.forEach(message->sendMessage(receiver, message));
     }
+    @Override
     public final void sendMessage(Object receiver, List<String> messages, HashMap<String, String> vars) {
         messages.forEach(message->sendMessage(receiver, message, vars));
     }
+    @Override
     public final void sendConsoleMessage(List<String> messages) {
         messages.forEach(message->sendConsoleMessage(message));
     }
+    @Override
     public final void sendConsoleMessage(List<String> messages, HashMap<String, String> vars) {
         messages.forEach(message->sendConsoleMessage(message, vars));
+    }
+
+    @Override
+    public String getTPS() {
+        return TaskTick.getTPS();
     }
 }
