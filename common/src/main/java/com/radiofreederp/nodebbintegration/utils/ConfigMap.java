@@ -1,4 +1,4 @@
-package com.radiofreederp.nodebbintegration;
+package com.radiofreederp.nodebbintegration.utils;
 
 import java.util.HashMap;
 

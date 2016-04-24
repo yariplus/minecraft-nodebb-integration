@@ -1,10 +1,18 @@
 package com.radiofreederp.nodebbintegration;
 
+import com.google.common.io.Files;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.text.channel.MessageReceiver;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 
 /**
  * Created by Yari on 4/17/2016.
@@ -39,51 +47,98 @@ public class SpongeServer extends MinecraftServer {
 
     @Override
     public ArrayList<JSONObject> getPlayerList() {
-        return null;
+
+        final ArrayList<JSONObject> playerList = new ArrayList<>();
+
+        for (Player player : Sponge.getServer().getOnlinePlayers()) {
+
+            // TODO: Vanish support.
+
+            JSONObject playerObj = new JSONObject();
+
+            try {
+                playerObj.put("name", player.getName());
+                playerObj.put("id", player.getUniqueId());
+
+                playerList.add(playerObj);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return playerList;
     }
 
     @Override
     public ArrayList<JSONObject> getPluginList() {
-        return null;
+        final ArrayList<JSONObject> pluginList = new ArrayList<>();
+
+        for (PluginContainer plugin : Sponge.getPluginManager().getPlugins()) {
+
+            JSONObject pluginObj = new JSONObject();
+
+            try {
+                pluginObj.put("name", plugin.getName());
+                pluginObj.put("version", plugin.getVersion());
+
+                pluginList.add(pluginObj);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return pluginList;
     }
 
     @Override
     public String getVersion() {
-        return null;
+        // TODO: ???
+        return "";
     }
 
     @Override
     public String getServerName() {
-        return null;
+        return Sponge.getServer().getMotd().toString();
     }
 
     @Override
     public String getServerIcon() {
-        return null;
+        String icon = "";
+
+        File file = new File("server-icon.png");
+        if (file.isFile()) {
+            try {
+                icon = "data:image/png;base64," + Base64.getEncoder().encodeToString(Files.toByteArray(file));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return icon;
     }
 
     @Override
     public String getWorldType() {
-        return null;
+        return Sponge.getServer().getDefaultWorld().get().getGeneratorType().toString();
     }
 
     @Override
     public String getWorldName() {
-        return null;
+        return Sponge.getServer().getDefaultWorld().get().getWorldName();
     }
 
     @Override
     public String getMotd() {
-        return null;
+        return Sponge.getServer().getMotd().toString();
     }
 
     @Override
     public int getOnlinePlayers() {
-        return 0;
+        return Sponge.getServer().getOnlinePlayers().size();
     }
 
     @Override
     public int getMaxPlayers() {
-        return 0;
+        return Sponge.getServer().getMaxPlayers();
     }
 }

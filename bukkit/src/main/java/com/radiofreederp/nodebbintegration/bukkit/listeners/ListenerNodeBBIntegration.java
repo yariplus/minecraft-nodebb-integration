@@ -5,6 +5,7 @@ import com.radiofreederp.nodebbintegration.NodeBBIntegrationPlugin;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.OnTimeHook;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VanishNoPacketHook;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VaultHook;
+import com.radiofreederp.nodebbintegration.MinecraftServerEvents;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
 import io.socket.client.Ack;
 import org.bukkit.Bukkit;
@@ -37,17 +38,19 @@ public class ListenerNodeBBIntegration implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        String socketEvent = SocketIOClient.Events.onPlayerJoin;
 
+        // Ignore vanished players.
         if (VanishNoPacketHook.isEnabled()) {
             if (VanishNoPacketHook.isVanished(event.getPlayer().getName())) return;
         }
 
-        SocketIOClient.emit(socketEvent, getPlayerJoinData(event.getPlayer()), (Object... args) -> plugin.log(socketEvent + " callback received."));
+        MinecraftServerEvents.onPlayerJoin(plugin, getPlayerJoinData(event.getPlayer()));
     }
 
     public static JSONObject getPlayerJoinData(Player player) {
+
         JSONObject obj = new JSONObject();
+
         try {
             obj.put("name", player.getName());
             obj.put("id", player.getUniqueId());

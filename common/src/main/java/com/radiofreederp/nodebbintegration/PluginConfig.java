@@ -1,8 +1,8 @@
 package com.radiofreederp.nodebbintegration;
 
+import com.radiofreederp.nodebbintegration.utils.ConfigMap;
 import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.List;
 
 /**
