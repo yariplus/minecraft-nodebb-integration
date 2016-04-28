@@ -46,6 +46,11 @@ public class SpongeServer extends MinecraftServer {
     }
 
     @Override
+    public String getTPS() {
+        return String.valueOf(Sponge.getServer().getTicksPerSecond());
+    }
+
+    @Override
     public ArrayList<JSONObject> getPlayerList() {
 
         final ArrayList<JSONObject> playerList = new ArrayList<>();

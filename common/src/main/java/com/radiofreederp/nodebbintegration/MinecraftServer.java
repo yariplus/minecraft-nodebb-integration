@@ -50,9 +50,4 @@ public abstract class MinecraftServer implements IMinecraftServer {
     public final void sendConsoleMessage(List<String> messages, HashMap<String, String> vars) {
         messages.forEach(message->sendConsoleMessage(message, vars));
     }
-
-    @Override
-    public String getTPS() {
-        return TaskTick.getTPS();
-    }
 }

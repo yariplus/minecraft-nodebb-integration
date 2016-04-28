@@ -5,6 +5,7 @@ import com.radiofreederp.nodebbintegration.bukkit.hooks.VanishNoPacketHook;
 import com.radiofreederp.nodebbintegration.tasks.TaskTick;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -13,6 +14,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Base64;
 
@@ -44,6 +46,28 @@ public class BukkitServer extends MinecraftServer {
     @Override
     public String removeColors(String string) {
         return ChatColor.stripColor(translateColors(string));
+    }
+
+    // Get TPS
+    // TODO: Replace hackery when a better method is found.
+    private static Object minecraftServer;
+    private static Field recentTps;
+    public String getTPS() {
+        try {
+            if (minecraftServer == null) {
+                Server server = Bukkit.getServer();
+                Field consoleField = server.getClass().getDeclaredField("console");
+                consoleField.setAccessible(true);
+                minecraftServer = consoleField.get(server);
+            }
+            if (recentTps == null) {
+                recentTps = minecraftServer.getClass().getSuperclass().getDeclaredField("recentTps");
+                recentTps.setAccessible(true);
+            }
+            return String.valueOf(((double[]) recentTps.get(minecraftServer))[0]);
+        } catch (IllegalAccessException | NoSuchFieldException ignored) {
+        }
+        return "0.000";
     }
 
     @Override

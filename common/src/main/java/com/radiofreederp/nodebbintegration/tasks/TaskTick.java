@@ -21,13 +21,8 @@ public class TaskTick implements Runnable {
     private final NodeBBIntegrationPlugin plugin;
     private final MinecraftServer server;
 
-    private long timeLast;
-    private String TPS;
-
     private static TaskTick instance;
-    public static String getTPS() {
-        return instance.TPS;
-    }
+
     public static TaskTick getTask() {
         return instance;
     }
@@ -38,21 +33,11 @@ public class TaskTick implements Runnable {
         this.plugin = plugin;
         this.server = plugin.getMinecraftServer();
 
-        timeLast = System.currentTimeMillis();
-
         plugin.runTaskTimerAsynchronously(instance);
     }
 
     @Override
     public void run() {
-        long timeNow = System.currentTimeMillis();
-        long diff = ( timeNow - timeLast );
-        double ticks = 20D / ( ((double)diff) / 60000D );
-        DecimalFormat df = new DecimalFormat("#.####");
-        df.setRoundingMode(RoundingMode.CEILING);
-        TPS = df.format(ticks);
-        timeLast = timeNow;
-
         if (SocketIOClient.connected()) {
 
             final String socketEvent = "eventStatus";
@@ -61,7 +46,7 @@ public class TaskTick implements Runnable {
 
             try {
 
-                obj.put("tps", TaskTick.getTPS());
+                obj.put("tps", server.getTPS());
                 obj.put("key", plugin.getPluginConfig().getForumAPIKey());
                 obj.put("players", server.getPlayerList());
 

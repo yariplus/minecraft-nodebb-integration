@@ -2,6 +2,7 @@ package com.radiofreederp.nodebbintegration;
 
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
 import org.json.JSONObject;
+import org.spongepowered.api.Sponge;
 
 import java.io.IOException;
 import java.util.List;
