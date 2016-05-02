@@ -44,7 +44,7 @@ public class ListenerNodeBBIntegration implements Listener {
             if (VanishNoPacketHook.isVanished(event.getPlayer().getName())) return;
         }
 
-        MinecraftServerEvents.onPlayerJoin(plugin, getPlayerJoinData(event.getPlayer()));
+        MinecraftServerEvents.onPlayerJoin(plugin, event.getPlayer(), getPlayerJoinData(event.getPlayer()));
     }
 
     public static JSONObject getPlayerJoinData(Player player) {

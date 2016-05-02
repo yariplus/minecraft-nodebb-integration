@@ -51,7 +51,7 @@ public final class SocketIOClient {
     public static void close() { if (hasSocket()) instance.socket.close(); }
 
     //
-    public static void emit(String event, JSONObject args, final Ack ack) {
+    public static void emit(final String event, final JSONObject args, final Ack ack) {
         if (connected()) instance.socket.emit(instance.namespace + event, args, new Ack() {
             @Override
             public void call(Object... objects) {

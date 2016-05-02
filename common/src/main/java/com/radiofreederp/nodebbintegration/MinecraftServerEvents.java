@@ -9,7 +9,7 @@ import org.json.JSONObject;
  */
 public interface MinecraftServerEvents {
 
-    static void onPlayerJoin(NodeBBIntegrationPlugin plugin, JSONObject data) {
+    static void onPlayerJoin(NodeBBIntegrationPlugin plugin, Object player, JSONObject data) {
         String socketEvent = SocketIOClient.Events.onPlayerJoin;
 
         SocketIOClient.emit(socketEvent, data, args -> {
@@ -19,19 +19,27 @@ public interface MinecraftServerEvents {
             if (args[0] == null) {
 
                 // Construct response object.
-                JSONObject resObj = ((JSONObject)args[1]);
-                if (resObj != null) {
+                if (args[1] != null) {
+
+                    JSONObject resObj = ((JSONObject)args[1]);
+                    JSONObject user = null;
 
                     try {
-                        if (resObj.getBoolean("isRegistered")) {
-                            // TODO: Send notifications.
-                        }else{
-                            // TODO: Message with instructions on how to register.
-                        }
+                        user = resObj.getJSONObject("user");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+
+                    if (user != null) {
+                        plugin.getMinecraftServer().sendMessage(player, "Thanks for registering at " + plugin.getPluginConfig().getForumName());
+                    }else{
+                        plugin.getMinecraftServer().sendMessage(player, "Use /register to create an account at " + plugin.getPluginConfig().getForumURL());
+                    }
+                }else{
+                    plugin.log(socketEvent + " callback no response object found.");
                 }
+            }else{
+                plugin.log(socketEvent + " callback error.");
             }
         });
     }

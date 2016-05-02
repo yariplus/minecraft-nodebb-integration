@@ -1,5 +1,6 @@
 package com.radiofreederp.nodebbintegration.sponge.listeners;
 
+import com.radiofreederp.nodebbintegration.MinecraftServerEvents;
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationPlugin;
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationSponge;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
@@ -22,8 +23,7 @@ public class ListenerNodeBBIntegration {
 
     @Listener
     public void onPlayerJoin(ClientConnectionEvent.Join event) {
-        String socketEvent = SocketIOClient.Events.onPlayerJoin;
-        SocketIOClient.emit(socketEvent, getPlayerJoinData(event.getTargetEntity()), args -> plugin.log(socketEvent + " callback received."));
+        MinecraftServerEvents.onPlayerJoin(plugin, event.getTargetEntity(), getPlayerJoinData(event.getTargetEntity()));
     }
 
     public static JSONObject getPlayerJoinData(Player player) {
