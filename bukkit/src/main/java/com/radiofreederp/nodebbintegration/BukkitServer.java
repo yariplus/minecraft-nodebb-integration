@@ -2,7 +2,6 @@ package com.radiofreederp.nodebbintegration;
 
 import com.google.common.io.Files;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VanishNoPacketHook;
-import com.radiofreederp.nodebbintegration.tasks.TaskTick;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
@@ -31,11 +30,15 @@ public class BukkitServer extends MinecraftServer {
     // Handle messaging.
     @Override
     public void sendMessage(Object receiver, String message) {
-        ((CommandSender)receiver).sendMessage(translateColors(message));
+        ((CommandSender)receiver).sendMessage(message);
     }
     @Override
     public void sendConsoleMessage(String message) {
         plugin.log(message);
+    }
+    @Override
+    public void sendMessageToOps(String message) {
+        if (plugin.isDebug()) Bukkit.getOnlinePlayers().stream().filter(player->player.hasPermission("nodebb.admin")).forEach(op->sendMessage(op, message));
     }
 
     // Handle color.

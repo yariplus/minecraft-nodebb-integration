@@ -31,7 +31,11 @@ public class SpongeServer extends MinecraftServer {
     }
     @Override
     public void sendConsoleMessage(String message) {
-
+        plugin.log(message);
+    }
+    @Override
+    public void sendMessageToOps(String message) {
+        if (plugin.isDebug()) Sponge.getServer().getOnlinePlayers().stream().filter(player->player.hasPermission("nodebb.admin")).forEach(op->sendMessage(op, message));
     }
 
     // Handle colors.

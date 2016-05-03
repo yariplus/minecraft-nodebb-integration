@@ -82,9 +82,11 @@ public final class SocketIOClient {
     private void setupSocket() {
         socket.on(Socket.EVENT_CONNECT, args -> {
             plugin.log("Connected to the forum.");
+            plugin.getMinecraftServer().sendMessageToOps("Connected to the forum.");
             plugin.runTask(TaskTick.getTask());
         }).on(Socket.EVENT_DISCONNECT, args -> {
             plugin.log("Lost connection to the forum.");
+            plugin.getMinecraftServer().sendMessageToOps("Lost connection to the forum.");
             plugin.log(args[0].toString());
         }).on(Socket.EVENT_CONNECT_ERROR, args -> {
             plugin.log("Error connecting to the forum.");
