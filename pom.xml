@@ -10,7 +10,7 @@
 
     <groupId>com.radiofreederp</groupId>
     <artifactId>nodebb-integration</artifactId>
-    <version>0.7.0-beta.13</version>
+    <version>0.7.0</version>
 
     <modules>
         <module>bukkit</module>
