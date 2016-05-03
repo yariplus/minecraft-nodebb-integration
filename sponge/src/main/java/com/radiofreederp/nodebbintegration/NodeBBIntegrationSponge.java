@@ -96,13 +96,14 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
         return server;
     }
 
+    // TODO: Move this into Config class.
     public ConfigurationNode getDefaultConfig() {
         return this.defaultConfig;
     }
     public ConfigurationNode getSpongeConfig() {
         return this.spongeConfig;
     }
-
+    public void setSpongeConfig(CommentedConfigurationNode config) { spongeConfig = config; }
     public ConfigurationLoader<CommentedConfigurationNode> getConfigManager() {
         return this.loader;
     }

@@ -6,7 +6,6 @@ import org.json.JSONObject;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.channel.MessageReceiver;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
@@ -28,7 +27,7 @@ public class SpongeServer extends MinecraftServer {
     // Handle messaging.
     @Override
     public void sendMessage(Object receiver, String message) {
-        ((MessageReceiver)receiver).sendMessage(Text.of(translateColors(message)));
+        ((MessageReceiver)receiver).sendMessage(TextSerializers.FORMATTING_CODE.deserialize(message));
     }
     @Override
     public void sendConsoleMessage(String message) {
@@ -39,10 +38,10 @@ public class SpongeServer extends MinecraftServer {
         if (plugin.isDebug()) Sponge.getServer().getOnlinePlayers().stream().filter(player->player.hasPermission("nodebb.admin")).forEach(op->sendMessage(op, message));
     }
 
-    // Handle colors.
+    // Handle colors. No translation necessary for sponge.
     @Override
     public String translateColors(String string) {
-        return TextSerializers.FORMATTING_CODE.deserialize(string).toString();
+        return string;
     }
 
     @Override

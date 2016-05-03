@@ -24,7 +24,12 @@ public class PluginConfigSponge extends PluginConfig {
 
     @Override
     public void reload() {
-        // TODO
+        try {
+            getPlugin().setSpongeConfig(getPlugin().getConfigManager().load());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
         SocketIOClient.connect();
     }
 
