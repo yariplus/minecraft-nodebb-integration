@@ -43,7 +43,7 @@ messages:
             - "Sorry! The server isn't currently connected to the forum."
         AssertParameters:
             - "Copy your player key from"
-            - "$1minecraft/register&r"
+            - "%forumurl%minecraft/register&r"
             - "then use the command /register [key]"
         RegSuccess:
             - "Success! Registered your player on %forumname%"

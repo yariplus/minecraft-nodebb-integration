@@ -24,13 +24,11 @@ public abstract class MinecraftServer implements IMinecraftServer {
     @Override
     public final void sendMessage(Object receiver, String message, HashMap<String, String> vars) {
         message = Helpers.replaceMap(message, vars);
-        message = translateColors(message);
         sendMessage(receiver, message);
     }
     @Override
     public final void sendConsoleMessage(String message, HashMap<String, String> vars) {
         message = Helpers.replaceMap(message, vars);
-        message = removeColors(message);
         sendConsoleMessage(message);
     }
     @Override

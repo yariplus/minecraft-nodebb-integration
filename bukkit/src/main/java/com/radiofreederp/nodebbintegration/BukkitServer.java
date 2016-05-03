@@ -30,11 +30,11 @@ public class BukkitServer extends MinecraftServer {
     // Handle messaging.
     @Override
     public void sendMessage(Object receiver, String message) {
-        ((CommandSender)receiver).sendMessage(message);
+        ((CommandSender)receiver).sendMessage(translateColors(message));
     }
     @Override
     public void sendConsoleMessage(String message) {
-        plugin.log(message);
+        plugin.log(removeColors(message));
     }
     @Override
     public void sendMessageToOps(String message) {

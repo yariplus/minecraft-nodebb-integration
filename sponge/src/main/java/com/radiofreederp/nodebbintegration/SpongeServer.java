@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.channel.MessageReceiver;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
@@ -27,11 +28,11 @@ public class SpongeServer extends MinecraftServer {
     // Handle messaging.
     @Override
     public void sendMessage(Object receiver, String message) {
-        ((MessageReceiver)receiver).sendMessage(TextSerializers.FORMATTING_CODE.deserialize(message));
+        ((MessageReceiver)receiver).sendMessage(Text.of(translateColors(message)));
     }
     @Override
     public void sendConsoleMessage(String message) {
-        plugin.log(message);
+        plugin.log(removeColors(message));
     }
     @Override
     public void sendMessageToOps(String message) {
