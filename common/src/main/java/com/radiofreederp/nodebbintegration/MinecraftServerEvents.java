@@ -14,7 +14,7 @@ public interface MinecraftServerEvents {
 
         SocketIOClient.emit(socketEvent, data, args -> {
 
-            // We receive feedback form the forum about the user.
+            // We receive a callback form the forum with information about the primary linked user.
             // First arg is an error object.
             if (args[0] == null) {
 
@@ -24,12 +24,15 @@ public interface MinecraftServerEvents {
                     JSONObject resObj = ((JSONObject)args[1]);
                     JSONObject user = null;
 
-                    try {
-                        user = resObj.getJSONObject("user");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                    if (resObj.has("user") && !resObj.isNull("user")) {
+                        try {
+                            user = resObj.getJSONObject("user");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
 
+                    // Inform the player.
                     if (user != null) {
                         plugin.getMinecraftServer().sendMessage(player, "Thanks for registering at " + plugin.getPluginConfig().getForumName());
                     }else{
