@@ -5,7 +5,9 @@ forum:
     apikey: "SECRETPASSWORD"
 socketio:
     address: "https://live.example.com/"
-    transports: ["polling", "websocket"]
+    transports:
+    - polling
+    - websocket
     namespace: "plugins.MinecraftIntegration"
 messages:
     nodebb:

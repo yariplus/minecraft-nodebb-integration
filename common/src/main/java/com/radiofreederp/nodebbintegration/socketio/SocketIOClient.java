@@ -7,6 +7,7 @@ import io.socket.client.IO;
 import io.socket.client.Manager;
 import io.socket.client.Socket;
 import io.socket.engineio.client.Transport;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.net.ssl.SSLContext;
@@ -50,13 +51,20 @@ public final class SocketIOClient {
     public static boolean disconnected() { return !connected(); }
     public static void close() { if (hasSocket()) instance.socket.close(); }
 
-    //
-    public static void emit(final String event, final JSONObject args, final Ack ack) {
-        if (connected()) instance.socket.emit(instance.namespace + event, args, new Ack() {
+    public static void emit(final String event, final JSONObject data, final Ack ack) {
+        if (connected()) instance.socket.emit(instance.namespace + event, data, new Ack() {
             @Override
-            public void call(Object... objects) {
-                instance.plugin.log(event + " callback received.");
-                ack.call(objects);
+            public void call(Object... args) {
+                if (args[0] == null) {
+                    instance.plugin.log(event + " callback received without error.");
+                } else {
+                    try {
+                        instance.plugin.log(event + " callback received with error: " + ((JSONObject)args[0]).getString("message"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                ack.call(args);
             }
         });
     }

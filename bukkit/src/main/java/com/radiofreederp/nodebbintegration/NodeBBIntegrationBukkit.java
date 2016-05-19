@@ -6,7 +6,7 @@ import com.radiofreederp.nodebbintegration.bukkit.hooks.OnTimeHook;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VanishNoPacketHook;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VaultHook;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VotifierHook;
-import com.radiofreederp.nodebbintegration.bukkit.listeners.ListenerNodeBBIntegration;
+import com.radiofreederp.nodebbintegration.bukkit.listeners.*;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
 import com.radiofreederp.nodebbintegration.tasks.TaskTick;
 import org.bukkit.Bukkit;
@@ -147,7 +147,11 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
         VanishNoPacketHook.hook(this);
 
         // Register listeners.
-        getServer().getPluginManager().registerEvents(new ListenerNodeBBIntegration(this), this);
+        getServer().getPluginManager().registerEvents(new ListenerPlayerJoin(this), this);
+        getServer().getPluginManager().registerEvents(new ListenerPlayerQuit(this), this);
+        getServer().getPluginManager().registerEvents(new ListenerPlayerChat(this), this);
+        getServer().getPluginManager().registerEvents(new ListenerServerListPing(this), this);
+        getServer().getPluginManager().registerEvents(new ListenerWorldSave(this), this);
 
         // Register commands.
         this.getCommand("nodebb").setExecutor(new CommandNodeBBBukkit(this));

@@ -43,6 +43,9 @@ public interface MinecraftServerEvents {
                 }
             }else{
                 plugin.log(socketEvent + " callback error.");
+                try {
+                    plugin.log(((JSONObject) args[0]).getString("message"));
+                } catch (JSONException e) {}
             }
         });
     }

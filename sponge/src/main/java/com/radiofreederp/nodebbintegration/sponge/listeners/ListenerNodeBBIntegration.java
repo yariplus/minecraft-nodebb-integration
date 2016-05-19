@@ -44,7 +44,7 @@ public class ListenerNodeBBIntegration {
     @Listener
     public void onPlayerQuit(ClientConnectionEvent.Disconnect event) {
         String socketEvent = SocketIOClient.Events.onPlayerQuit;
-        SocketIOClient.emit(socketEvent, getPlayerQuitData(event.getTargetEntity()), args -> plugin.log(socketEvent + " callback received."));
+        SocketIOClient.emit(socketEvent, getPlayerQuitData(event.getTargetEntity()), args -> {});
     }
 
     public static JSONObject getPlayerQuitData(Player player) {

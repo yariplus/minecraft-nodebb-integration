@@ -15,9 +15,9 @@ public class ListenerVanishNoPacket implements Listener
     {
         // TODO: Make more options for handling vanished players.
         if (event.isVanishing()) {
-            SocketIOClient.emit(SocketIOClient.Events.onPlayerQuit, ListenerNodeBBIntegration.getPlayerQuitData(event.getPlayer()), args -> {});
+            SocketIOClient.emit(SocketIOClient.Events.onPlayerQuit, ListenerPlayerQuit.getPlayerQuitData(event.getPlayer()), args -> {});
         }else{
-            SocketIOClient.emit(SocketIOClient.Events.onPlayerJoin, ListenerNodeBBIntegration.getPlayerJoinData(event.getPlayer()), args -> {});
+            SocketIOClient.emit(SocketIOClient.Events.onPlayerJoin, ListenerPlayerJoin.getPlayerJoinData(event.getPlayer()), args -> {});
         }
     }
 }

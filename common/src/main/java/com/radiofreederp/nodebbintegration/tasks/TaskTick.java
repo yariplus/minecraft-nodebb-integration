@@ -71,7 +71,7 @@ public class TaskTick implements Runnable {
             }
 
             plugin.log("Sending " + socketEvent);
-            SocketIOClient.emit(socketEvent, obj, args -> plugin.log(socketEvent + " callback received."));
+            SocketIOClient.emit(socketEvent, obj, args -> plugin.log(args[0] == null ? "no errors" : "got error"));
         }
     }
 }
