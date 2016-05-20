@@ -1,0 +1,6 @@
+
+description = ''
+dependencies {
+  compile project(':nodebb-integration-bukkit')
+  compile project(':nodebb-integration-sponge')
+}

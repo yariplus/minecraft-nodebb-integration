@@ -1,0 +1,18 @@
+rootProject.name = 'nodebb-integration'
+include ':nodebb-integration-bukkit'
+include ':nodebb-integration-pocketmine'
+include ':nodebb-integration-spigot'
+include ':nodebb-integration-canarymod'
+include ':nodebb-integration-bungeecord'
+include ':nodebb-integration-sponge'
+include ':nodebb-integration-common'
+include ':nodebb-integration-universal'
+
+project(':nodebb-integration-bukkit').projectDir = "$rootDir/bukkit" as File
+project(':nodebb-integration-pocketmine').projectDir = "$rootDir/pocketmine" as File
+project(':nodebb-integration-spigot').projectDir = "$rootDir/spigot" as File
+project(':nodebb-integration-canarymod').projectDir = "$rootDir/canarymod" as File
+project(':nodebb-integration-bungeecord').projectDir = "$rootDir/bungeecord" as File
+project(':nodebb-integration-sponge').projectDir = "$rootDir/sponge" as File
+project(':nodebb-integration-common').projectDir = "$rootDir/common" as File
+project(':nodebb-integration-universal').projectDir = "$rootDir/universal" as File

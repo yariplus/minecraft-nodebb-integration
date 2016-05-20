@@ -1,0 +1,29 @@
+allprojects  {
+  apply plugin: 'maven'
+
+  group = 'com.radiofreederp'
+version = '0.7.1'
+}
+
+subprojects {
+  apply plugin: 'java'
+  sourceCompatibility = 1.8
+  targetCompatibility = 1.8
+
+  
+  repositories {
+    mavenLocal()
+    
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    maven { url "http://repo.maven.apache.org/maven2" }
+    maven { url "http://repo.bukkit.org/content/groups/public/" }
+    maven { url "http://nexus.theyeticave.net/content/repositories/pub_releases" }
+    maven { url "http://repo.howaner.de" }
+    maven { url "http://repo.kitteh.org/content/groups/public" }
+    maven { url "http://repo.spongepowered.org/maven" }
+  }
+
+  
+  
+  
+}
