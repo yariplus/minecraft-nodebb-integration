@@ -3,7 +3,8 @@
 !/.gitattributes
 
 target/
-lib/
+build/
+libs/
 *.iml
 
 *.xml

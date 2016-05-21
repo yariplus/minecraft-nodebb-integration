@@ -1,18 +1,49 @@
+plugins {
+  id 'java'
+  id 'com.github.johnrengelman.shadow' version '1.2.3'
+}
 
-description = ''
+description = 'Minecraft Plugin NodeBB Integration for Bukkit'
+
+repositories {
+  // Votifier
+  maven { url "http://repo.howaner.de" }
+
+  // VanishNoPacket
+  maven { url "http://repo.kitteh.org/content/groups/public" }
+
+  // Vault
+  maven { url "http://nexus.theyeticave.net/content/repositories/pub_releases" }
+
+  // Spigot
+  maven { url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
+
+  // OnTimeAPI
+  flatDir {
+    dirs '../libs'
+  }
+}
+
 dependencies {
   compile project(':nodebb-integration-common')
-    compile group: 'me.edge209.OnTime', name: 'OnTimeAPI', version:'4.1.3'
-    compile group: 'com.vexsoftware', name: 'votifier', version:'1.9'
-    compile group: 'org.kitteh', name: 'VanishNoPacket', version:'3.19.1'
-    compile(group: 'org.bukkit', name: 'bukkit', version:'1.8-R0.1-SNAPSHOT') {
-       /* This dependency was originally in the Maven provided scope, but the project was not of type war.
-       This behavior is not yet supported by Gradle, so this dependency has been converted to a compile dependency.
-       Please review and delete this closure when resolved. */
-    }
-    compile(group: 'net.milkbowl.vault', name: 'VaultAPI', version:'1.5') {
-       /* This dependency was originally in the Maven provided scope, but the project was not of type war.
-       This behavior is not yet supported by Gradle, so this dependency has been converted to a compile dependency.
-       Please review and delete this closure when resolved. */
-    }
+  compile group: 'me.edge209.OnTime', name: 'OnTimeAPI', version:'4.1.3'
+  compile group: 'com.vexsoftware', name: 'votifier', version:'1.9'
+  compile group: 'org.kitteh', name: 'VanishNoPacket', version:'3.19.1'
+  compile group: 'org.bukkit', name: 'bukkit', version:'1.8-R0.1-SNAPSHOT'
+  compile group: 'net.milkbowl.vault', name: 'VaultAPI', version:'1.5'
+}
+
+configurations {
+  // Don't package plugins into JAR.
+  runtime.exclude module: 'OnTimeAPI'
+  runtime.exclude module: 'votifier'
+  runtime.exclude module: 'VanishNoPacket'
+  runtime.exclude module: 'bukkit'
+  runtime.exclude module: 'VaultAPI'
+}
+
+shadowJar {
+  manifest {
+    attributes 'Implementation-Title': description, 'Implementation-Version': project.version
+  }
 }
