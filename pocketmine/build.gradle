@@ -1,2 +1,25 @@
+description = 'Minecraft Plugin NodeBB Integration for PocketMine-MP'
 
-description = ''
+apply plugin: 'java'
+jar.enabled = false
+
+def artifact = "${project.name}-${project.version}.phar"
+def dir = "plugin"
+
+task clean() {
+  delete fileTree(dir: dir)
+}
+
+task phar(type:Exec) {
+  mkdir(dir)
+
+  def out = "${dir}/${artifact}"
+  def src = "src/NodeBBIntegrationPocketMine/"
+  def cmd = """php -dphar.readonly=0 DevTools_v1.11.0.phar --make="${src}" --out "${out}" """
+
+  if (System.getProperty('os.name').toLowerCase().contains('windows')) {
+    commandLine 'cmd', '/c', cmd
+  } else {
+    commandLine cmd
+  }
+}

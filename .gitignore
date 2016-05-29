@@ -16,6 +16,7 @@ libs/
 .mtj.tmp/
 
 # Package Files #
+*.phar
 *.jar
 *.war
 *.ear

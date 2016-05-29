@@ -5,14 +5,14 @@ plugins {
 
 description = 'Minecraft Plugin NodeBB Integration Universal'
 
-shadowJar {
-  manifest {
-    attributes 'Implementation-Title': description, 'Implementation-Version': project.version
-  }
-}
-
 dependencies {
   compile project(':nodebb-integration-bukkit')
   compile project(':nodebb-integration-bungeecord')
   compile project(':nodebb-integration-sponge')
+}
+
+shadowJar {
+  manifest {
+    attributes 'Implementation-Title': description, 'Implementation-Version': project.version
+  }
 }

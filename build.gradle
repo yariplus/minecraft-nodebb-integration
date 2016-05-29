@@ -2,13 +2,18 @@ subprojects {
   group = 'com.radiofreederp'
   version = '0.7.1'
 
-  apply plugin: 'java'
-  apply plugin: 'maven'
-
-  sourceCompatibility = 1.8
-  targetCompatibility = 1.8
-
   repositories {
     mavenCentral()
   }
 }
+
+def buildAliases = [
+  'package' : ['clean', 'jar', 'shadowJar', 'phar'],
+]
+def expandedTaskList = []
+
+gradle.startParameter.taskNames.each {
+  expandedTaskList << (buildAliases[it] ? buildAliases[it] : it)
+}
+
+gradle.startParameter.taskNames = expandedTaskList.flatten()
