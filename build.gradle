@@ -1,14 +1,39 @@
-subprojects {
+allprojects {
   group = 'com.radiofreederp'
   version = '0.7.1'
+}
 
+subprojects {
   repositories {
     mavenCentral()
   }
 }
 
+def packageDir = "packages"
+
+task cleanPackage << {
+  delete fileTree(dir: packageDir)
+}
+
+task movePackages(type: Copy) {
+  mkdir("packages")
+  from "bukkit/build/libs/nodebb-integration-bukkit-${project.version}-all.jar"
+  from "sponge/build/libs/nodebb-integration-sponge-${project.version}-all.jar"
+  from "bungeecord/build/libs/nodebb-integration-bungeecord-${project.version}-all.jar"
+  from "universal/build/libs/nodebb-integration-universal-${project.version}-all.jar"
+  from "pocketmine/plugin/nodebb-integration-pocketmine-${project.version}.phar"
+  into "packages"
+  rename { String filename ->
+    filename.replace("-all", "")
+  }
+
+  doLast {
+    println "Moving finished jars into packages folder..."
+  }
+}
+
 def buildAliases = [
-  'package' : ['clean', 'jar', 'shadowJar', 'phar'],
+  'package' : ['clean', 'cleanPackage', 'jar', 'shadowJar', 'phar', 'movePackages'],
 ]
 def expandedTaskList = []
 

@@ -6,7 +6,7 @@ jar.enabled = false
 def artifact = "${project.name}-${project.version}.phar"
 def dir = "plugin"
 
-task clean() {
+task cleanPackage {
   delete fileTree(dir: dir)
 }
 
