@@ -15,6 +15,14 @@ task cleanPackage << {
   delete fileTree(dir: packageDir)
 }
 
+task getTools << {
+  mkdir('libs')
+  def f = new File('libs/OnTime-4.1.4.jar')
+  if (!f.exists()) {
+    new URL('http://dev.bukkit.org/media/files/912/72/OnTime.jar').withInputStream{ i -> f.withOutputStream{ it << i }}
+  }
+}
+
 task movePackages(type: Copy) {
   mkdir("packages")
   from "bukkit/build/libs/nodebb-integration-bukkit-${project.version}-all.jar"
@@ -33,7 +41,7 @@ task movePackages(type: Copy) {
 }
 
 def buildAliases = [
-  'package' : ['clean', 'cleanPackage', 'jar', 'shadowJar', 'phar', 'movePackages'],
+  'package' : ['clean', 'cleanPackage', 'getTools', 'jar', 'shadowJar', 'phar', 'movePackages'],
 ]
 def expandedTaskList = []
 
