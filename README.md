@@ -1,9 +1,13 @@
 # NodeBB Integration
-This Bukkit plugin is a companion app for [Minecraft Integration](https://community.nodebb.org/topic/3559/nodebb-plugin-minecraft-integration-minecraft-integration), a [NodeBB](https://nodebb.org/) forum plugin. It establishes a WebSocket connection to the forum which allows communication between the forum and your Minecraft server. This allows information on your Minecraft server and players to be displayed on your forum via widgets, user profiles, posts, shoutboxes, etc.. Your forum can also send events back to the server such as posts, messages, awards, groups. The plugin is a WebSocket client only and exposes it's API only to the Minecraft Integration plugin. The WebSocket client is run asynchronously to prevent network lag from interfering with normal server processes. If your forum uses a secure connection, this plugin's connection will be secure as well.
+
+**NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG.**
+
+NodeBB Integration is a Minecraft plugin and companion app for the [Minecraft Integration](https://community.nodebb.org/topic/3559/nodebb-plugin-minecraft-integration-minecraft-integration), a [NodeBB](https://nodebb.org/) forum plugin. It establishes a WebSocket connection to the forum which allows communication between the forum and your Minecraft server. This allows information on your Minecraft server and players to be displayed on your forum via widgets, user profiles, posts, shoutboxes, etc.. Your forum can also send events back to the server such as posts, messages, awards, groups. The plugin is a WebSocket client only and exposes it's API only to the Minecraft Integration plugin. The WebSocket client is run asynchronously to prevent network lag from interfering with normal server processes. If your forum uses a secure connection, this plugin's connection will be secure as well.
 
 ## Requirements
 
 Requires Java 8 or higher.
+Requires Spigot or Sponge.
 
 ### What is NodeBB?
 
@@ -60,15 +64,18 @@ Gets or sets the forum URL and reloads.
 **/nodebb name [name]**
 Gets or sets the forum name and reloads.
 
+**/nodebb live [url]**
+**(Advanced)** Gets or sets the socket.io address.
+
 **/nodebb debug [toggle]**
 Displays information useful for fixing errors. Use the toggle option to turn on verbose logging.
 
 ### For Players
 
-All players have these commands. No permission is required.
+All players have these commands. No permissions are required.
 
-**/register [EMAIL] [PASSWORD]**
-Connects the forum account associated with the email entered to the players UUID, allowing additional features on your forum.
+**/register {PLAYERKEY}**
+Connects the forum account associated with the PLAYERKEY to the players UUID, allowing additional features on your forum.
 
 ## Setting up your NodeBB forum
 
@@ -120,6 +127,12 @@ The SOCKETNAMESPACE and PLUGINID must be changed to their appropriate values in 
 >     console.log(data.player.name);
 >   }
 > }
+
+## Development
+
+Use `gradle package` to build plugins.
+
+Dependencies are downloaded automatically.
 
 ## Project Information
 
