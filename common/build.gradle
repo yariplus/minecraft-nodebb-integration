@@ -1,0 +1,10 @@
+plugins {
+  id 'java'
+}
+
+dependencies {
+  compile group: 'io.socket', name: 'socket.io-client', version: '0.7.0'
+  compile group: 'org.json', name: 'json', version: '20090211'
+  compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.2.0'
+  compile group: 'com.squareup.okio', name: 'okio', version: '1.6.0'
+}

@@ -1,0 +1,18 @@
+plugins {
+  id 'java'
+  id 'com.github.johnrengelman.shadow' version '1.2.3'
+}
+
+description = 'Minecraft Plugin NodeBB Integration Universal'
+
+dependencies {
+  compile project(':nodebb-integration-bukkit')
+  compile project(':nodebb-integration-bungeecord')
+  compile project(':nodebb-integration-sponge')
+}
+
+shadowJar {
+  manifest {
+    attributes 'Implementation-Title': description, 'Implementation-Version': project.version
+  }
+}

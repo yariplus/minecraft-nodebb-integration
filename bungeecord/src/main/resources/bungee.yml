@@ -1,0 +1,4 @@
+name: NodeBBIntegration
+main: com.radiofreederp.nodebbintegration.NodeBBIntegrationBungeeCord
+version: 0.7.1
+author: yariplus

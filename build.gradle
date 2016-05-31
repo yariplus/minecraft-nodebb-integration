@@ -1,0 +1,52 @@
+allprojects {
+  group = 'com.radiofreederp'
+  version = '0.7.1'
+}
+
+subprojects {
+  repositories {
+    mavenCentral()
+  }
+}
+
+def packageDir = "packages"
+
+task cleanPackage << {
+  delete fileTree(dir: packageDir)
+}
+
+task getTools << {
+  mkdir('libs')
+  def f = new File('libs/OnTime-4.1.4.jar')
+  if (!f.exists()) {
+    new URL('http://dev.bukkit.org/media/files/912/72/OnTime.jar').withInputStream{ i -> f.withOutputStream{ it << i }}
+  }
+}
+
+task movePackages(type: Copy) {
+  mkdir("packages")
+  from "bukkit/build/libs/nodebb-integration-bukkit-${project.version}-all.jar"
+  from "sponge/build/libs/nodebb-integration-sponge-${project.version}-all.jar"
+  from "bungeecord/build/libs/nodebb-integration-bungeecord-${project.version}-all.jar"
+  from "universal/build/libs/nodebb-integration-universal-${project.version}-all.jar"
+  from "pocketmine/plugin/nodebb-integration-pocketmine-${project.version}.phar"
+  into "packages"
+  rename { String filename ->
+    filename.replace("-all", "")
+  }
+
+  doLast {
+    println "Moving finished jars into packages folder..."
+  }
+}
+
+def buildAliases = [
+  'package' : ['clean', 'cleanPackage', 'getTools', 'jar', 'shadowJar', 'phar', 'movePackages'],
+]
+def expandedTaskList = []
+
+gradle.startParameter.taskNames.each {
+  expandedTaskList << (buildAliases[it] ? buildAliases[it] : it)
+}
+
+gradle.startParameter.taskNames = expandedTaskList.flatten()

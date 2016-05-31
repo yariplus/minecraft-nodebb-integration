@@ -3,7 +3,8 @@
 !/.gitattributes
 
 target/
-lib/
+build/
+libs/
 *.iml
 
 *.xml
@@ -15,6 +16,7 @@ lib/
 .mtj.tmp/
 
 # Package Files #
+*.phar
 *.jar
 *.war
 *.ear

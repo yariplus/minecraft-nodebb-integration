@@ -1,0 +1,27 @@
+plugins {
+  id 'java'
+  id 'com.github.johnrengelman.shadow' version '1.2.3'
+}
+
+description = 'Minecraft Plugin NodeBB Integration for Sponge'
+
+repositories {
+  // Sponge
+  maven { url "http://repo.spongepowered.org/maven" }
+}
+
+dependencies {
+  compile project(':nodebb-integration-common')
+  compile group: 'org.spongepowered', name: 'spongeapi', version: '3.0.0'
+}
+
+configurations {
+  // Don't package plugins into JAR.
+  runtime.exclude module: 'spongeapi'
+}
+
+shadowJar {
+  manifest {
+    attributes 'Implementation-Title': description, 'Implementation-Version': project.version
+  }
+}

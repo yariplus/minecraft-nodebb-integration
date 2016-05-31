@@ -1,0 +1,27 @@
+plugins {
+  id 'java'
+  id 'com.github.johnrengelman.shadow' version '1.2.3'
+}
+
+description = 'Minecraft Plugin NodeBB Integration for BungeeCord'
+
+repositories {
+  // BungeeCord
+  maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+}
+
+dependencies {
+  compile project(':nodebb-integration-common')
+  compile group: 'net.md-5', name: 'bungeecord-api', version: '1.9-SNAPSHOT'
+}
+
+configurations {
+  // Don't package plugins into JAR.
+  runtime.exclude module: 'bungeecord-api'
+}
+
+shadowJar {
+  manifest {
+    attributes 'Implementation-Title': description, 'Implementation-Version': project.version
+  }
+}
