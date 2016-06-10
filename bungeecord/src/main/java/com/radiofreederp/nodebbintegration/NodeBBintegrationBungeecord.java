@@ -6,7 +6,7 @@ package com.radiofreederp.nodebbintegration;
 
 import net.md_5.bungee.api.plugin.Plugin;
 
-public class NodeBBintegrationBungeeCord extends Plugin {
+public class NodeBBIntegrationBungeeCord extends Plugin {
     @Override
     public void onEnable() {
         // You should not put an enable message in your plugin.
