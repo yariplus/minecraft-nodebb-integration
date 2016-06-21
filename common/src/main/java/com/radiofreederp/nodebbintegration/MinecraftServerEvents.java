@@ -7,9 +7,9 @@ import org.json.JSONObject;
 /**
  * Created by Yari on 4/21/2016.
  */
-public interface MinecraftServerEvents {
+public class MinecraftServerEvents {
 
-    static void onPlayerJoin(NodeBBIntegrationPlugin plugin, Object player, JSONObject data) {
+    public static void onPlayerJoin(NodeBBIntegrationPlugin plugin, Object player, JSONObject data) {
         String socketEvent = SocketIOClient.Events.onPlayerJoin;
 
         SocketIOClient.emit(socketEvent, data, args -> {
