@@ -50,9 +50,12 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
     @Override
     public void log(String message) { log(message, Level.INFO); }
     @Override
+    public void error(String message) { log(message, Level.SEVERE); }
+    @Override
     public void log(String message, Level level) {
-        if (debug) {
-            Bukkit.getLogger().log(level != null ? level : Level.INFO, "[NodeBB-Integration] " + message);
+        if (level == null) level = Level.INFO;
+        if (level == Level.SEVERE || debug) {
+            Bukkit.getLogger().log(level, "[NodeBB-Integration] " + message);
         }
     }
 

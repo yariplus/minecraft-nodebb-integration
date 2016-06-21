@@ -24,6 +24,8 @@ public interface NodeBBIntegrationPlugin {
 
     void log(String message, Level level);
 
+    void error(String message);
+
     boolean isDebug();
 
     void toggleDebug();

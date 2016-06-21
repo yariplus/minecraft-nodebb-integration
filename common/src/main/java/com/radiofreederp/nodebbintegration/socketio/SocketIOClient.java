@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -175,7 +176,10 @@ public final class SocketIOClient {
             plugin.log("Got Cookie: " + cookie);
         } catch (SSLHandshakeException e) {
             e.printStackTrace();
-            plugin.log("Failed to find forum SSL certificates, you may need to add these manually.");
+            plugin.error("Failed to find forum SSL certificates, you may need to add these manually.");
+        } catch (UnknownHostException e) {
+            plugin.error("Can't connect to forum at " + _url);
+            plugin.error("Use `/nodebb url URL` to set the forum address.");
         }
     }
 

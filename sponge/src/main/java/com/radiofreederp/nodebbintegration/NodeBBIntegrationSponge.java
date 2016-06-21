@@ -50,6 +50,10 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
         logger.info(message);
     }
     @Override
+    public void error(String message) {
+        logger.error(message);
+    }
+    @Override
     public void log(String message, Level level) {
         logger.info(message);
     }
