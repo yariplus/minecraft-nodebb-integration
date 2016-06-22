@@ -50,7 +50,13 @@ public final class SocketIOClient {
     public static void connect() { instance.connectSocket(); }
     public static boolean connected() { return hasSocket() && instance.socket.connected(); }
     public static boolean disconnected() { return !connected(); }
-    public static void close() { if (hasSocket()) instance.socket.close(); }
+    public static void close() {
+        if (hasSocket()) {
+            try {
+                instance.socket.close();
+            } catch (Exception ignored) {}
+        }
+    }
 
     public static void emit(final String event, final JSONObject data, final Ack ack) {
         if (connected()) instance.socket.emit(instance.namespace + event, data, new Ack() {
