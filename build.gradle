@@ -1,6 +1,6 @@
 allprojects {
   group = 'com.radiofreederp'
-  version = '0.7.2'
+  version = '0.7.3'
 }
 
 subprojects {
