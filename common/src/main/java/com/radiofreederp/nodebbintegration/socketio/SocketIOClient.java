@@ -16,9 +16,9 @@ import javax.net.ssl.TrustManagerFactory;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -84,6 +84,7 @@ public final class SocketIOClient {
     // Initial connection when created.
     private SocketIOClient(NodeBBIntegrationPlugin _plugin) {
         plugin = _plugin;
+
         connectSocket();
     }
 
@@ -128,6 +129,7 @@ public final class SocketIOClient {
 
                 // Get a session cookie.
                 getCookie(url);
+                if (cookie == null) return;
 
                 // Set SocketIO options.
                 IO.Options options = new IO.Options();
@@ -168,21 +170,34 @@ public final class SocketIOClient {
         plugin.log("Getting Cookie.");
 
         URL url = new URL(_url);
-        URLConnection connection = url.openConnection();
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         try {
             connection.connect();
             cookie = connection.getHeaderField("Set-Cookie");
+            int response = connection.getResponseCode();
+
+            if (response/100 == 4) {
+                plugin.error("Forum returned a " + response + " Forbidden error, you may need to whitelist your server's address on your forum's firewall.");
+                cookie = null;
+            }
+            if (response/100 == 3) {
+                plugin.error("Forum returned a " + response + " Redirect error, please use the actual forum address.");
+                cookie = null;
+            }
+
             plugin.log("Got Cookie: " + cookie);
         } catch (SSLHandshakeException e) {
-            e.printStackTrace();
-            plugin.error("Failed to find forum SSL certificates, you may need to add these manually.");
+            plugin.error("Failed to verify SSL certificates from your forum, you may need to add these manually.");
+            cookie = null;
         } catch (UnknownHostException e) {
             plugin.error("Can't connect to forum at " + _url);
             plugin.error("Use `/nodebb url URL` to set the forum address.");
+            cookie = null;
         }
     }
 
+    // DEPRECATED: Scheduled to be added to Java 8u101
     // Add additional LE certificates.
     static {
         try {
@@ -198,6 +213,21 @@ public final class SocketIOClient {
                 keyStore.setCertificateEntry("lets-encrypt-x1-cross-signed", crt);
             }
 
+            try (InputStream caInput = new BufferedInputStream(NodeBBIntegrationPlugin.class.getResourceAsStream("/lets-encrypt-x2-cross-signed.der"))) {
+                Certificate crt = cf.generateCertificate(caInput);
+                keyStore.setCertificateEntry("lets-encrypt-x2-cross-signed", crt);
+            }
+
+            try (InputStream caInput = new BufferedInputStream(NodeBBIntegrationPlugin.class.getResourceAsStream("/lets-encrypt-x3-cross-signed.der"))) {
+                Certificate crt = cf.generateCertificate(caInput);
+                keyStore.setCertificateEntry("lets-encrypt-x3-cross-signed", crt);
+            }
+
+            try (InputStream caInput = new BufferedInputStream(NodeBBIntegrationPlugin.class.getResourceAsStream("/lets-encrypt-x4-cross-signed.der"))) {
+                Certificate crt = cf.generateCertificate(caInput);
+                keyStore.setCertificateEntry("lets-encrypt-x4-cross-signed", crt);
+            }
+
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             tmf.init(keyStore);
 
@@ -205,7 +235,7 @@ public final class SocketIOClient {
             sslContext.init(null, tmf.getTrustManagers(), null);
             SSLContext.setDefault(sslContext);
         } catch (Exception e) {
-            instance.plugin.log("Failed to load LE X1 certs.");
+            System.out.println("[NodeBB-Integration] Could not automatically add Let's Encrypt Certificates, you will need to add these manually if you need them.");
         }
     }
 }
