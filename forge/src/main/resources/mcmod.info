@@ -1,0 +1,16 @@
+[
+{
+  "modid": "nodebbintegration",
+  "name": "NodeBB Integration",
+  "description": "NodeBB Integration",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["yariplus"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

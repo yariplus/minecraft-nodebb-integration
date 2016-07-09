@@ -26,10 +26,13 @@ task getTools << {
 task movePackages(type: Copy) {
   mkdir("packages")
   from "bukkit/build/libs/nodebb-integration-bukkit-${project.version}-all.jar"
-  from "sponge/build/libs/nodebb-integration-sponge-${project.version}-all.jar"
   from "bungeecord/build/libs/nodebb-integration-bungeecord-${project.version}-all.jar"
+  from "forge/build/libs/nodebb-integration-forge-${project.version}-all.jar"
+  from "sponge/build/libs/nodebb-integration-sponge-${project.version}-all.jar"
   from "universal/build/libs/nodebb-integration-universal-${project.version}-all.jar"
+
   from "pocketmine/plugin/nodebb-integration-pocketmine-${project.version}.phar"
+
   into "packages"
   rename { String filename ->
     filename.replace("-all", "")
@@ -41,7 +44,7 @@ task movePackages(type: Copy) {
 }
 
 def buildAliases = [
-  'package' : ['clean', 'cleanPackage', 'getTools', 'jar', 'shadowJar', 'phar', 'movePackages'],
+  'package' : ['clean', 'cleanPackage', 'getTools', 'jar', 'build', 'shadowJar', 'phar', 'movePackages'],
 ]
 def expandedTaskList = []
 
