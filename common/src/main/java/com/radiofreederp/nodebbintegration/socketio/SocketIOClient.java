@@ -10,22 +10,12 @@ import io.socket.engineio.client.Transport;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLHandshakeException;
-import javax.net.ssl.TrustManagerFactory;
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.KeyStore;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -162,18 +152,18 @@ public final class SocketIOClient {
                 socket.connect();
 
             } catch (URISyntaxException e) {
-                plugin.log("The forum URL was invalid.");
-                e.printStackTrace();
-            } catch (Exception e) {
-                plugin.log("The forum URL was invalid.");
-                e.printStackTrace();
+                plugin.error("The forum URL is incorrectly formatted.");
+                if (plugin.isDebug()) e.printStackTrace();
+            } catch (IOException e) {
+                plugin.error("The forum URL is invalid.");
+                if (plugin.isDebug()) e.printStackTrace();
             }
         });
     }
 
     // Get the express session cookie.
     private void getCookie(String _url) throws IOException {
-        plugin.log("Getting Cookie.");
+        plugin.log("Getting Session Cookie.");
 
         URL url = new URL(_url);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -195,53 +185,12 @@ public final class SocketIOClient {
             plugin.log("Got Cookie: " + cookie);
         } catch (SSLHandshakeException e) {
             plugin.error("Failed to verify SSL certificates from your forum, you may need to add these manually.");
+            if (plugin.isDebug()) e.printStackTrace();
             cookie = null;
         } catch (UnknownHostException e) {
             plugin.error("Can't connect to forum at " + _url);
             plugin.error("Use `/nodebb url URL` to set the forum address.");
             cookie = null;
-        }
-    }
-
-    // DEPRECATED: Scheduled to be added to Java 8u101
-    // Add additional LE certificates.
-    static {
-        try {
-            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            Path ksPath = Paths.get(System.getProperty("java.home"), "lib", "security", "cacerts");
-
-            keyStore.load(Files.newInputStream(ksPath), "changeit".toCharArray());
-
-            CertificateFactory cf = CertificateFactory.getInstance("X.509");
-
-            try (InputStream caInput = new BufferedInputStream(NodeBBIntegrationPlugin.class.getResourceAsStream("/lets-encrypt-x1-cross-signed.der"))) {
-                Certificate crt = cf.generateCertificate(caInput);
-                keyStore.setCertificateEntry("lets-encrypt-x1-cross-signed", crt);
-            }
-
-            try (InputStream caInput = new BufferedInputStream(NodeBBIntegrationPlugin.class.getResourceAsStream("/lets-encrypt-x2-cross-signed.der"))) {
-                Certificate crt = cf.generateCertificate(caInput);
-                keyStore.setCertificateEntry("lets-encrypt-x2-cross-signed", crt);
-            }
-
-            try (InputStream caInput = new BufferedInputStream(NodeBBIntegrationPlugin.class.getResourceAsStream("/lets-encrypt-x3-cross-signed.der"))) {
-                Certificate crt = cf.generateCertificate(caInput);
-                keyStore.setCertificateEntry("lets-encrypt-x3-cross-signed", crt);
-            }
-
-            try (InputStream caInput = new BufferedInputStream(NodeBBIntegrationPlugin.class.getResourceAsStream("/lets-encrypt-x4-cross-signed.der"))) {
-                Certificate crt = cf.generateCertificate(caInput);
-                keyStore.setCertificateEntry("lets-encrypt-x4-cross-signed", crt);
-            }
-
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            tmf.init(keyStore);
-
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, tmf.getTrustManagers(), null);
-            SSLContext.setDefault(sslContext);
-        } catch (Exception e) {
-            System.out.println("[NodeBB-Integration] Could not automatically add Let's Encrypt Certificates, you will need to add these manually if you need them.");
         }
     }
 }
