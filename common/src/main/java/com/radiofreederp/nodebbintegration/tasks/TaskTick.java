@@ -1,17 +1,10 @@
 package com.radiofreederp.nodebbintegration.tasks;
 
-import com.radiofreederp.nodebbintegration.MinecraftServer;
+import com.radiofreederp.nodebbintegration.MinecraftServerCommon;
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationPlugin;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.File;
-import java.io.IOException;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Base64;
 
 /**
  * Created by Yari on 4/20/2016.
@@ -19,7 +12,7 @@ import java.util.Base64;
 public class TaskTick implements Runnable {
 
     private final NodeBBIntegrationPlugin plugin;
-    private final MinecraftServer server;
+    private final MinecraftServerCommon server;
 
     private static TaskTick instance;
 

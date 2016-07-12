@@ -1,19 +1,5 @@
 package com.radiofreederp.nodebbintegration;
 
-import com.radiofreederp.nodebbintegration.tasks.TaskTick;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLHandshakeException;
-import javax.net.ssl.TrustManagerFactory;
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.KeyStore;
-import java.security.cert.*;
 import java.util.logging.Level;
 
 /**
@@ -32,7 +18,7 @@ public interface NodeBBIntegrationPlugin {
 
     PluginConfig getPluginConfig();
 
-    MinecraftServer getMinecraftServer();
+    MinecraftServerCommon getMinecraftServer();
 
     void runTaskAsynchronously(Runnable task);
 

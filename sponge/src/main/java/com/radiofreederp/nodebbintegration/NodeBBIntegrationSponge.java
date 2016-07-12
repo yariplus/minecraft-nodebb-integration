@@ -96,7 +96,7 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
     }
 
     @Override
-    public MinecraftServer getMinecraftServer() {
+    public MinecraftServerCommon getMinecraftServer() {
         return server;
     }
 

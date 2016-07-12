@@ -1,16 +1,14 @@
 package com.radiofreederp.nodebbintegration;
 
-import com.radiofreederp.nodebbintegration.tasks.TaskTick;
 import com.radiofreederp.nodebbintegration.utils.Helpers;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Yari on 4/17/2016.
  */
-public abstract class MinecraftServer implements IMinecraftServer {
+public abstract class MinecraftServerCommon implements IMinecraftServerCommon {
 
     // Base methods are implemented by the actual server.
     abstract public void sendMessage(Object receiver, String message);

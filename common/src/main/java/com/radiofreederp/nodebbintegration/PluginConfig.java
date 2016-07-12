@@ -11,7 +11,7 @@ import java.util.List;
 public abstract class PluginConfig {
 
     protected NodeBBIntegrationPlugin plugin;
-    protected MinecraftServer server;
+    protected MinecraftServerCommon server;
 
     abstract public String getString(ConfigOption option);
     abstract public List<String> getArray(ConfigOption option);

@@ -17,7 +17,7 @@ import java.util.Base64;
 /**
  * Created by Yari on 4/17/2016.
  */
-public class SpongeServer extends MinecraftServer {
+public class SpongeServer extends MinecraftServerCommon {
 
     private final NodeBBIntegrationPlugin plugin;
     public SpongeServer(NodeBBIntegrationPlugin plugin) {

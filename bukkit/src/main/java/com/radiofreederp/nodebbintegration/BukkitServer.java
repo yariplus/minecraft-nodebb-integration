@@ -20,7 +20,7 @@ import java.util.Base64;
 /**
  * Created by Yari on 4/17/2016.
  */
-public class BukkitServer extends MinecraftServer {
+public class BukkitServer extends MinecraftServerCommon {
     private NodeBBIntegrationPlugin plugin;
 
     public BukkitServer(NodeBBIntegrationPlugin plugin) {

@@ -32,7 +32,7 @@ public class CommandRegisterBukkit implements CommandExecutor
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
     {
-        // TODO: MinecraftServer.isPlayer();
+        // TODO: MinecraftServerCommon.isPlayer();
         // Sender needs to be a player.
         if (!(sender instanceof Player)) {
             sender.sendMessage("Command needs to be run by a player.");

@@ -1,6 +1,5 @@
 package com.radiofreederp.nodebbintegration.commands;
 
-import com.radiofreederp.nodebbintegration.MinecraftServer;
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationPlugin;
 import com.radiofreederp.nodebbintegration.PluginConfig;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;

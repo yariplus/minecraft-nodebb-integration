@@ -22,10 +22,10 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
 
     public static NodeBBIntegrationBukkit instance;
 
-    private MinecraftServer minecraftServer = new BukkitServer(this);
+    private MinecraftServerCommon minecraftServer = new BukkitServer(this);
 
     @Override
-    public MinecraftServer getMinecraftServer() {
+    public MinecraftServerCommon getMinecraftServer() {
         return minecraftServer;
     }
 
