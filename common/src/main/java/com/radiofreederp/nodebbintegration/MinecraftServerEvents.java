@@ -1,6 +1,7 @@
 package com.radiofreederp.nodebbintegration;
 
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
+import io.socket.client.Ack;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -9,43 +10,47 @@ import org.json.JSONObject;
  */
 public class MinecraftServerEvents {
 
-    public static void onPlayerJoin(NodeBBIntegrationPlugin plugin, Object player, JSONObject data) {
-        String socketEvent = SocketIOClient.Events.onPlayerJoin;
+    public static void onPlayerJoin(final NodeBBIntegrationPlugin plugin, final Object player, JSONObject data) {
+        final String socketEvent = SocketIOClient.Events.onPlayerJoin;
 
-        SocketIOClient.emit(socketEvent, data, args -> {
+        SocketIOClient.emit(socketEvent, data, new Ack() {
+            @Override
+            public void call(Object... args) {
 
-            // We receive a callback form the forum with information about the primary linked user.
-            // First arg is an error object.
-            if (args[0] == null) {
+                // We receive a callback form the forum with information about the primary linked user.
+                // First arg is an error object.
+                if (args[0] == null) {
 
-                // Construct response object.
-                if (args[1] != null) {
+                    // Construct response object.
+                    if (args[1] != null) {
 
-                    JSONObject resObj = ((JSONObject)args[1]);
-                    JSONObject user = null;
+                        JSONObject resObj = ((JSONObject) args[1]);
+                        JSONObject user = null;
 
-                    if (resObj.has("user") && !resObj.isNull("user")) {
-                        try {
-                            user = resObj.getJSONObject("user");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        if (resObj.has("user") && !resObj.isNull("user")) {
+                            try {
+                                user = resObj.getJSONObject("user");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
-                    }
 
-                    // Inform the player.
-                    if (user != null) {
-                        plugin.getMinecraftServer().sendMessage(player, "Thanks for registering at " + plugin.getPluginConfig().getForumName());
-                    }else{
-                        plugin.getMinecraftServer().sendMessage(player, "Use /register to create an account at " + plugin.getPluginConfig().getForumURL());
+                        // Inform the player.
+                        if (user != null) {
+                            plugin.getMinecraftServer().sendMessage(player, "Thanks for registering at " + plugin.getPluginConfig().getForumName());
+                        } else {
+                            plugin.getMinecraftServer().sendMessage(player, "Use /register to create an account at " + plugin.getPluginConfig().getForumURL());
+                        }
+                    } else {
+                        plugin.log(socketEvent + " callback no response object found.");
                     }
-                }else{
-                    plugin.log(socketEvent + " callback no response object found.");
+                } else {
+                    plugin.log(socketEvent + " callback error.");
+                    try {
+                        plugin.log(((JSONObject) args[0]).getString("message"));
+                    } catch (JSONException e) {
+                    }
                 }
-            }else{
-                plugin.log(socketEvent + " callback error.");
-                try {
-                    plugin.log(((JSONObject) args[0]).getString("message"));
-                } catch (JSONException e) {}
             }
         });
     }

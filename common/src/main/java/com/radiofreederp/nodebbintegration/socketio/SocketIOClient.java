@@ -6,6 +6,7 @@ import io.socket.client.Ack;
 import io.socket.client.IO;
 import io.socket.client.Manager;
 import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 import io.socket.engineio.client.Transport;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -86,77 +87,110 @@ public final class SocketIOClient {
 
     // Setup Socket Events
     private void setupSocket() {
-        socket.on(Socket.EVENT_CONNECT, args -> {
-            plugin.log("Connected to the forum.");
-            plugin.getMinecraftServer().sendMessageToOps("Connected to the forum.");
-            plugin.runTask(TaskTick.getTask());
-        }).on(Socket.EVENT_DISCONNECT, args -> {
-            plugin.log("Lost connection to the forum.");
-            plugin.getMinecraftServer().sendMessageToOps("Lost connection to the forum.");
-            plugin.log(args[0].toString());
-        }).on(Socket.EVENT_CONNECT_ERROR, args -> {
-            plugin.log("Error connecting to the forum.");
-            plugin.log(args[0].toString());
+        socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                plugin.log("Connected to the forum.");
+                plugin.getMinecraftServer().sendMessageToOps("Connected to the forum.");
+                plugin.runTask(TaskTick.getTask());
+            }
         });
 
-        socket.on("eventWebChat", args -> plugin.eventWebChat(args));
-        socket.on("eventGetPlayerVotes", args -> plugin.eventGetPlayerVotes(args));
+        socket.on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                plugin.log("Lost connection to the forum.");
+                plugin.getMinecraftServer().sendMessageToOps("Lost connection to the forum.");
+                plugin.log(args[0].toString());
+            }
+        });
+
+        socket.on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                plugin.log("Error connecting to the forum.");
+                plugin.log(args[0].toString());
+            }
+        });
+
+        socket.on("eventWebChat", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                plugin.eventWebChat(args);
+            }
+        });
+
+        socket.on("eventGetPlayerVotes", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                plugin.eventGetPlayerVotes(args);
+            }
+        });
     }
 
     // Disconnect the socket and reconnect asynchronously.
     private void connectSocket() {
         plugin.log("Reconnecting socket...");
-        plugin.runTaskAsynchronously(() -> {
-            try {
-                // Close previous sockets, and get the forum url and namespace.
-                if (socket != null) socket.close();
+        plugin.runTaskAsynchronously(new Thread() {
+            @Override
+            public void run() {
+                try {
+                    // Close previous sockets, and get the forum url and namespace.
+                    if (socket != null) socket.close();
 
-                // Get config.
-                live = plugin.getMinecraftServer().removeColors(plugin.getPluginConfig().getSocketAddress());
-                transports = plugin.getPluginConfig().getSocketTransports();
-                url = plugin.getMinecraftServer().removeColors(plugin.getPluginConfig().getForumURL());
-                namespace = plugin.getMinecraftServer().removeColors(plugin.getPluginConfig().getSocketNamespace());
+                    // Get config.
+                    live = plugin.getMinecraftServer().removeColors(plugin.getPluginConfig().getSocketAddress());
+                    transports = plugin.getPluginConfig().getSocketTransports();
+                    url = plugin.getMinecraftServer().removeColors(plugin.getPluginConfig().getForumURL());
+                    namespace = plugin.getMinecraftServer().removeColors(plugin.getPluginConfig().getSocketNamespace());
 
-                // ID-10T checks.
-                if (url.length() > 10) {
-                    if (url.charAt(url.length() - 1) != '/') url = url + "/";
-                    if (!url.substring(0, 4).equals("http")) url = "http://" + url;
-                }
+                    // ID-10T checks.
+                    if (url.length() > 10) {
+                        if (url.charAt(url.length() - 1) != '/') url = url + "/";
+                        if (!url.substring(0, 4).equals("http")) url = "http://" + url;
+                    }
 
-                // Get a session cookie.
-                getCookie(url);
-                if (cookie == null) return;
+                    // Get a session cookie.
+                    getCookie(url);
+                    if (cookie == null) return;
 
-                // Set SocketIO options.
-                IO.Options options = new IO.Options();
-                options.transports = transports.toArray(new String[transports.size()]);
+                    // Set SocketIO options.
+                    IO.Options options = new IO.Options();
+                    options.transports = transports.toArray(new String[transports.size()]);
 
-                // Create a new socket.
-                socket = IO.socket(live, options);
+                    // Create a new socket.
+                    socket = IO.socket(live, options);
 
-                // Send the session cookie with requests.
-                socket.io().on(Manager.EVENT_TRANSPORT, args -> {
-                    Transport transport = (Transport)args[0];
+                    // Send the session cookie with requests.
+                    socket.io().on(Manager.EVENT_TRANSPORT, new Emitter.Listener() {
+                        @Override
+                        public void call(Object... args) {
+                            Transport transport = (Transport) args[0];
 
-                    transport.on(Transport.EVENT_REQUEST_HEADERS, args2 -> {
-                        @SuppressWarnings("unchecked")
-                        Map<String, List<String>> headers = (Map<String, List<String>>)args2[0];
-                        headers.put("Cookie", Arrays.asList(cookie));
+                            transport.on(Transport.EVENT_REQUEST_HEADERS, new Emitter.Listener() {
+                                @Override
+                                public void call(Object... args2) {
+                                    @SuppressWarnings("unchecked")
+                                    Map<String, List<String>> headers = (Map<String, List<String>>) args2[0];
+                                    headers.put("Cookie", Arrays.asList(cookie));
+                                }
+                            });
+                        }
                     });
-                });
 
-                // Setup events and such.
-                setupSocket();
+                    // Setup events and such.
+                    setupSocket();
 
-                // Connect to the forum.
-                socket.connect();
+                    // Connect to the forum.
+                    socket.connect();
 
-            } catch (URISyntaxException e) {
-                plugin.error("The forum URL is incorrectly formatted.");
-                if (plugin.isDebug()) e.printStackTrace();
-            } catch (IOException e) {
-                plugin.error("The forum URL is invalid.");
-                if (plugin.isDebug()) e.printStackTrace();
+                } catch (URISyntaxException e) {
+                    plugin.error("The forum URL is incorrectly formatted.");
+                    if (plugin.isDebug()) e.printStackTrace();
+                } catch (IOException e) {
+                    plugin.error("The forum URL is invalid.");
+                    if (plugin.isDebug()) e.printStackTrace();
+                }
             }
         });
     }

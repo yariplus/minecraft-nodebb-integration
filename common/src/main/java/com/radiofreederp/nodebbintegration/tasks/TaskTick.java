@@ -3,6 +3,7 @@ package com.radiofreederp.nodebbintegration.tasks;
 import com.radiofreederp.nodebbintegration.MinecraftServerCommon;
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationPlugin;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
+import io.socket.client.Ack;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -64,7 +65,12 @@ public class TaskTick implements Runnable {
             }
 
             plugin.log("Sending " + socketEvent);
-            SocketIOClient.emit(socketEvent, obj, args -> plugin.log(args[0] == null ? "no errors" : "got error"));
+            SocketIOClient.emit(socketEvent, obj, new Ack() {
+                @Override
+                public void call(Object... args) {
+                    plugin.log(args[0] == null ? "no errors" : "got error");
+                }
+            });
         }
     }
 }

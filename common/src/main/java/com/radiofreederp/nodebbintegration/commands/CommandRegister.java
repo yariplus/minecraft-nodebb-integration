@@ -3,6 +3,7 @@ package com.radiofreederp.nodebbintegration.commands;
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationPlugin;
 import com.radiofreederp.nodebbintegration.PluginConfig;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
+import io.socket.client.Ack;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -50,26 +51,29 @@ public class CommandRegister extends MinecraftCommand {
 
         plugin.log("Sending commandRegister");
 
-        SocketIOClient.emit("commandRegister", obj, res -> {
+        SocketIOClient.emit("commandRegister", obj, new Ack() {
+            @Override
+            public void call(Object... res) {
 
-            plugin.log("Received commandRegister callback");
+                plugin.log("Received commandRegister callback");
 
-            // Default is error.
-            String result = "ERROR";
+                // Default is error.
+                String result = "ERROR";
 
-            // Interpret response object.
-            try {
-                if (res[0] != null) {
-                    result = ((JSONObject) res[0]).getString("message");
-                } else {
-                    result = ((JSONObject) res[1]).getString("result");
+                // Interpret response object.
+                try {
+                    if (res[0] != null) {
+                        result = ((JSONObject) res[0]).getString("message");
+                    } else {
+                        result = ((JSONObject) res[1]).getString("result");
+                    }
+                } catch (Exception e) {
+                    result = "BADRES";
                 }
-            } catch (Exception e) {
-                result = "BADRES";
-            }
 
-            // Send response message.
-            server.sendMessage(sender, plugin.getPluginConfig().getArray(PluginConfig.ConfigOption.valueOf("MSG_REG_" + result)), plugin.getPluginConfig().getConfigMap());
+                // Send response message.
+                server.sendMessage(sender, plugin.getPluginConfig().getArray(PluginConfig.ConfigOption.valueOf("MSG_REG_" + result)), plugin.getPluginConfig().getConfigMap());
+            }
         });
 
         return false;
