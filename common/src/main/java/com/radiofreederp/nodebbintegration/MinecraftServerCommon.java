@@ -4,7 +4,6 @@ import com.radiofreederp.nodebbintegration.utils.Helpers;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * Created by Yari on 4/17/2016.
@@ -39,56 +38,38 @@ public abstract class MinecraftServerCommon implements IMinecraftServerCommon {
     // Send message list.
     @Override
     public final void sendMessage(final Object receiver, List<String> messages) {
-        messages.forEach(new Consumer<String>() {
-            @Override
-            public void accept(String message) {
-                sendMessage(receiver, message);
-            }
-        });
+        for (String message : messages) {
+            sendMessage(receiver, message);
+        }
     }
     @Override
     public final void sendMessage(final Object receiver, List<String> messages, final HashMap<String, String> vars) {
-        messages.forEach(new Consumer<String>() {
-            @Override
-            public void accept(String message) {
-                sendMessage(receiver, message, vars);
-            }
-        });
+        for (String message : messages) {
+            sendMessage(receiver, message, vars);
+        }
     }
     @Override
     public final void sendConsoleMessage(List<String> messages) {
-        messages.forEach(new Consumer<String>() {
-            @Override
-            public void accept(String message) {
-                sendConsoleMessage(message);
-            }
-        });
+        for (String message : messages) {
+            sendConsoleMessage(message);
+        }
     }
     @Override
     public final void sendConsoleMessage(List<String> messages, final HashMap<String, String> vars) {
-        messages.forEach(new Consumer<String>() {
-            @Override
-            public void accept(String message) {
-                sendConsoleMessage(message, vars);
-            }
-        });
+        for (String message : messages) {
+            sendConsoleMessage(message, vars);
+        }
     }
     @Override
     public final void sendMessageToOps(List<String> messages) {
-        messages.forEach(new Consumer<String>() {
-            @Override
-            public void accept(String message) {
-                sendMessageToOps(message);
-            }
-        });
+        for (String message : messages) {
+            sendMessageToOps(message);
+        }
     }
     @Override
     public final void sendMessageToOps(List<String> messages, final HashMap<String, String> vars) {
-        messages.forEach(new Consumer<String>() {
-            @Override
-            public void accept(String message) {
-                sendMessageToOps(message, vars);
-            }
-        });
+        for (String message : messages) {
+            sendMessageToOps(message, vars);
+        }
     }
 }

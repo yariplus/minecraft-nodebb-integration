@@ -1,0 +1,19 @@
+plugins {
+  id 'java'
+  id 'com.github.johnrengelman.shadow' version '1.2.3'
+}
+
+description = 'Minecraft Plugin NodeBB Integration Legacy'
+
+compileJava.options.fork = true
+compileJava.options.forkOptions.executable = project.jdk17
+
+dependencies {
+  compile project(':nodebb-integration-bukkit-legacy')
+}
+
+shadowJar {
+  manifest {
+    attributes 'Implementation-Title': description, 'Implementation-Version': project.version
+  }
+}

@@ -7,6 +7,9 @@ subprojects {
   repositories {
     mavenCentral()
   }
+  ext {
+    jdk17 = 'path to your javac'
+  }
 }
 
 def packageDir = "packages"
@@ -28,6 +31,7 @@ task movePackages(type: Copy) {
   from "bukkit/build/libs/nodebb-integration-bukkit-${project.version}-all.jar"
   from "bungeecord/build/libs/nodebb-integration-bungeecord-${project.version}-all.jar"
   from "forge/build/libs/nodebb-integration-forge-${project.version}-all.jar"
+  from "legacy/build/libs/nodebb-integration-legacy-${project.version}-all.jar"
   from "sponge/build/libs/nodebb-integration-sponge-${project.version}-all.jar"
   from "universal/build/libs/nodebb-integration-universal-${project.version}-all.jar"
 

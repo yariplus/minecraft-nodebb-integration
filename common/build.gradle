@@ -2,6 +2,9 @@ plugins {
   id 'java'
 }
 
+compileJava.options.fork = true
+compileJava.options.forkOptions.executable = project.jdk17
+
 dependencies {
   compile group: 'io.socket', name: 'socket.io-client', version: '0.7.0'
   compile group: 'org.json', name: 'json', version: '20090211'
