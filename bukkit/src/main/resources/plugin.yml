@@ -6,7 +6,7 @@ softdepend: [OnTime, Votifier, VanishNoPacket]
 commands:
   register:
     description: Register your Minecraft account with your forum account.
-    usage: /register [email] [password]
+    usage: /register [key]
   nodebb:
     description: NodeBB Integration parent command.
     usage: /nodebb
