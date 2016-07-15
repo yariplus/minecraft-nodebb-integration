@@ -4,10 +4,8 @@ version: 0.7.3
 depend: [Vault]
 softdepend: [OnTime, Votifier, VanishNoPacket]
 commands:
-  register:
-    description: Register your Minecraft account with your forum account.
-    usage: /register [key]
   nodebb:
     description: NodeBB Integration parent command.
-    usage: /nodebb
     permission: nodebb.admin
+  register:
+    description: Register your Minecraft account with your forum account.

@@ -67,7 +67,7 @@ Displays information useful for fixing errors. Use the toggle option to turn on 
 
 All players have these commands. No permission is required.
 
-**/register [EMAIL] [PASSWORD]**
+**/register [KEY]**
 Connects the forum account associated with the email entered to the players UUID, allowing additional features on your forum.
 
 ## Setting up your NodeBB forum

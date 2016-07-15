@@ -8,7 +8,7 @@ subprojects {
     mavenCentral()
   }
   ext {
-    jdk17 = 'path to your javac'
+    jdk17 = System.getenv('JAVAC_17')
   }
 }
 
