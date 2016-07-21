@@ -7,17 +7,12 @@ import com.radiofreederp.nodebbintegration.bukkit.hooks.OnTimeHook;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VanishNoPacketHook;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VaultHook;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Arrays;
 
 /**
  * Created by Yari on 5/18/2016.
@@ -56,28 +51,10 @@ public class ListenerPlayerJoin implements Listener {
             }
 
             if (VaultHook.chat != null && VaultHook.permission != null) {
-                String[] groupNames = VaultHook.permission.getPlayerGroups(null, player);
-                final JSONArray groups = new JSONArray();
-                final World world = Bukkit.getWorlds().get(0);
-
                 obj.put("primaryGroup", VaultHook.chat.getPrimaryGroup(player));
                 obj.put("prefix", VaultHook.chat.getPlayerPrefix(player));
                 obj.put("suffix", VaultHook.chat.getPlayerSuffix(player));
-
-                for (String groupName : groupNames) {
-                    try {
-                        JSONObject group = new JSONObject();
-
-                        group.put("name", groupName);
-                        group.put("prefix", VaultHook.chat.getGroupPrefix(world, groupName));
-                        group.put("suffix", VaultHook.chat.getGroupSuffix(world, groupName));
-
-                        groups.put(group);
-                    } catch (JSONException ignored) {
-                    }
-                }
-
-                obj.put("groups", groups);
+                obj.put("groups", VaultHook.permission.getPlayerGroups(player));
             }
 
         } catch (JSONException e) {

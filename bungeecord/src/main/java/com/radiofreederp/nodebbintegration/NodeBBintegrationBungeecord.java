@@ -12,5 +12,6 @@ public class NodeBBIntegrationBungeeCord extends Plugin {
         // You should not put an enable message in your plugin.
         // BungeeCord already does so
         getLogger().info("Yay! It loads!");
+
     }
 }

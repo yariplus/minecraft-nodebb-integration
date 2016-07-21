@@ -58,6 +58,8 @@ public class TaskTick implements Runnable {
 
                 obj.put("icon", server.getServerIcon());
 
+                obj.put("groups", server.getGroups());
+
             } catch (JSONException e) {
                 plugin.log("Error constructing JSON Object for " + socketEvent);
                 e.printStackTrace();

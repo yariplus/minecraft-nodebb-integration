@@ -3,6 +3,7 @@ package com.radiofreederp.nodebbintegration;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -96,5 +97,11 @@ public class ForgeServer extends MinecraftServerCommon {
   @Override
   public int getMaxPlayers() {
     return MinecraftServer.getServer().getMaxPlayers();
+  }
+
+  @Override
+  public JSONArray getGroups() {
+    JSONArray groups = null;
+    return groups;
   }
 }

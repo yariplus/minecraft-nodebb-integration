@@ -1,5 +1,6 @@
 package com.radiofreederp.nodebbintegration;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -47,4 +48,6 @@ public interface IMinecraftServerCommon {
 
     int getOnlinePlayers();
     int getMaxPlayers();
+
+    JSONArray getGroups();
 }

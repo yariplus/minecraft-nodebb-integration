@@ -1,6 +1,7 @@
 package com.radiofreederp.nodebbintegration;
 
 import com.google.common.io.Files;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.spongepowered.api.Sponge;
@@ -149,5 +150,11 @@ public class SpongeServer extends MinecraftServerCommon {
     @Override
     public int getMaxPlayers() {
         return Sponge.getServer().getMaxPlayers();
+    }
+
+    @Override
+    public JSONArray getGroups() {
+        JSONArray groups = null;
+        return groups;
     }
 }

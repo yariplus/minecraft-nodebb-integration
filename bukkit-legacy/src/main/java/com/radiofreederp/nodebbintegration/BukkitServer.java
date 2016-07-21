@@ -1,18 +1,18 @@
 package com.radiofreederp.nodebbintegration;
 
-import com.google.common.io.Files;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VanishNoPacketHook;
+import com.radiofreederp.nodebbintegration.bukkit.hooks.VaultHook;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -163,5 +163,27 @@ public class BukkitServer extends MinecraftServerCommon {
     @Override
     public int getMaxPlayers() {
         return Bukkit.getMaxPlayers();
+    }
+
+    @Override
+    public JSONArray getGroups() {
+        JSONArray groups = new JSONArray();
+        World world = Bukkit.getWorlds().get(0);
+
+        for ( String groupName : VaultHook.permission.getGroups() ) {
+            JSONObject group = new JSONObject();
+
+            try {
+                group.put("name", groupName);
+                group.put("prefix", VaultHook.chat.getGroupPrefix(world, groupName));
+                group.put("suffix", VaultHook.chat.getGroupSuffix(world, groupName));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            groups.put(group);
+        }
+
+        return groups;
     }
 }
