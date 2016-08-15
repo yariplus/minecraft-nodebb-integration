@@ -7,15 +7,21 @@ import com.radiofreederp.nodebbintegration.bukkit.hooks.VanishNoPacketHook;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VaultHook;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VotifierHook;
 import com.radiofreederp.nodebbintegration.bukkit.listeners.*;
+import com.radiofreederp.nodebbintegration.socketio.ESocketEvent;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
 import com.radiofreederp.nodebbintegration.tasks.TaskTick;
+import io.socket.client.Ack;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.scheduler.BukkitTask;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.logging.Level;
 
 public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegrationPlugin {
@@ -131,7 +137,6 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
 
     @Override
     public void onEnable() {
-
         instance = this;
 
         // Start the socket client.
@@ -159,6 +164,14 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
         // Register commands.
         this.getCommand("nodebb").setExecutor(new CommandNodeBBBukkit(this));
         this.getCommand("register").setExecutor(new CommandRegisterBukkit(this));
+
+        // Sync Players
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                SocketIOClient.emit(ESocketEvent.SEND_OFFLINE_PLAYERS, minecraftServer.getOfflinePlayers(), args -> log("Received " + ESocketEvent.SEND_OFFLINE_PLAYERS + " callback."));
+            }
+        }.runTaskLater(this, 100);
 
         // Turn off debug messages after setup.
         debug = false;

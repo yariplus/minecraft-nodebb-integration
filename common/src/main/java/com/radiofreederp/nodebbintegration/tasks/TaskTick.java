@@ -2,6 +2,7 @@ package com.radiofreederp.nodebbintegration.tasks;
 
 import com.radiofreederp.nodebbintegration.MinecraftServerCommon;
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationPlugin;
+import com.radiofreederp.nodebbintegration.socketio.ESocketEvent;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
 import io.socket.client.Ack;
 import org.json.JSONException;
@@ -34,7 +35,7 @@ public class TaskTick implements Runnable {
     public void run() {
         if (SocketIOClient.connected()) {
 
-            final String socketEvent = "eventStatus";
+            final String socketEvent = ESocketEvent.SEND_SERVER_STATUS;
 
             JSONObject obj = new JSONObject();
 
@@ -57,8 +58,6 @@ public class TaskTick implements Runnable {
                 obj.put("pluginList", server.getPluginList());
 
                 obj.put("icon", server.getServerIcon());
-
-                obj.put("groups", server.getGroups());
 
             } catch (JSONException e) {
                 plugin.log("Error constructing JSON Object for " + socketEvent);

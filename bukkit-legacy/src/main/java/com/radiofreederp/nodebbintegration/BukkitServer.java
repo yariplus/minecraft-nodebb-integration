@@ -2,10 +2,7 @@ package com.radiofreederp.nodebbintegration;
 
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VanishNoPacketHook;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VaultHook;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Server;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -15,6 +12,8 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.function.Consumer;
 
 /**
  * Created by Yari on 4/17/2016.
@@ -167,23 +166,72 @@ public class BukkitServer extends MinecraftServerCommon {
 
     @Override
     public JSONArray getGroups() {
-        JSONArray groups = new JSONArray();
-        World world = Bukkit.getWorlds().get(0);
+        if (VaultHook.permission == null) return new JSONArray();
 
-        for ( String groupName : VaultHook.permission.getGroups() ) {
-            JSONObject group = new JSONObject();
-
-            try {
-                group.put("name", groupName);
-                group.put("prefix", VaultHook.chat.getGroupPrefix(world, groupName));
-                group.put("suffix", VaultHook.chat.getGroupSuffix(world, groupName));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            groups.put(group);
+        try {
+            return new JSONArray(VaultHook.permission.getGroups());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return new JSONArray();
         }
+    }
+
+    @Override
+    public JSONObject getGroupsWithMembers() {
+        final JSONObject groups = new JSONObject();
+
+        if (VaultHook.permission == null) return groups;
+
+        Arrays.stream(VaultHook.permission.getGroups()).forEach(new Consumer<String>() {
+            @Override
+            public void accept(String g) {
+                try {
+                    groups.put(g, new JSONArray());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        Arrays.stream(Bukkit.getOfflinePlayers()).forEach(new Consumer<OfflinePlayer>() {
+            @Override
+            public void accept(final OfflinePlayer p) {
+                Arrays.stream(VaultHook.permission.getPlayerGroups(Bukkit.getWorlds().get(0).getName(), p)).forEach(new Consumer<String>() {
+                    @Override
+                    public void accept(String g) {
+                        // TODO: Add UUID resolver.
+                        // ((JSONArray) groups.get(g)).put(p.getUniqueId());
+                    }
+                });
+            }
+        });
 
         return groups;
+    }
+
+    @Override
+    public JSONObject getOfflinePlayers() {
+        final JSONObject players = new JSONObject();
+
+        Arrays.stream(Bukkit.getOfflinePlayers()).forEach(new Consumer<OfflinePlayer>() {
+            @Override
+            public void accept(OfflinePlayer offlinePlayer) {
+                JSONObject player = new JSONObject();
+                try {
+                    player.put("name", offlinePlayer.getName());
+                    player.put("lastPlayed", offlinePlayer.getLastPlayed());
+                    if (VaultHook.permission != null) {
+                        String[] groups = VaultHook.permission.getPlayerGroups(Bukkit.getWorlds().get(0).getName(), offlinePlayer);
+                        player.put("groups", groups);
+                    }
+                    // TODO: Add UUID resolver.
+                    // players.put(offlinePlayer.getUniqueId().toString(), player);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        return players;
     }
 }

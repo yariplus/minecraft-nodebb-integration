@@ -101,7 +101,16 @@ public class ForgeServer extends MinecraftServerCommon {
 
   @Override
   public JSONArray getGroups() {
-    JSONArray groups = null;
-    return groups;
+    return new JSONArray();
+  }
+
+  @Override
+  public JSONObject getGroupsWithMembers() {
+    return new JSONObject();
+  }
+
+  @Override
+  public JSONObject getOfflinePlayers() {
+    return new JSONObject();
   }
 }

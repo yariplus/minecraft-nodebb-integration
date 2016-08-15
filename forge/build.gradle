@@ -64,6 +64,8 @@ configurations {
   runtime.exclude group: 'lzma'
   runtime.exclude group: 'com.ibm.icu'
   runtime.exclude group: 'com.paulscode'
+  runtime.exclude group: 'org.apache'
+  runtime.exclude group: 'org.lwjgl'
 }
 
 shadowJar {

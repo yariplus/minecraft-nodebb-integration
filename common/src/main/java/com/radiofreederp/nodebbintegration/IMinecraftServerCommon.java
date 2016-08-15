@@ -50,4 +50,6 @@ public interface IMinecraftServerCommon {
     int getMaxPlayers();
 
     JSONArray getGroups();
+    JSONObject getGroupsWithMembers();
+    JSONObject getOfflinePlayers();
 }
