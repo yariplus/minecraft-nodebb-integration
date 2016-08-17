@@ -5,8 +5,9 @@ package com.radiofreederp.nodebbintegration.socketio;
  */
 public interface ESocketEvent {
   String SEND_SERVER_STATUS = "eventStatus";
-  String SEND_OFFLINE_PLAYERS = "eventOfflinePlayers";
-  String SEND_GROUPS = "";
+  String WRITE_OFFLINE_PLAYERS = "writeOfflinePlayers";
+  String WRITE_RANKS = "writeRanks";
+  String WRITE_RANKS_WITH_MEMBERS = "writeRanksWithMembers";
   String SEND_PLAYER_LOGOUT = "";
   String SEND_PLAYER_LOGIN = "";
   String SEND_PLAYER_CHAT = "";

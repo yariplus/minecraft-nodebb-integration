@@ -50,6 +50,12 @@ public final class SocketIOClient {
     }
 
     public static void emit(final String event, final JSONObject data, final Ack ack) {
+        try {
+            data.put("key", instance.plugin.getPluginConfig().getForumAPIKey());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         if (connected()) instance.socket.emit(instance.namespace + event, data, new Ack() {
             @Override
             public void call(Object... args) {

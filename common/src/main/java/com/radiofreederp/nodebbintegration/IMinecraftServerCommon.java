@@ -49,7 +49,7 @@ public interface IMinecraftServerCommon {
     int getOnlinePlayers();
     int getMaxPlayers();
 
-    JSONArray getGroups();
+    JSONObject getGroups();
     JSONObject getGroupsWithMembers();
     JSONObject getOfflinePlayers();
 }

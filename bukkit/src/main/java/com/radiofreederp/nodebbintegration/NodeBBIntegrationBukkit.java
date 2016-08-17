@@ -169,7 +169,15 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
         new BukkitRunnable(){
             @Override
             public void run() {
-                SocketIOClient.emit(ESocketEvent.SEND_OFFLINE_PLAYERS, minecraftServer.getOfflinePlayers(), args -> log("Received " + ESocketEvent.SEND_OFFLINE_PLAYERS + " callback."));
+                JSONObject data = new JSONObject();
+
+                try {
+                    data.put("ranks", minecraftServer.getGroupsWithMembers());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                SocketIOClient.emit(ESocketEvent.WRITE_RANKS_WITH_MEMBERS, data, args -> log("Received " + ESocketEvent.WRITE_RANKS_WITH_MEMBERS + " callback."));
             }
         }.runTaskLater(this, 100);
 

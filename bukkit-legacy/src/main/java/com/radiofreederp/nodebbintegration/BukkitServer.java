@@ -164,45 +164,23 @@ public class BukkitServer extends MinecraftServerCommon {
         return Bukkit.getMaxPlayers();
     }
 
-    @Override
-    public JSONArray getGroups() {
-        if (VaultHook.permission == null) return new JSONArray();
-
-        try {
-            return new JSONArray(VaultHook.permission.getGroups());
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return new JSONArray();
-        }
-    }
-
-    @Override
-    public JSONObject getGroupsWithMembers() {
-        final JSONObject groups = new JSONObject();
+    private JSONArray getPlayerGroups(OfflinePlayer player) {
+        final JSONArray groups = new JSONArray();
 
         if (VaultHook.permission == null) return groups;
 
-        Arrays.stream(VaultHook.permission.getGroups()).forEach(new Consumer<String>() {
+        Arrays.stream(VaultHook.permission.getPlayerGroups(Bukkit.getWorlds().get(0).getName(), player)).forEach(new Consumer<String>() {
             @Override
             public void accept(String g) {
                 try {
-                    groups.put(g, new JSONArray());
+                    JSONObject group = new JSONObject();
+
+                    group.put("name", g);
+
+                    groups.put(group);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            }
-        });
-
-        Arrays.stream(Bukkit.getOfflinePlayers()).forEach(new Consumer<OfflinePlayer>() {
-            @Override
-            public void accept(final OfflinePlayer p) {
-                Arrays.stream(VaultHook.permission.getPlayerGroups(Bukkit.getWorlds().get(0).getName(), p)).forEach(new Consumer<String>() {
-                    @Override
-                    public void accept(String g) {
-                        // TODO: Add UUID resolver.
-                        // ((JSONArray) groups.get(g)).put(p.getUniqueId());
-                    }
-                });
             }
         });
 
@@ -210,28 +188,99 @@ public class BukkitServer extends MinecraftServerCommon {
     }
 
     @Override
-    public JSONObject getOfflinePlayers() {
-        final JSONObject players = new JSONObject();
+    public JSONObject getGroups() {
+        final JSONObject groups = new JSONObject();
 
-        Arrays.stream(Bukkit.getOfflinePlayers()).forEach(new Consumer<OfflinePlayer>() {
+        if (VaultHook.permission == null) return groups;
+
+        Arrays.stream(VaultHook.permission.getGroups()).forEach(new Consumer<String>() {
             @Override
-            public void accept(OfflinePlayer offlinePlayer) {
-                JSONObject player = new JSONObject();
+            public void accept(String g) {
+                JSONObject group = new JSONObject();
+
                 try {
-                    player.put("name", offlinePlayer.getName());
-                    player.put("lastPlayed", offlinePlayer.getLastPlayed());
-                    if (VaultHook.permission != null) {
-                        String[] groups = VaultHook.permission.getPlayerGroups(Bukkit.getWorlds().get(0).getName(), offlinePlayer);
-                        player.put("groups", groups);
-                    }
-                    // TODO: Add UUID resolver.
-                    // players.put(offlinePlayer.getUniqueId().toString(), player);
+                    group.put("name", g);
+                    group.put("members", new JSONArray());
+
+                    groups.put(g, group);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         });
 
-        return players;
+        return groups;
+    }
+
+    @Override
+    public JSONObject getGroupsWithMembers() {
+        JSONObject data = new JSONObject();
+
+        if (VaultHook.permission == null) return data;
+
+        final JSONObject groupsObj = getGroups();
+
+        Arrays.stream(Bukkit.getOfflinePlayers()).forEach(new Consumer<OfflinePlayer>() {
+            @Override
+            public void accept(final OfflinePlayer p) {
+                Arrays.stream(VaultHook.permission.getPlayerGroups(Bukkit.getWorlds().get(0).getName(), p)).forEach(new Consumer<String>() {
+                    @Override
+                    public void accept(String g) {
+                        try {
+                            JSONObject player = new JSONObject();
+
+                            //player.put("id", p.getUniqueId());
+                            player.put("name", p.getName());
+                            player.put("lastplayed", p.getLastPlayed());
+
+                            groupsObj.getJSONObject(g).getJSONArray("members").put(player);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
+
+        try {
+            data.put("groups", groupsObj.toJSONArray(groupsObj.names()));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return data;
+    }
+
+    @Override
+    public JSONObject getOfflinePlayers() {
+        JSONObject data = new JSONObject();
+
+        final JSONArray players = new JSONArray();
+
+        Arrays.stream(Bukkit.getOfflinePlayers()).forEach(new Consumer<OfflinePlayer>() {
+            @Override
+            public void accept(OfflinePlayer offlinePlayer) {
+                JSONObject player = new JSONObject();
+
+                try {
+                    //player.put("id", offlinePlayer.getUniqueId());
+                    player.put("name", offlinePlayer.getName());
+                    player.put("lastPlayed", offlinePlayer.getLastPlayed());
+                    player.put("groups", getPlayerGroups(offlinePlayer));
+
+                    players.put(player);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        try {
+            data.put("players", players);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return data;
     }
 }

@@ -153,8 +153,8 @@ public class SpongeServer extends MinecraftServerCommon {
     }
 
     @Override
-    public JSONArray getGroups() {
-        return new JSONArray();
+    public JSONObject getGroups() {
+        return new JSONObject();
     }
 
     @Override
