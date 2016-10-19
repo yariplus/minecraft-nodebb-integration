@@ -2,7 +2,9 @@ package com.radiofreederp.nodebbintegration.commands;
 
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationPlugin;
 import com.radiofreederp.nodebbintegration.PluginConfig;
+import com.radiofreederp.nodebbintegration.socketio.ESocketEvent;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
+import io.socket.client.Ack;
 
 import java.util.HashMap;
 
@@ -29,6 +31,20 @@ public class CommandNodeBB extends MinecraftCommand {
                         plugin.getPluginConfig().reload();
                         server.sendMessage(sender, "Reloaded PluginConfig.");
                         server.sendConsoleMessage("Reloaded PluginConfig.");
+                        break;
+                    case "syncgroups":
+                        // Sync Players
+                        plugin.runTask(new Runnable() {
+                            @Override
+                            public void run() {
+                                SocketIOClient.emit(ESocketEvent.WRITE_RANKS_WITH_MEMBERS, plugin.getMinecraftServer().getGroupsWithMembers(), new Ack() {
+                                    @Override
+                                    public void call(Object... args) {
+                                        plugin.log("Received " + ESocketEvent.WRITE_RANKS_WITH_MEMBERS + " callback.");
+                                    }
+                                });
+                            }
+                        });
                         break;
                     case "debug":
                         if (SocketIOClient.connected()) {

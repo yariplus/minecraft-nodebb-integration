@@ -242,7 +242,7 @@ public class BukkitServer extends MinecraftServerCommon {
         }));
 
         try {
-            data.put("groups", groupsObj.toJSONArray(groupsObj.names()));
+            data.put("ranks", groupsObj.toJSONArray(groupsObj.names()));
         } catch (JSONException e) {
             e.printStackTrace();
         }
