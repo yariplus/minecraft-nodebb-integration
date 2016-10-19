@@ -12,7 +12,7 @@ repositories {
 
 dependencies {
   compile project(':nodebb-integration-common')
-  compile group: 'org.spongepowered', name: 'spongeapi', version: '3.0.0'
+  compile group: 'org.spongepowered', name: 'spongeapi', version: '5.0.0'
 }
 
 configurations {

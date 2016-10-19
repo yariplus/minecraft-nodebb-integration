@@ -89,7 +89,7 @@ public class SpongeServer extends MinecraftServerCommon {
 
             try {
                 pluginObj.put("name", plugin.getName());
-                pluginObj.put("version", plugin.getVersion());
+                pluginObj.put("version", plugin.getVersion().orElse(""));
 
                 pluginList.add(pluginObj);
             } catch (JSONException e) {
