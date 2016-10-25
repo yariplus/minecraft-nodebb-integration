@@ -143,6 +143,11 @@ public class SpongeServer extends MinecraftServerCommon {
     }
 
     @Override
+    public String getPlayerPrefix(Object player) {
+        return null;
+    }
+
+    @Override
     public int getOnlinePlayers() {
         return Sponge.getServer().getOnlinePlayers().size();
     }

@@ -90,6 +90,11 @@ public class ForgeServer extends MinecraftServerCommon {
   }
 
   @Override
+  public String getPlayerPrefix(Object player) {
+    return null;
+  }
+
+  @Override
   public int getOnlinePlayers() {
     return MinecraftServer.getServer().getCurrentPlayerCount();
   }

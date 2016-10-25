@@ -46,6 +46,8 @@ public interface IMinecraftServerCommon {
 
     String getMotd();
 
+    String getPlayerPrefix(Object player);
+
     int getOnlinePlayers();
     int getMaxPlayers();
 

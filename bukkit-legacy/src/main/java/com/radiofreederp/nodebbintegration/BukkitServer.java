@@ -155,6 +155,17 @@ public class BukkitServer extends MinecraftServerCommon {
     }
 
     @Override
+    public String getPlayerPrefix(Object _player) {
+        Player player = (Player)_player;
+
+        if (VaultHook.chat != null) {
+            return VaultHook.chat.getPlayerPrefix(player);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public int getOnlinePlayers() {
         return Bukkit.getOnlinePlayers().length;
     }

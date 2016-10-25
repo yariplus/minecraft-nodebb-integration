@@ -44,6 +44,7 @@ public class CommandRegister extends MinecraftCommand {
             obj.put("id", uuid);
             obj.put("name", name);
             obj.put("pkey", pkey);
+            obj.put("prefix", server.getPlayerPrefix(sender));
         } catch (JSONException e) {
             e.printStackTrace();
             return true;
