@@ -1,6 +1,7 @@
 package com.radiofreederp.nodebbintegration;
 
 import com.google.common.io.Files;
+import com.radiofreederp.nodebbintegration.bukkit.hooks.OnTimeHook;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VanishNoPacketHook;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VaultHook;
 import org.bukkit.*;
@@ -79,28 +80,46 @@ public class BukkitServer extends MinecraftServerCommon {
 
     @Override
     public ArrayList<JSONObject> getPlayerList() {
-
         final ArrayList<JSONObject> playerList = new ArrayList<>();
 
         for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-
             if (VanishNoPacketHook.isEnabled()) {
                 if (VanishNoPacketHook.isVanished(player.getName())) continue;
             }
 
-            JSONObject playerObj = new JSONObject();
-
-            try {
-                playerObj.put("name", player.getName());
-                playerObj.put("id", player.getUniqueId());
-
-                playerList.add(playerObj);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            playerList.add(getPlayerJSON(player));
         }
 
         return playerList;
+    }
+
+    @Override
+    public JSONObject getPlayerJSON (Object _player) {
+        JSONObject playerObj = new JSONObject();
+        Player player = (Player)_player;
+
+        try {
+            playerObj.put("name", player.getName());
+            playerObj.put("displayName", player.getDisplayName());
+            playerObj.put("id", player.getUniqueId());
+
+            if (VaultHook.chat != null && VaultHook.permission != null) {
+                playerObj.put("primaryGroup", VaultHook.chat.getPrimaryGroup(player));
+                playerObj.put("prefix", VaultHook.chat.getPlayerPrefix(player));
+                playerObj.put("suffix", VaultHook.chat.getPlayerSuffix(player));
+                playerObj.put("groups", VaultHook.permission.getPlayerGroups(null, player));
+            }
+
+            if (OnTimeHook.isEnabled()) {
+                if (OnTimeHook.isEnabled()) {
+                    OnTimeHook.onTimeCheckTime(player, playerObj);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return playerObj;
     }
 
     @Override

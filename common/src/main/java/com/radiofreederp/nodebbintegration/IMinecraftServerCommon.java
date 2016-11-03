@@ -36,6 +36,8 @@ public interface IMinecraftServerCommon {
     ArrayList<JSONObject> getPlayerList();
     ArrayList<JSONObject> getPluginList();
 
+    JSONObject getPlayerJSON(Object _player);
+
     String getVersion();
     String getServerName();
 

@@ -13,6 +13,12 @@ public class MinecraftServerEvents {
     public static void onPlayerJoin(final NodeBBIntegrationPlugin plugin, final Object player, JSONObject data) {
         final String socketEvent = SocketIOClient.Events.onPlayerJoin;
 
+        try {
+            data.put("key", plugin.getPluginConfig().getForumAPIKey());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         SocketIOClient.emit(socketEvent, data, new Ack() {
             @Override
             public void call(Object... args) {

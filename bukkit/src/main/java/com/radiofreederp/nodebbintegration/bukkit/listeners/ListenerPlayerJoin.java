@@ -32,36 +32,6 @@ public class ListenerPlayerJoin implements Listener {
             if (VanishNoPacketHook.isVanished(event.getPlayer().getName())) return;
         }
 
-        MinecraftServerEvents.onPlayerJoin(plugin, event.getPlayer(), getPlayerJoinData(event.getPlayer()));
-    }
-
-    public static JSONObject getPlayerJoinData(Player player) {
-
-        JSONObject obj = new JSONObject();
-
-        try {
-            obj.put("name", player.getName());
-            obj.put("id", player.getUniqueId());
-            obj.put("key", NodeBBIntegrationBukkit.instance.getPluginConfig().getForumAPIKey());
-
-            if (OnTimeHook.isEnabled()) {
-                if (OnTimeHook.isEnabled()) {
-                    OnTimeHook.onTimeCheckTime(player, obj);
-                }
-            }
-
-            if (VaultHook.chat != null && VaultHook.permission != null) {
-                obj.put("primaryGroup", VaultHook.chat.getPrimaryGroup(player));
-                obj.put("prefix", VaultHook.chat.getPlayerPrefix(player));
-                obj.put("suffix", VaultHook.chat.getPlayerSuffix(player));
-                obj.put("groups", VaultHook.permission.getPlayerGroups(null, player));
-            }
-
-        } catch (JSONException e) {
-            NodeBBIntegrationBukkit.instance.log("Error constructing JSON Object for " + SocketIOClient.Events.onPlayerJoin);
-            e.printStackTrace();
-        }
-
-        return obj;
+        MinecraftServerEvents.onPlayerJoin(plugin, event.getPlayer(), plugin.getMinecraftServer().getPlayerJSON(event.getPlayer()));
     }
 }

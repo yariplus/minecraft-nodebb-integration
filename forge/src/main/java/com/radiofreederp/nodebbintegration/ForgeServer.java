@@ -60,6 +60,11 @@ public class ForgeServer extends MinecraftServerCommon {
   }
 
   @Override
+  public JSONObject getPlayerJSON(Object _player) {
+    return null;
+  }
+
+  @Override
   public String getVersion() {
     return MinecraftServer.getServer().getMinecraftVersion();
   }

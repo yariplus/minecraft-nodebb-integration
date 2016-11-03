@@ -16,9 +16,7 @@ project(':nodebb-integration-pocketmine').projectDir = "$rootDir/pocketmine" as 
 project(':nodebb-integration-sponge').projectDir = "$rootDir/sponge" as File
 project(':nodebb-integration-universal').projectDir = "$rootDir/universal" as File
 
-def legacy = false
-
-if (legacy) {
+if (false) {
   include ':nodebb-integration-legacy'
   include ':nodebb-integration-bukkit-legacy'
   project(':nodebb-integration-legacy').projectDir = "$rootDir/legacy" as File
