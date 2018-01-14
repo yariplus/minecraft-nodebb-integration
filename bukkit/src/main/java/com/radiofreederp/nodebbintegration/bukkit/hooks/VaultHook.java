@@ -1,6 +1,7 @@
 package com.radiofreederp.nodebbintegration.bukkit.hooks;
 
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationBukkit;
+import com.radiofreederp.nodebbintegration.utils.Logger;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -19,9 +20,9 @@ public final class VaultHook
 
     public static void hook(NodeBBIntegrationBukkit plugin)
     {
-        if (setupChat(plugin))        NodeBBIntegrationBukkit.instance.log("Hooked into Vault Chat.");
-        if (setupPermissions(plugin)) NodeBBIntegrationBukkit.instance.log("Hooked into Vault Permissions.");
-        if (setupEconomy(plugin))     NodeBBIntegrationBukkit.instance.log("Hooked into Vault Economy.");
+        if (setupChat(plugin))        Logger.log("Hooked into Vault Chat.");
+        if (setupPermissions(plugin)) Logger.log("Hooked into Vault Permissions.");
+        if (setupEconomy(plugin))     Logger.log("Hooked into Vault Economy.");
     }
 
     private static boolean setupPermissions(NodeBBIntegrationBukkit plugin)

@@ -5,8 +5,12 @@ allprojects {
 
 subprojects {
   repositories {
+    jcenter()
     mavenCentral()
   }
+
+  apply plugin: 'java'
+
   ext {
     jdk17 = System.getenv('JAVAC_17')
   }

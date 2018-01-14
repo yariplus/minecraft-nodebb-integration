@@ -1,46 +1,47 @@
 package com.radiofreederp.nodebbintegration.commands;
 
-import com.radiofreederp.nodebbintegration.NodeBBIntegrationPlugin;
-import com.radiofreederp.nodebbintegration.PluginConfig;
+import com.radiofreederp.nodebbintegration.configuration.PluginConfig;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
+import com.radiofreederp.nodebbintegration.tasks.Messages;
+import com.radiofreederp.nodebbintegration.utils.ConfigMap;
+import com.radiofreederp.nodebbintegration.utils.Logger;
 import io.socket.client.Ack;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by Yari on 4/18/2016.
- */
+import java.util.Arrays;
+
 public class CommandRegister extends MinecraftCommand {
 
-    public CommandRegister(NodeBBIntegrationPlugin plugin) {
-        super(plugin);
+    public CommandRegister() {
+        super();
     }
 
     @Override
     public boolean doCommand(final Object sender, String pkey, String uuid, String name) {
 
-        // Assert parameters.
+        // If no key, remind them how to use the command.
         if (pkey == null) {
-            plugin.getMinecraftServer().sendMessage(sender, plugin.getPluginConfig().getArray(PluginConfig.ConfigOption.MSG_REG_ASSERTPARAMS), plugin.getPluginConfig().getConfigMap());
+            plugin.getMinecraftServer().sendMessage(sender, Arrays.asList(Messages.HELP_REGISTER), new ConfigMap<String, String>().add("%forumurl%", PluginConfig.instance.getForumURL()).add("%forumname%", PluginConfig.instance.getForumName()));
             return true;
         }
 
-        // Trim key.
+        // Trim the prefix "key-" from the key.
         if (pkey.length() > 4) pkey = pkey.substring(4);
 
-        // Alert
-        plugin.getMinecraftServer().sendMessage(sender, plugin.getPluginConfig().getArray(PluginConfig.ConfigOption.MSG_REG_ALERT), plugin.getPluginConfig().getConfigMap());
+        // TODO: Insert helpful message here.
+        plugin.getMinecraftServer().sendMessage(sender, Messages.REGISTER);
 
         // If we're not connected, don't do anything.
         if (SocketIOClient.disconnected()) {
-            plugin.getMinecraftServer().sendMessage(sender, plugin.getPluginConfig().getArray(PluginConfig.ConfigOption.MSG_REG_DISCONNECTED));
+            plugin.getMinecraftServer().sendMessage(sender, Messages.DISCONNECTED);
             return true;
         }
 
         // Construct request object.
         JSONObject obj = new JSONObject();
         try {
-            obj.put("key", plugin.getPluginConfig().getForumAPIKey());
+            obj.put("key", PluginConfig.instance.getForumAPIKey());
             obj.put("id", uuid);
             obj.put("name", name);
             obj.put("pkey", pkey);
@@ -50,13 +51,13 @@ public class CommandRegister extends MinecraftCommand {
             return true;
         }
 
-        plugin.log("Sending commandRegister");
+        Logger.log("Sending commandRegister");
 
         SocketIOClient.emit("commandRegister", obj, new Ack() {
             @Override
             public void call(Object... res) {
 
-                plugin.log("Received commandRegister callback");
+                Logger.log("Received commandRegister callback");
 
                 // Default is error.
                 String result = "ERROR";
@@ -72,8 +73,8 @@ public class CommandRegister extends MinecraftCommand {
                     result = "BADRES";
                 }
 
-                // Send response message.
-                server.sendMessage(sender, plugin.getPluginConfig().getArray(PluginConfig.ConfigOption.valueOf("MSG_REG_" + result)), plugin.getPluginConfig().getConfigMap());
+                // TODO: Send response message.
+                server.sendMessage(sender, "Result is " + result);
             }
         });
 

@@ -148,7 +148,7 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
         // Loads config and updates if necessary.
         pluginConfig = new PluginConfigBukkit(this);
 
-        // Initialize Plugin Hooks
+        // Initialize NBBPlugin Hooks
         VaultHook.hook(this);
         OnTimeHook.hook(this);
         VotifierHook.hook(this);

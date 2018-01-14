@@ -2,15 +2,14 @@ package com.radiofreederp.nodebbintegration.tasks;
 
 import com.radiofreederp.nodebbintegration.MinecraftServerCommon;
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationPlugin;
+import com.radiofreederp.nodebbintegration.configuration.PluginConfig;
 import com.radiofreederp.nodebbintegration.socketio.ESocketEvent;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
+import com.radiofreederp.nodebbintegration.utils.Logger;
 import io.socket.client.Ack;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by Yari on 4/20/2016.
- */
 public class TaskTick implements Runnable {
 
     private final NodeBBIntegrationPlugin plugin;
@@ -25,7 +24,7 @@ public class TaskTick implements Runnable {
     public TaskTick(NodeBBIntegrationPlugin plugin){
         instance = this;
 
-        this.plugin = plugin;
+		this.plugin = plugin;
         this.server = plugin.getMinecraftServer();
 
         plugin.runTaskTimerAsynchronously(instance);
@@ -42,7 +41,7 @@ public class TaskTick implements Runnable {
             try {
 
                 obj.put("tps", server.getTPS());
-                obj.put("key", plugin.getPluginConfig().getForumAPIKey());
+                obj.put("key", PluginConfig.instance.getForumAPIKey());
                 obj.put("players", server.getPlayerList());
 
                 obj.put("version", server.getVersion());
@@ -60,16 +59,16 @@ public class TaskTick implements Runnable {
                 obj.put("icon", server.getServerIcon());
 
             } catch (JSONException e) {
-                plugin.log("Error constructing JSON Object for " + socketEvent);
+                Logger.log("Error constructing JSON Object for " + socketEvent);
                 e.printStackTrace();
                 return;
             }
 
-            plugin.log("Sending " + socketEvent);
+            Logger.log("Sending " + socketEvent);
             SocketIOClient.emit(socketEvent, obj, new Ack() {
                 @Override
                 public void call(Object... args) {
-                    plugin.log(args[0] == null ? "no errors" : "got error");
+                    Logger.log(args[0] == null ? "no errors" : "got error");
                 }
             });
         }

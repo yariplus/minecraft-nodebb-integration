@@ -1,18 +1,12 @@
 package com.radiofreederp.nodebbintegration.bukkit.listeners;
 
+import com.radiofreederp.nodebbintegration.MinecraftServerEvents;
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationBukkit;
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationPlugin;
-import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-/**
- * Created by Yari on 5/18/2016.
- */
 public class ListenerPlayerQuit implements Listener {
 
     private NodeBBIntegrationBukkit plugin;
@@ -23,22 +17,6 @@ public class ListenerPlayerQuit implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        String socketEvent = SocketIOClient.Events.onPlayerQuit;
-        SocketIOClient.emit(socketEvent, getPlayerQuitData(event.getPlayer()), args -> {});
-    }
-
-    public static JSONObject getPlayerQuitData(Player player) {
-        JSONObject obj = new JSONObject();
-
-        try {
-            obj.put("name", player.getName());
-            obj.put("id", player.getUniqueId());
-            obj.put("key", NodeBBIntegrationBukkit.instance.getPluginConfig().getForumAPIKey());
-        } catch (JSONException e) {
-            NodeBBIntegrationBukkit.instance.log("Error constructing JSON Object for " + SocketIOClient.Events.onPlayerQuit);
-            e.printStackTrace();
-        }
-
-        return obj;
+        MinecraftServerEvents.onPlayerQuit(event.getPlayer(), plugin.getMinecraftServer().getPlayerJSON(event.getPlayer()));
     }
 }

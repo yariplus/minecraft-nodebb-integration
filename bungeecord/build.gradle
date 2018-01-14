@@ -3,7 +3,7 @@ plugins {
   id 'com.github.johnrengelman.shadow' version '1.2.3'
 }
 
-description = 'Minecraft Plugin NodeBB Integration for BungeeCord'
+description = 'Minecraft NBBPlugin NodeBB Integration for BungeeCord'
 
 repositories {
   // BungeeCord

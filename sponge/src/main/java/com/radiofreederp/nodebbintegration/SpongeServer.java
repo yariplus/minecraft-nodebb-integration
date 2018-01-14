@@ -1,6 +1,7 @@
 package com.radiofreederp.nodebbintegration;
 
 import com.google.common.io.Files;
+import com.radiofreederp.nodebbintegration.utils.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,9 +16,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 
-/**
- * Created by Yari on 4/17/2016.
- */
 public class SpongeServer extends MinecraftServerCommon {
 
     private final NodeBBIntegrationPlugin plugin;
@@ -32,11 +30,11 @@ public class SpongeServer extends MinecraftServerCommon {
     }
     @Override
     public void sendConsoleMessage(String message) {
-        plugin.log(removeColors(message));
+        Logger.log(removeColors(message));
     }
     @Override
     public void sendMessageToOps(String message) {
-        if (plugin.isDebug()) Sponge.getServer().getOnlinePlayers().stream().filter(player->player.hasPermission("nodebb.admin")).forEach(op->sendMessage(op, message));
+        Sponge.getServer().getOnlinePlayers().stream().filter(player->player.hasPermission("nodebb.admin")).forEach(op->sendMessage(op, message));
     }
 
     // Handle colors. No translation necessary for sponge.

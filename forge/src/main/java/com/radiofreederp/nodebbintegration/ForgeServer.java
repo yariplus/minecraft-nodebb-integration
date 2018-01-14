@@ -3,7 +3,7 @@ package com.radiofreederp.nodebbintegration;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
-import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -35,12 +35,12 @@ public class ForgeServer extends MinecraftServerCommon {
 
   @Override
   public String translateColors(String string) {
-    return null;
+    return string;
   }
 
   @Override
   public String removeColors(String string) {
-    return null;
+    return string;
   }
 
   @Override
@@ -51,17 +51,28 @@ public class ForgeServer extends MinecraftServerCommon {
 
   @Override
   public ArrayList<JSONObject> getPlayerList() {
-    return null;
+    return new ArrayList<JSONObject>();
   }
 
   @Override
   public ArrayList<JSONObject> getPluginList() {
-    return null;
+    return new ArrayList<JSONObject>();
   }
 
   @Override
   public JSONObject getPlayerJSON(Object _player) {
-    return null;
+    EntityPlayerMP player = (EntityPlayerMP)_player;
+    JSONObject playerObj = new JSONObject();
+
+    try {
+      playerObj.put("name", player.getGameProfile().getName());
+      playerObj.put("displayName", player.getDisplayName());
+      playerObj.put("id", player.getGameProfile().getId().toString());
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
+
+    return playerObj;
   }
 
   @Override
@@ -76,17 +87,17 @@ public class ForgeServer extends MinecraftServerCommon {
 
   @Override
   public String getServerIcon() {
-    return null;
+    return "";
   }
 
   @Override
   public String getWorldType() {
-    return null;
+    return "";
   }
 
   @Override
   public String getWorldName() {
-    return null;
+    return "";
   }
 
   @Override
@@ -96,7 +107,7 @@ public class ForgeServer extends MinecraftServerCommon {
 
   @Override
   public String getPlayerPrefix(Object player) {
-    return null;
+    return "";
   }
 
   @Override

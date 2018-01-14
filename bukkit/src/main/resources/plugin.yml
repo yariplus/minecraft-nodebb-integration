@@ -8,4 +8,6 @@ commands:
     description: NodeBB Integration parent command.
     permission: nodebb.admin
   register:
-    description: Register your Minecraft account with your forum account.
+    description: Register a new forum account.
+  link:
+    description: Link your Minecraft account with your forum account.

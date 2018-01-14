@@ -14,10 +14,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by Yari on 5/18/2016.
- */
 public class ListenerPlayerJoin implements Listener {
+
     private NodeBBIntegrationBukkit plugin;
 
     public ListenerPlayerJoin(NodeBBIntegrationPlugin plugin) {
@@ -32,6 +30,6 @@ public class ListenerPlayerJoin implements Listener {
             if (VanishNoPacketHook.isVanished(event.getPlayer().getName())) return;
         }
 
-        MinecraftServerEvents.onPlayerJoin(plugin, event.getPlayer(), plugin.getMinecraftServer().getPlayerJSON(event.getPlayer()));
+        MinecraftServerEvents.onPlayerJoin(event.getPlayer(), plugin.getMinecraftServer().getPlayerJSON(event.getPlayer()));
     }
 }

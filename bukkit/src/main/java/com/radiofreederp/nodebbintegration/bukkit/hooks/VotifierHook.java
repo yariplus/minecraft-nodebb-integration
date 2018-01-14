@@ -2,6 +2,7 @@ package com.radiofreederp.nodebbintegration.bukkit.hooks;
 
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationBukkit;
 import com.radiofreederp.nodebbintegration.bukkit.listeners.ListenerVotifier;
+import com.radiofreederp.nodebbintegration.utils.Logger;
 import org.bukkit.Bukkit;
 
 /**
@@ -22,7 +23,7 @@ public final class VotifierHook {
         if (Bukkit.getPluginManager().isPluginEnabled("Votifier")) {
             enabled = true;
             plugin.getServer().getPluginManager().registerEvents(new ListenerVotifier(), plugin);
-            NodeBBIntegrationBukkit.instance.log("Hooked into Votifier.");
+            Logger.log("Hooked into Votifier.");
         }
     }
 }

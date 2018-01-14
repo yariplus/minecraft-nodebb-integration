@@ -1,68 +1,39 @@
 package com.radiofreederp.nodebbintegration;
 
-import com.radiofreederp.nodebbintegration.bukkit.commands.CommandRegisterBukkit;
+import com.radiofreederp.nodebbintegration.bukkit.commands.CommandLinkBukkit;
 import com.radiofreederp.nodebbintegration.bukkit.commands.CommandNodeBBBukkit;
+import com.radiofreederp.nodebbintegration.bukkit.commands.CommandRegisterBukkit;
+import com.radiofreederp.nodebbintegration.bukkit.configuration.PluginConfigBukkit;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.OnTimeHook;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VanishNoPacketHook;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VaultHook;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VotifierHook;
 import com.radiofreederp.nodebbintegration.bukkit.listeners.*;
+import com.radiofreederp.nodebbintegration.configuration.PluginConfig;
 import com.radiofreederp.nodebbintegration.socketio.ESocketEvent;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
 import com.radiofreederp.nodebbintegration.tasks.TaskTick;
-import io.socket.client.Ack;
+import com.radiofreederp.nodebbintegration.utils.Logger;
+import com.radiofreederp.nodebbintegration.utils.NBBPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitScheduler;
-import org.bukkit.scheduler.BukkitTask;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Arrays;
 import java.util.logging.Level;
 
 public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegrationPlugin {
 
-    public static NodeBBIntegrationBukkit instance;
-
     private MinecraftServerCommon minecraftServer = new BukkitServer(this);
-
     @Override
     public MinecraftServerCommon getMinecraftServer() {
         return minecraftServer;
     }
 
-    private PluginConfig pluginConfig;
-
-    @Override
-    public PluginConfig getPluginConfig() {
-        return pluginConfig;
-    }
-
-    // Debug is initially true until the plugin is done loading.
-    private boolean debug = true;
-    @Override
-    public boolean isDebug() {
-        return debug;
-    }
-    @Override
-    public void toggleDebug() {
-        debug = !debug;
-    }
-
-    @Override
-    public void log(String message) { log(message, Level.INFO); }
-    @Override
-    public void error(String message) { log(message, Level.SEVERE); }
     @Override
     public void log(String message, Level level) {
-        if (level == null) level = Level.INFO;
-        if (level == Level.SEVERE || debug) {
-            Bukkit.getLogger().log(level, "[NodeBB-Integration] " + message);
-        }
+        Bukkit.getLogger().log(level, "[NodeBB-Integration] " + message);
     }
 
     // TODO: There's a better way to do this, but I can't figure it out.
@@ -121,23 +92,29 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
 
     @Override
     public void eventGetPlayerVotes(Object... req) {
-        log("Got eventGetPlayerVotes");
+        Logger.log("Got eventGetPlayerVotes");
 
         // Interpret message.
         // TODO: Should be an error object.
         if (req[0] == null) return;
 
-        log("Compiling votes...");
-        JSONObject res = getPluginConfig().getPlayerVotes((JSONObject)req[0]);
+        Logger.log("Compiling votes...");
+        //JSONObject res = getPluginConfig().getPlayerVotes((JSONObject)req[0]);
 
-        log("Sending votes...");
-        SocketIOClient.emit("PlayerVotes", res, cb -> {});
-
+        Logger.log("Sending votes...");
+        //SocketIOClient.emit("PlayerVotes", res, cb -> {});
     }
 
     @Override
     public void onEnable() {
-        instance = this;
+        // Set static instance.
+        NBBPlugin.instance = this;
+
+        // Start logger.
+        Logger.init(this);
+
+        // Loads config and updates if necessary.
+		new PluginConfigBukkit();
 
         // Start the socket client.
         SocketIOClient.create(this);
@@ -145,10 +122,7 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
         // Monitor the TPS.
         initTaskTick();
 
-        // Loads config and updates if necessary.
-        pluginConfig = new PluginConfigBukkit(this);
-
-        // Initialize Plugin Hooks
+        // Initialize NBBPlugin Hooks
         VaultHook.hook(this);
         OnTimeHook.hook(this);
         VotifierHook.hook(this);
@@ -162,19 +136,20 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
         getServer().getPluginManager().registerEvents(new ListenerWorldSave(this), this);
 
         // Register commands.
-        this.getCommand("nodebb").setExecutor(new CommandNodeBBBukkit(this));
-        this.getCommand("register").setExecutor(new CommandRegisterBukkit(this));
+        this.getCommand("nodebb").setExecutor(new CommandNodeBBBukkit());
+        this.getCommand("register").setExecutor(new CommandLinkBukkit()); // TODO
+        this.getCommand("link").setExecutor(new CommandLinkBukkit());
 
         // Sync Players
         new BukkitRunnable(){
             @Override
             public void run() {
-                SocketIOClient.emit(ESocketEvent.WRITE_RANKS_WITH_MEMBERS, minecraftServer.getGroupsWithMembers(), args -> log("Received " + ESocketEvent.WRITE_RANKS_WITH_MEMBERS + " callback."));
+                SocketIOClient.emit(ESocketEvent.WRITE_RANKS_WITH_MEMBERS, minecraftServer.getGroupsWithMembers(), args -> Logger.log("Received " + ESocketEvent.WRITE_RANKS_WITH_MEMBERS + " callback."));
             }
         }.runTaskLater(this, 100);
 
         // Turn off debug messages after setup.
-        debug = false;
+        PluginConfigBukkit.setDebug(false);
     }
 
     @Override

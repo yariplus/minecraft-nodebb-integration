@@ -1,75 +1,61 @@
 buildscript {
   repositories {
     mavenCentral()
-    maven {
-      name = "forge"
-      url = "http://files.minecraftforge.net/maven"
-    }
-    maven {
-      name = "sonatype"
-      url = "https://oss.sonatype.org/content/repositories/snapshots/"
-    }
+    maven { url = "http://files.minecraftforge.net/maven" }
   }
   dependencies {
     classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
   }
 }
 
-plugins {
-  id 'java'
-  id 'com.github.johnrengelman.shadow' version '1.2.3'
-}
 apply plugin: 'forge'
 
 version = "${parent.version}"
 group = "com.radiofreederp.nodebbintegration"
-archivesBaseName = "nodebb-integration-forge"
+
+processResources {
+  // this will ensure that this task is redone when the versions change.
+  inputs.property "version", project.version
+  inputs.property "mcversion", project.minecraft.version
+
+  // replace stuff in mcmod.info, nothing else
+  from(sourceSets.main.resources.srcDirs) {
+    include 'mcmod.info'
+
+    // replace version and mcversion
+    expand 'version': project.version, 'mcversion': project.minecraft.version
+  }
+
+  // copy everything else, thats not the mcmod.info
+  from(sourceSets.main.resources.srcDirs) {
+    exclude 'mcmod.info'
+  }
+}
+
+configurations {
+  shade
+  compile.extendsFrom shade
+}
 
 minecraft {
   version = "1.7.10-10.13.4.1614-1.7.10"
   runDir = "run"
   mappings = 'stable_12'
+
+  srgExtra "PK: io/socket com/radiofreederp/nodebbintegration/io/socket"
+  srgExtra "PK: org/json com/radiofreederp/nodebbintegration/org/json"
+  srgExtra "PK: okhttp3 com/radiofreederp/nodebbintegration/com/squareup/okhttp3"
+  srgExtra "PK: okio com/radiofreederp/nodebbintegration/com/squareup/okio"
 }
 
 dependencies {
   compile project(':nodebb-integration-common')
 }
 
-processResources
-  {
-    // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
-
-    // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs) {
-      include 'mcmod.info'
-
-      // replace version and mcversion
-      expand 'version': project.version, 'mcversion': project.minecraft.version
+jar {
+  configurations.shade.each { dep ->
+    from(project.zipTree(dep)){
+      exclude 'META-INF', 'META-INF/**'
     }
-
-    // copy everything else, thats not the mcmod.info
-    from(sourceSets.main.resources.srcDirs) {
-      exclude 'mcmod.info'
-    }
-  }
-
-configurations {
-  runtime.exclude module: 'forgeSrc'
-  runtime.exclude group: 'org.scala-lang'
-  runtime.exclude group: 'com.mojang'
-  runtime.exclude group: 'net.minecraft'
-  runtime.exclude group: 'tv.twitch'
-  runtime.exclude group: 'lzma'
-  runtime.exclude group: 'com.ibm.icu'
-  runtime.exclude group: 'com.paulscode'
-  runtime.exclude group: 'org.apache'
-  runtime.exclude group: 'org.lwjgl'
-}
-
-shadowJar {
-  manifest {
-    attributes 'Implementation-Title': "forge", 'Implementation-Version': project.version
   }
 }

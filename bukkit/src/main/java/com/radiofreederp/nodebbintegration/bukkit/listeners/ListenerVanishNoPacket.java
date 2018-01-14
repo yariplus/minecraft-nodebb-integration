@@ -7,9 +7,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
-/**
- * Created by Yari on 2/15/2016.
- */
 public class ListenerVanishNoPacket implements Listener
 {
     private NodeBBIntegrationBukkit plugin;
@@ -23,7 +20,7 @@ public class ListenerVanishNoPacket implements Listener
     {
         // TODO: Make more options for handling vanished players.
         if (event.isVanishing()) {
-            SocketIOClient.emit(SocketIOClient.Events.onPlayerQuit, ListenerPlayerQuit.getPlayerQuitData(event.getPlayer()), args -> {});
+            SocketIOClient.emit(SocketIOClient.Events.onPlayerQuit, plugin.getMinecraftServer().getPlayerJSON(event.getPlayer()), args -> {});
         }else{
             SocketIOClient.emit(SocketIOClient.Events.onPlayerJoin, plugin.getMinecraftServer().getPlayerJSON(event.getPlayer()), args -> {});
         }

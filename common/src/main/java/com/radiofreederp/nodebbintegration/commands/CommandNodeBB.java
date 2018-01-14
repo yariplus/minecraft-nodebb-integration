@@ -1,24 +1,26 @@
 package com.radiofreederp.nodebbintegration.commands;
 
-import com.radiofreederp.nodebbintegration.NodeBBIntegrationPlugin;
-import com.radiofreederp.nodebbintegration.PluginConfig;
+import com.radiofreederp.nodebbintegration.configuration.PluginConfig;
 import com.radiofreederp.nodebbintegration.socketio.ESocketEvent;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
+import com.radiofreederp.nodebbintegration.tasks.Messages;
+import com.radiofreederp.nodebbintegration.utils.Logger;
 import io.socket.client.Ack;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
-/**
- * Created by Yari on 4/17/2016.
- */
 public class CommandNodeBB extends MinecraftCommand {
 
-    public CommandNodeBB(NodeBBIntegrationPlugin plugin) {
-        super(plugin);
+    public CommandNodeBB() {
+        super();
     }
+
+	private HashMap<String, String> vars = new HashMap<>();
 
     @Override
     public boolean doCommand(Object sender, String action, String option, String value) {
+		vars.clear();
 
         switch (action) {
             default:
@@ -28,7 +30,7 @@ public class CommandNodeBB extends MinecraftCommand {
             case "get":
                 switch (option) {
                     case "reload":
-                        plugin.getPluginConfig().reload();
+                        config.reload();
                         server.sendMessage(sender, "Reloaded PluginConfig.");
                         server.sendConsoleMessage("Reloaded PluginConfig.");
                         break;
@@ -40,7 +42,7 @@ public class CommandNodeBB extends MinecraftCommand {
                                 SocketIOClient.emit(ESocketEvent.WRITE_RANKS_WITH_MEMBERS, plugin.getMinecraftServer().getGroupsWithMembers(), new Ack() {
                                     @Override
                                     public void call(Object... args) {
-                                        plugin.log("Received " + ESocketEvent.WRITE_RANKS_WITH_MEMBERS + " callback.");
+                                        Logger.log("Received " + ESocketEvent.WRITE_RANKS_WITH_MEMBERS + " callback.");
                                     }
                                 });
                             }
@@ -50,29 +52,38 @@ public class CommandNodeBB extends MinecraftCommand {
                         if (SocketIOClient.connected()) {
                             server.sendMessage(sender, "The server is currently &aCONNECTED to the forum.");
                         } else {
-                            server.sendMessage(sender, "The server is currently &4DISCONNECTED from the forum.");
-                        }
-                        server.sendMessage(sender, "Forum Name is " + plugin.getPluginConfig().getForumName());
-                        server.sendMessage(sender, "Forum URL is " + plugin.getPluginConfig().getForumURL());
-                        server.sendMessage(sender, "Forum API Key is " + plugin.getPluginConfig().getForumAPIKey());
-                        server.sendMessage(sender, "Socket Live Address is " + plugin.getPluginConfig().getSocketAddress());
+							server.sendMessage(sender, "The server is currently &4DISCONNECTED from the forum.");
+						}
+                        server.sendMessage(sender, "Forum Name is " + config.getForumName());
+                        server.sendMessage(sender, "Forum URL is " + config.getForumURL());
+                        server.sendMessage(sender, "Forum API Key is " + config.getForumAPIKey());
+                        server.sendMessage(sender, "socket.io address is " + config.getSocketAddress());
+                        server.sendMessage(sender, "socket.io namespace is " + config.getSocketNamespace());
+                        server.sendMessage(sender, "socket.io transports is " + config.getSocketTransportsAsString());
                         server.sendMessage(sender, "Post bugs to https://goo.gl/qSy6BP");
                         server.sendMessage(sender, "Use &3/nodebb debug toggle&r to toggle verbose logging.");
                         break;
                     case "name":
-                        server.sendMessage(sender, "Forum Name is " + plugin.getPluginConfig().getForumName());
+                        server.sendMessage(sender, "Forum Name is " + config.getForumName());
                         break;
                     case "url":
-                        server.sendMessage(sender, "Forum URL is " + plugin.getPluginConfig().getForumURL());
+                        server.sendMessage(sender, "Forum URL is " + config.getForumURL());
                         break;
                     case "key":
-                        server.sendMessage(sender, "Forum API Key is " + plugin.getPluginConfig().getForumAPIKey());
+                        server.sendMessage(sender, "Forum API Key is " + config.getForumAPIKey());
                         break;
                     case "live":
-                        HashMap<String, String> vars = new HashMap<>();
-                        vars.put("%live%", plugin.getPluginConfig().getSocketAddress());
-                        server.sendMessage(sender, plugin.getPluginConfig().getArray(PluginConfig.ConfigOption.MSG_SOCKETADDRESS_GET), vars);
+					case "siourl":
+					case "socketurl":
+					case "socket":
+						server.sendMessage(sender, "socket.io address is " + config.getSocketAddress());
                         break;
+					case "namespace":
+						server.sendMessage(sender, "socket.io namespace is " + config.getSocketNamespace());
+						break;
+					case "transports":
+						server.sendMessage(sender, "socket.io transports is " + config.getSocketTransportsAsString());
+						break;
                     default:
                     case "help":
                         help(sender);
@@ -82,38 +93,38 @@ public class CommandNodeBB extends MinecraftCommand {
             case "set":
                 switch (option) {
                     case "debug":
-                        plugin.toggleDebug();
-                        if (plugin.isDebug()) {
+                        PluginConfig.setDebug(!PluginConfig.getDebug());
+                        if (PluginConfig.getDebug()) {
                             server.sendMessage(sender, "Turned on verbose logging.");
                         } else {
                             server.sendMessage(sender, "Turned off verbose logging.");
                         }
                         break;
                     case "name":
-                        plugin.getPluginConfig().setForumName(value);
+                        config.setForumName(value);
                         server.sendMessage(sender, "Set forum name to " + value);
-                        plugin.log("Set forum name to " + value);
-                        plugin.getPluginConfig().save();
+                        Logger.log("Set forum name to " + value);
+                        config.save();
                         break;
                     case "url":
-                        plugin.getPluginConfig().setForumURL(value);
+                        config.setForumURL(value);
                         server.sendMessage(sender, "Set forum url to " + value);
-                        plugin.log("Set forum url to " + value);
-                        plugin.getPluginConfig().save();
+                        Logger.log("Set forum url to " + value);
+                        config.save();
                         break;
                     case "key":
-                        plugin.getPluginConfig().setForumAPIKey(value);
+                        config.setForumAPIKey(value);
                         server.sendMessage(sender, "Set new API key.");
-                        plugin.log("Set new API key.");
-                        plugin.getPluginConfig().save();
+                        Logger.log("Set new API key.");
+                        config.save();
                         break;
                     case "live":
-                        plugin.getPluginConfig().setSocketAddress(value);
+                        config.setSocketAddress(value);
                         HashMap<String, String> vars = new HashMap<>();
-                        vars.put("%live%", plugin.getPluginConfig().getSocketAddress());
-                        server.sendMessage(sender, plugin.getPluginConfig().getArray(PluginConfig.ConfigOption.MSG_SOCKETADDRESS_SET), vars);
-                        server.sendConsoleMessage(plugin.getPluginConfig().getArray(PluginConfig.ConfigOption.MSG_SOCKETADDRESS_SET), vars);
-                        plugin.getPluginConfig().save();
+                        vars.put("%live%", config.getSocketAddress());
+                        server.sendMessage(sender, Messages.SOCKETIO_DOMAIN_SET, vars);
+                        server.sendConsoleMessage(Messages.SOCKETIO_DOMAIN_SET, vars);
+                        config.save();
                         break;
                     default:
                     case "help":
@@ -127,8 +138,6 @@ public class CommandNodeBB extends MinecraftCommand {
     }
 
     private void help(Object sender) {
-        for (String str : plugin.getPluginConfig().getArray(PluginConfig.ConfigOption.MSG_HELP)) {
-            plugin.getMinecraftServer().sendMessage(sender, str);
-        }
+        plugin.getMinecraftServer().sendMessage(sender, Arrays.asList(Messages.HELP));
     }
 }

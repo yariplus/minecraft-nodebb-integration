@@ -4,11 +4,11 @@ import com.google.common.io.Files;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.OnTimeHook;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VanishNoPacketHook;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VaultHook;
+import com.radiofreederp.nodebbintegration.utils.Logger;
 import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,12 +19,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.HashMap;
-import java.util.function.Consumer;
 
-/**
- * Created by Yari on 4/17/2016.
- */
 public class BukkitServer extends MinecraftServerCommon {
     private NodeBBIntegrationPlugin plugin;
 
@@ -39,11 +34,11 @@ public class BukkitServer extends MinecraftServerCommon {
     }
     @Override
     public void sendConsoleMessage(String message) {
-        plugin.log(removeColors(message));
+        Logger.log(removeColors(message));
     }
     @Override
     public void sendMessageToOps(String message) {
-        if (plugin.isDebug()) Bukkit.getOnlinePlayers().stream().filter(player->player.hasPermission("nodebb.admin")).forEach(op->sendMessage(op, message));
+        Bukkit.getOnlinePlayers().stream().filter(player->player.hasPermission("nodebb.admin")).forEach(op->sendMessage(op, message));
     }
 
     // Handle color.

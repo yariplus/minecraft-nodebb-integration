@@ -22,7 +22,7 @@ public class CommandNodeBBSponge implements CommandExecutor {
     private final CommandNodeBB command;
 
     public CommandNodeBBSponge(NodeBBIntegrationSponge plugin) {
-        this.command = new CommandNodeBB(plugin);
+        this.command = new CommandNodeBB();
     }
 
     @Override

@@ -3,7 +3,7 @@ plugins {
   id 'com.github.johnrengelman.shadow' version '1.2.3'
 }
 
-description = 'Minecraft Plugin NodeBB Integration for Sponge'
+description = 'Minecraft NBBPlugin NodeBB Integration for Sponge'
 
 repositories {
   // Sponge
@@ -12,7 +12,7 @@ repositories {
 
 dependencies {
   compile project(':nodebb-integration-common')
-  compile group: 'org.spongepowered', name: 'spongeapi', version: '5.0.0'
+  compile group: 'org.spongepowered', name: 'spongeapi', version: '6.0.0'
 }
 
 configurations {

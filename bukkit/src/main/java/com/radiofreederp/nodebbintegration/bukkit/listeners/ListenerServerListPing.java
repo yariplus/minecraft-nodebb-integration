@@ -3,6 +3,7 @@ package com.radiofreederp.nodebbintegration.bukkit.listeners;
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationBukkit;
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationPlugin;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
+import com.radiofreederp.nodebbintegration.utils.Logger;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerListPingEvent;
@@ -22,6 +23,6 @@ public class ListenerServerListPing implements Listener {
     public void onServerListPing(final ServerListPingEvent event) {
         if (SocketIOClient.disconnected()) return;
 
-        plugin.log("Server List Ping from: " + event.getAddress().toString());
+        Logger.log("Server List Ping from: " + event.getAddress().toString());
     }
 }

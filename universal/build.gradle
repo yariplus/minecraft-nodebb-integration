@@ -1,19 +1,34 @@
 plugins {
-  id 'java'
   id 'com.github.johnrengelman.shadow' version '1.2.3'
 }
 
-description = 'Minecraft Plugin NodeBB Integration Universal'
+description = 'Minecraft NBBPlugin NodeBB Integration Universal'
+
+repositories {
+  flatDir {
+    dirs '../common/build/libs',
+      '../bukkit/build/libs',
+      '../sponge/build/libs',
+      '../forge/build/libs',
+      '../bungeecord/build/libs'
+  }
+}
 
 dependencies {
-  compile project(':nodebb-integration-bukkit')
-  compile project(':nodebb-integration-bungeecord')
-  //compile project(':nodebb-integration-forge')
-  compile project(':nodebb-integration-sponge')
+  compile name: 'nodebb-integration-common-0.8.0-alpha.10-all'
+  compile name: 'nodebb-integration-bukkit-0.8.0-alpha.10'
+  //compile name: 'nodebb-integration-bungeecord-0.8.0-alpha.10'
+  compile name: 'nodebb-integration-forge-0.8.0-alpha.10'
+  compile name: 'nodebb-integration-sponge-0.8.0-alpha.10'
 }
 
 shadowJar {
   manifest {
     attributes 'Implementation-Title': description, 'Implementation-Version': project.version
   }
+
+  relocate 'io.socket', 'com.radiofreederp.nodebbintegration.io.socket'
+  relocate 'org.json', 'com.radiofreederp.nodebbintegration.org.json'
+  relocate 'okhttp3', 'com.radiofreederp.nodebbintegration.okhttp3'
+  relocate 'okio', 'com.radiofreederp.nodebbintegration.okio'
 }

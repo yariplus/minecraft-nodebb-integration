@@ -4,18 +4,15 @@ import com.google.inject.Inject;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
 import com.radiofreederp.nodebbintegration.sponge.commands.CommandNodeBBSponge;
 import com.radiofreederp.nodebbintegration.sponge.commands.CommandRegisterSponge;
+import com.radiofreederp.nodebbintegration.sponge.configuration.PluginConfigSponge;
 import com.radiofreederp.nodebbintegration.sponge.listeners.ListenerNodeBBIntegration;
 import com.radiofreederp.nodebbintegration.tasks.TaskTick;
-import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
-import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
-import ninja.leaping.configurate.loader.ConfigurationLoader;
-import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
+import com.radiofreederp.nodebbintegration.utils.NBBPlugin;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
-import org.spongepowered.api.config.DefaultConfig;
+import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
@@ -23,18 +20,11 @@ import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.text.Text;
 
-import java.io.File;
-import java.io.IOException;
+import java.nio.file.Path;
 import java.util.logging.Level;
 
-/**
- * Created by Yari on 4/5/2016.
- */
-
-@Plugin(id = "nodebbintegration", name = "NodeBBIntegration", version = "0.8.0-alpha.10")
+@Plugin(id = NBBPlugin.ID, name = NBBPlugin.NAME, version = NBBPlugin.VERSION)
 public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
-
-    public static NodeBBIntegrationSponge instance;
 
     private final SpongeServer server = new SpongeServer(this);
 
@@ -46,27 +36,8 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
         return logger;
     }
     @Override
-    public void log(String message) {
-        logger.info(message);
-    }
-    @Override
-    public void error(String message) {
-        logger.error(message);
-    }
-    @Override
     public void log(String message, Level level) {
         logger.info(message);
-    }
-
-    // Debug is initially true until the plugin is done loading.
-    private boolean debug = true;
-    @Override
-    public boolean isDebug() {
-        return debug;
-    }
-    @Override
-    public void toggleDebug() {
-        debug = !debug;
     }
 
     @Inject
@@ -77,77 +48,30 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
     @Inject
     private PluginContainer pluginContainer;
 
+    // Injects private dir path for config files.
     @Inject
-    @DefaultConfig(sharedRoot = true)
-    private File defaultConfigFile;
-
-    @Inject
-    @DefaultConfig(sharedRoot = true)
-    private ConfigurationLoader<CommentedConfigurationNode> loader;
-    private YAMLConfigurationLoader jarLoader;
-
-    private PluginConfig pluginConfig;
-    private ConfigurationNode defaultConfig;
-    private ConfigurationNode spongeConfig;
-
-    @Override
-    public PluginConfig getPluginConfig() {
-        return this.pluginConfig;
-    }
+    @ConfigDir(sharedRoot = false)
+    private Path privateConfigDir;
 
     @Override
     public MinecraftServerCommon getMinecraftServer() {
         return server;
     }
 
-    // TODO: Move this into Config class.
-    public ConfigurationNode getDefaultConfig() {
-        return this.defaultConfig;
-    }
-    public ConfigurationNode getSpongeConfig() {
-        return this.spongeConfig;
-    }
-    public void setSpongeConfig(CommentedConfigurationNode config) { spongeConfig = config; }
-    public ConfigurationLoader<CommentedConfigurationNode> getConfigManager() {
-        return this.loader;
-    }
-
     @Listener
     public void onPreInitialization(GamePreInitializationEvent event) {
         getLogger().info("Starting NodeBB Integration.");
 
-        jarLoader = YAMLConfigurationLoader.builder().setURL(this.getClass().getResource("/config.yml")).build();
-
-        try {
-            defaultConfig = jarLoader.load();
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-
-        loader = HoconConfigurationLoader.builder().setPath(defaultConfigFile.toPath()).build();
-        if (defaultConfigFile.exists()) {
-            try {
-                spongeConfig = loader.load();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }else{
-            try {
-                spongeConfig = getDefaultConfig();
-                loader.save(defaultConfig);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        getLogger().info(spongeConfig.getNode("version").getString());
-
-        pluginConfig = new PluginConfigSponge(this);
+		new PluginConfigSponge(privateConfigDir);
     }
 
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
-        instance = this;
+        // Set static instance.
+        NBBPlugin.instance = this;
+
+        // Start logger.
+        com.radiofreederp.nodebbintegration.utils.Logger.init(this);
 
         // Start the socket client.
         SocketIOClient.create(this);
@@ -156,7 +80,7 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
         initTaskTick();
 
         // Register listeners.
-        Sponge.getEventManager().registerListeners(this, new ListenerNodeBBIntegration(this));
+        Sponge.getEventManager().registerListeners(this, new ListenerNodeBBIntegration());
 
         // Register commands.
         CommandSpec specNodeBB = CommandSpec.builder()

@@ -1,6 +1,7 @@
 package com.radiofreederp.nodebbintegration.bukkit.hooks;
 
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationBukkit;
+import com.radiofreederp.nodebbintegration.utils.Logger;
 import me.edge209.OnTime.OnTimeAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -20,7 +21,7 @@ public final class OnTimeHook {
     public static void hook(NodeBBIntegrationBukkit plugin) {
         if (Bukkit.getPluginManager().isPluginEnabled("OnTime")) {
             enabled = true;
-            NodeBBIntegrationBukkit.instance.log("Hooked into OnTime.");
+            Logger.log("Hooked into OnTime.");
         }
     }
 

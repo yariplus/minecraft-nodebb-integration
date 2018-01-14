@@ -1,6 +1,5 @@
 package com.radiofreederp.nodebbintegration.bukkit.commands;
 
-import com.radiofreederp.nodebbintegration.NodeBBIntegrationBukkit;
 import com.radiofreederp.nodebbintegration.commands.CommandNodeBB;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -8,16 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-/**
- * Created by Yari on 10/5/2015.
- */
-public class CommandNodeBBBukkit implements CommandExecutor {
-
-    private final CommandNodeBB command;
-
-    public CommandNodeBBBukkit(NodeBBIntegrationBukkit plugin) {
-        this.command = new CommandNodeBB(plugin);
-    }
+public class CommandNodeBBBukkit extends CommandNodeBB implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -29,24 +19,17 @@ public class CommandNodeBBBukkit implements CommandExecutor {
         String option = null;
         String value = null;
 
-        switch (args.length) {
-            default:
-            case 0:
-                action = "help";
-                break;
-            case 1:
-                action = "get";
-                option = args[0];
-                break;
-            case 2:
-                action = "set";
-                option = args[0];
-                value = args[1].replace('_', ' ');
-                break;
+        if (args.length == 0) {
+            action = "help";
+        } else if (args.length == 1) {
+            action = "get";
+            option = args[0];
+        } else {
+            action = "set";
+            option = args[0];
+            value = args[1].replace('_', ' ');
         }
 
-        boolean success = this.command.doCommand(sender, action, option, value);
-
-        return success;
+        return doCommand(sender, action, option, value);
     }
 }

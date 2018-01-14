@@ -20,7 +20,7 @@ public class CommandRegisterSponge implements CommandExecutor {
     private final NodeBBIntegrationPlugin plugin;
 
     public CommandRegisterSponge(NodeBBIntegrationSponge plugin) {
-        this.command = new CommandRegister(plugin);
+        this.command = new CommandRegister();
         this.plugin = plugin;
     }
 

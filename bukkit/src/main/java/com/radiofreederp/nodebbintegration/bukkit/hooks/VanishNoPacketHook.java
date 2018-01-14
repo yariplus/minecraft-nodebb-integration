@@ -2,6 +2,7 @@ package com.radiofreederp.nodebbintegration.bukkit.hooks;
 
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationBukkit;
 import com.radiofreederp.nodebbintegration.bukkit.listeners.ListenerVanishNoPacket;
+import com.radiofreederp.nodebbintegration.utils.Logger;
 import org.bukkit.Bukkit;
 
 /**
@@ -21,7 +22,7 @@ public final class VanishNoPacketHook {
         if (Bukkit.getPluginManager().isPluginEnabled("VanishNoPacket")) {
             enabled = true;
             plugin.getServer().getPluginManager().registerEvents(new ListenerVanishNoPacket(plugin), plugin);
-            NodeBBIntegrationBukkit.instance.log("Hooked into VanishNoPacket.");
+            Logger.log("Hooked into VanishNoPacket.");
         }
     }
 
