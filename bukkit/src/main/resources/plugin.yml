@@ -1,6 +1,6 @@
 name: NodeBBIntegration
 main: com.radiofreederp.nodebbintegration.NodeBBIntegrationBukkit
-version: 0.8.0-alpha.10
+version: 0.8.0-alpha.11
 depend: [Vault]
 softdepend: [OnTime, Votifier, VanishNoPacket]
 commands:

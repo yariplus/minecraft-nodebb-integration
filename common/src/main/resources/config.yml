@@ -61,4 +61,4 @@ messages:
             - "Data error. Please inform an administrator."
         ParsingError:
             - "Parsing error. Please inform an administrator."
-version: "0.8.0-alpha.10"
+version: "0.8.0-alpha.11"

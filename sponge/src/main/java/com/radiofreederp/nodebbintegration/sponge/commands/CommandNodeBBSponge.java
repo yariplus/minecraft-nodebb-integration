@@ -35,10 +35,6 @@ public class CommandNodeBBSponge extends CommandNodeBB implements CommandExecuto
             action = "get";
         }
 
-        plugin.log("option=" + option, Level.SEVERE);
-        plugin.log("value=" + value, Level.SEVERE);
-        plugin.log("action=" + action, Level.SEVERE);
-
         return doCommand(src, action, option, value) ? CommandResult.success() : CommandResult.empty();
     }
 }
