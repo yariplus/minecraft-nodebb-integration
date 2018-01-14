@@ -1,6 +1,5 @@
 package com.radiofreederp.nodebbintegration.sponge.commands;
 
-import com.radiofreederp.nodebbintegration.NodeBBIntegrationSponge;
 import com.radiofreederp.nodebbintegration.commands.CommandNodeBB;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -9,21 +8,10 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
 
-import java.io.IOException;
+import java.util.logging.Level;
 
-/**
- * Created by Yari on 4/5/2016.
- */
-public class CommandNodeBBSponge implements CommandExecutor {
-
-    private final CommandNodeBB command;
-
-    public CommandNodeBBSponge(NodeBBIntegrationSponge plugin) {
-        this.command = new CommandNodeBB();
-    }
+public class CommandNodeBBSponge extends CommandNodeBB implements CommandExecutor {
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
@@ -31,24 +19,26 @@ public class CommandNodeBBSponge implements CommandExecutor {
         // Make sure source can receive messages back.
         if (!(src instanceof Player || src instanceof ConsoleSource)) return CommandResult.empty();
 
-        String action;
+        String action = "";
         String option = args.getOne("option").orElse("help").toString().toLowerCase();
-        String value = null;
+        String value = "";
 
         if (args.getOne("value").isPresent()) {
             action = "set";
-            value = args.getOne("value").get().toString();
+            value = args.getOne("value").orElse("help").toString();
 
             // Add remaining text to value.
             if (args.getOne("remaining").isPresent()) {
-                value += " " + args.getOne("remaining").get().toString();
+                value += " " + args.getOne("remaining").toString(); // TODO: This doesn't actually work.
             }
         }else{
             action = "get";
         }
 
-        boolean success = this.command.doCommand(src, action, option, value);
+        plugin.log("option=" + option, Level.SEVERE);
+        plugin.log("value=" + value, Level.SEVERE);
+        plugin.log("action=" + action, Level.SEVERE);
 
-        return success ? CommandResult.success() : CommandResult.empty();
+        return doCommand(src, action, option, value) ? CommandResult.success() : CommandResult.empty();
     }
 }

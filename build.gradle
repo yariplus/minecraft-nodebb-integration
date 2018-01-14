@@ -52,7 +52,7 @@ task movePackages(type: Copy) {
 }
 
 def buildAliases = [
-  'package' : ['clean', 'cleanPackage', 'getTools', 'jar', 'build', 'shadowJar', 'phar', 'movePackages'],
+  'package' : ['clean', 'cleanPackage', 'getTools', 'jar', 'build', 'shadowJar', 'movePackages'],
 ]
 def expandedTaskList = []
 

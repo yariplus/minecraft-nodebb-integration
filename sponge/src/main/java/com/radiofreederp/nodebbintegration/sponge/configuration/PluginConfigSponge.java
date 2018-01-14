@@ -56,7 +56,7 @@ public class PluginConfigSponge extends PluginConfig implements IPluginConfig {
 
 		configurationNode.getNode(keySocketAddress).setValue(getSocketAddress() != null ? getSocketAddress() : defSocketAddress);
 		configurationNode.getNode(keySocketTransports).setValue(getSocketTransports() != null && getSocketTransports().size() > 0 ? getSocketTransports() : defSocketTransports);
-		configurationNode.getNode(keySocketNamespace).setValue(getSocketNamespace() != null ? getSocketAddress() : defSocketNamespace);
+		configurationNode.getNode(keySocketNamespace).setValue(getSocketNamespace() != null ? getSocketNamespace() : defSocketNamespace);
 
 		save();
 	}

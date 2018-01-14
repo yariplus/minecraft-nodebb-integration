@@ -2,6 +2,7 @@ package com.radiofreederp.nodebbintegration;
 
 import com.google.inject.Inject;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
+import com.radiofreederp.nodebbintegration.sponge.commands.CommandLinkSponge;
 import com.radiofreederp.nodebbintegration.sponge.commands.CommandNodeBBSponge;
 import com.radiofreederp.nodebbintegration.sponge.commands.CommandRegisterSponge;
 import com.radiofreederp.nodebbintegration.sponge.configuration.PluginConfigSponge;
@@ -86,22 +87,28 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
         CommandSpec specNodeBB = CommandSpec.builder()
                 .description(Text.of("NodeBB Integration parent command."))
                 .permission("nodebb.admin")
-                .executor(new CommandNodeBBSponge(this))
+                .executor(new CommandNodeBBSponge())
                 .arguments(
-                        GenericArguments.optional(GenericArguments.string(Text.of("option")), Text.of("help")),
+                        GenericArguments.optional(GenericArguments.string(Text.of("option"))),
                         GenericArguments.optional(GenericArguments.string(Text.of("value"))),
                         GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("remaining")))
                 )
                 .build();
         CommandSpec specRegister = CommandSpec.builder()
-                .description(Text.of("Register your Minecraft account with your forum account."))
-                .executor(new CommandRegisterSponge(this))
-                .arguments(
-                        GenericArguments.optional(GenericArguments.string(Text.of("pkey")))
-                )
-                .build();
+          .description(Text.of("Create a new forum account."))
+          .executor(new CommandRegisterSponge())
+          .arguments(
+            GenericArguments.optional(GenericArguments.string(Text.of("username"))),
+            GenericArguments.optional(GenericArguments.string(Text.of("email")))
+          )
+          .build();
+        CommandSpec specLink = CommandSpec.builder()
+          .description(Text.of("Register your Minecraft account with your forum account."))
+          .executor(new CommandLinkSponge())
+          .build();
         Sponge.getCommandManager().register(this, specNodeBB, "nodebb");
-        Sponge.getCommandManager().register(this, specRegister, "register");
+        Sponge.getCommandManager().register(this, specLink, "register");
+        Sponge.getCommandManager().register(this, specLink, "link");
     }
 
     @Override

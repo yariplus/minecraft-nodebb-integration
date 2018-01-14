@@ -114,11 +114,14 @@ public class CommandNodeBB extends MinecraftCommand {
                         break;
                     case "key":
                         config.setForumAPIKey(value);
-                        server.sendMessage(sender, "Set new API key.");
-                        Logger.log("Set new API key.");
+                        server.sendMessage(sender, "Set new API key: " + value);
+                        Logger.log("Set new API key: " + value);
                         config.save();
                         break;
                     case "live":
+                    case "siourl":
+                    case "socketurl":
+                    case "socket":
                         config.setSocketAddress(value);
                         HashMap<String, String> vars = new HashMap<>();
                         vars.put("%live%", config.getSocketAddress());
@@ -126,8 +129,15 @@ public class CommandNodeBB extends MinecraftCommand {
                         server.sendConsoleMessage(Messages.SOCKETIO_DOMAIN_SET, vars);
                         config.save();
                         break;
+                    case "namespace":
+                        config.setSocketNamespace(value);
+                        server.sendMessage(sender, "Set new Socket Namespace: " + value);
+                        Logger.log("Set new Socket Namespace: " + value);
+                        config.save();
+                        break;
                     default:
                     case "help":
+                        // TODO: Errors for invalid keys.
                         help(sender);
                         break;
                 }

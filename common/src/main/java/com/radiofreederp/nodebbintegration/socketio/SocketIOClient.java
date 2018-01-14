@@ -62,12 +62,14 @@ public final class SocketIOClient {
                     if (args[0] == null) {
                         Logger.log(event + " callback received without error.");
                     } else {
+                        // TODO: This throws with an invalid event.
                         try {
                             Logger.log(event + " callback received with error: " + ((JSONObject)args[0]).getString("message"));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
+
                     ack.call(args);
                 }
             });
