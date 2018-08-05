@@ -2,7 +2,8 @@ package com.radiofreederp.nodebbintegration.socketio;
 
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationPlugin;
 import com.radiofreederp.nodebbintegration.configuration.PluginConfig;
-import com.radiofreederp.nodebbintegration.tasks.TaskTick;
+import com.radiofreederp.nodebbintegration.tasks.TaskPing;
+import com.radiofreederp.nodebbintegration.tasks.TaskStatus;
 import com.radiofreederp.nodebbintegration.utils.Logger;
 import io.socket.client.Ack;
 import io.socket.client.IO;
@@ -42,7 +43,7 @@ public final class SocketIOClient {
         if (hasSocket()) {
             try {
                 instance.socket.close();
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {} // TODO: Debug socket close errors.
         }
     }
 
@@ -54,31 +55,26 @@ public final class SocketIOClient {
         }
 
         if (connected()) {
-            Logger.log("Sending socket request: " + PluginConfig.instance.getSocketNamespace() + "." + event, Level.SEVERE);
+            Logger.log("Sending socket request: " + PluginConfig.instance.getSocketNamespace() + "." + event);
 
             instance.socket.emit(PluginConfig.instance.getSocketNamespace() + "." + event, data, new Ack() {
                 @Override
                 public void call(Object... args) {
                     if (args[0] == null) {
-                        Logger.log(event + " callback received without error.");
+                        Logger.log(PluginConfig.instance.getSocketNamespace() + "." + event + " callback received without error.");
                     } else {
-                        // TODO: This throws with an invalid event.
+                        // TODO: This throws with an invalid event name.
                         try {
-                            Logger.log(event + " callback received with error: " + ((JSONObject)args[0]).getString("message"));
+                            Logger.error(PluginConfig.instance.getSocketNamespace() + "." + event + " callback received with error: " + ((JSONObject)args[0]).getString("message"));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
 
-                    ack.call(args);
+                    if (ack != null) ack.call(args);
                 }
             });
         }
-    }
-
-    public interface Events {
-        String onPlayerJoin = "eventPlayerJoin";
-        String onPlayerQuit = "eventPlayerQuit";
     }
 
     // Create instance during plugin load.
@@ -102,24 +98,25 @@ public final class SocketIOClient {
             public void call(Object... args) {
                 Logger.log("Connected to the forum.");
                 plugin.getMinecraftServer().sendMessageToOps("Connected to the forum.");
-                plugin.runTask(TaskTick.getTask());
+                plugin.runTask(TaskStatus.getTask());
+                plugin.runTask(TaskPing.getTask());
             }
         });
 
         socket.on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                Logger.log("Lost connection to the forum.");
+                Logger.error("Lost connection to the forum.");
                 plugin.getMinecraftServer().sendMessageToOps("Lost connection to the forum.");
-                Logger.log(args[0].toString());
+                if (args[0] != null) Logger.error(args[0].toString());
             }
         });
 
         socket.on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                Logger.log("Error connecting to the forum.");
-                Logger.log(args[0].toString());
+                Logger.error("Error connecting to the forum.");
+                if (args[0] != null) Logger.error(args[0].toString());
             }
         });
 
@@ -140,6 +137,8 @@ public final class SocketIOClient {
     // Disconnect the socket and reconnect asynchronously.
     private void connectSocket() {
         Logger.log("Reconnecting socket...");
+
+        // TODO: Research. This thread may not be required. SIO and OKHttp may run on their own threads already.
         plugin.runTaskAsynchronously(new Thread() {
             @Override
             public void run() {
@@ -151,12 +150,6 @@ public final class SocketIOClient {
                     live = plugin.getMinecraftServer().removeColors(PluginConfig.instance.getSocketAddress());
                     transports = PluginConfig.instance.getSocketTransports();
                     url = plugin.getMinecraftServer().removeColors(PluginConfig.instance.getForumURL());
-
-                    // ID-10T checks.
-                    if (url.length() > 10) {
-                        if (url.charAt(url.length() - 1) != '/') url = url + "/";
-                        if (!url.substring(0, 4).equals("http")) url = "http://" + url;
-                    }
 
                     // Get a session cookie.
                     getCookie(url);
@@ -194,11 +187,11 @@ public final class SocketIOClient {
                     socket.connect();
 
                 } catch (URISyntaxException e) {
-                    Logger.log("The forum URL is incorrectly formatted.", Level.SEVERE);
+                    Logger.error("Socket The forum URL may be incorrectly formatted.");
                     e.printStackTrace();
                 } catch (IOException e) {
-                    Logger.error("The forum URL is invalid.");
-                    if (PluginConfig.getDebug()) e.printStackTrace();
+                    Logger.error("The forum URL may be invalid.");
+                    e.printStackTrace();
                 }
             }
         });
@@ -206,7 +199,7 @@ public final class SocketIOClient {
 
     // Get the express session cookie.
     private void getCookie(String _url) throws IOException {
-        Logger.log("Getting Session Cookie.");
+        Logger.info("Getting Session Cookie from: " + _url);
 
         URL url = new URL(_url);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -217,22 +210,26 @@ public final class SocketIOClient {
             int response = connection.getResponseCode();
 
             if (response/100 == 4) {
-                Logger.log("Forum returned a " + response + " Forbidden error, you may need to whitelist your server's address on your forum's firewall.", Level.SEVERE);
+                Logger.error("Forum returned a " + response + " Forbidden error, you may need to whitelist your server's IP address on your forum's firewall or cloudflare proxy.");
                 cookie = null;
             }
             if (response/100 == 3) {
-                Logger.log("Forum returned a " + response + " Redirect error, please use the actual forum address.", Level.SEVERE);
+                Logger.error("Forum returned a " + response + " Redirect error, please use the actual forum address.");
                 cookie = null;
             }
 
-            Logger.log("Got Cookie: " + cookie, Level.SEVERE);
+            Logger.info("Got Cookie: " + cookie);
         } catch (SSLHandshakeException e) {
-            Logger.log("Failed to verify SSL certificates from your forum, you may need to add these manually.", Level.SEVERE);
+            Logger.error("Failed to verify SSL certificates from your forum, you may need to manually add these to your Java trust store.");
             if (PluginConfig.getDebug()) e.printStackTrace();
             cookie = null;
         } catch (UnknownHostException e) {
-            Logger.log("Can't connect to forum at " + _url, Level.SEVERE);
-            Logger.log("Use `/nodebb url URL` to set the forum address.", Level.SEVERE);
+            Logger.error("Can't connect to forum at " + _url);
+            Logger.error("Use `/nodebb url URL` to set the forum address.");
+            Logger.error("Use `/nodebb key KEY` to set the forum key.");
+			plugin.getMinecraftServer().sendMessageToOps("Can't connect to forum at " + _url);
+			plugin.getMinecraftServer().sendMessageToOps("Use `/nodebb url URL` to set the forum address.");
+			plugin.getMinecraftServer().sendMessageToOps("Use `/nodebb key KEY` to set the forum key.");
             cookie = null;
         }
     }

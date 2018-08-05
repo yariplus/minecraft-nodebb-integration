@@ -7,7 +7,7 @@ import com.radiofreederp.nodebbintegration.sponge.commands.CommandNodeBBSponge;
 import com.radiofreederp.nodebbintegration.sponge.commands.CommandRegisterSponge;
 import com.radiofreederp.nodebbintegration.sponge.configuration.PluginConfigSponge;
 import com.radiofreederp.nodebbintegration.sponge.listeners.ListenerNodeBBIntegration;
-import com.radiofreederp.nodebbintegration.tasks.TaskTick;
+import com.radiofreederp.nodebbintegration.tasks.TaskStatus;
 import com.radiofreederp.nodebbintegration.utils.NBBPlugin;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
@@ -117,8 +117,8 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
     }
 
     @Override
-    public void runTaskTimerAsynchronously(Runnable task) {
-        Sponge.getScheduler().createTaskBuilder().execute(task).intervalTicks(20 * 60).intervalTicks(20 * 60).async().submit(this);
+    public void runTaskTimerAsynchronously(Runnable task, int delay, int interval) {
+
     }
 
     @Override
@@ -127,8 +127,13 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
     }
 
     @Override
+    public void runTaskTimer(Runnable task, int delay, int interval) {
+
+    }
+
+    @Override
     public void initTaskTick() {
-        new TaskTick(this);
+        new TaskStatus(this);
     }
 
     @Override

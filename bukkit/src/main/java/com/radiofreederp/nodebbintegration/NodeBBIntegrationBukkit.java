@@ -2,21 +2,21 @@ package com.radiofreederp.nodebbintegration;
 
 import com.radiofreederp.nodebbintegration.bukkit.commands.CommandLinkBukkit;
 import com.radiofreederp.nodebbintegration.bukkit.commands.CommandNodeBBBukkit;
-import com.radiofreederp.nodebbintegration.bukkit.commands.CommandRegisterBukkit;
 import com.radiofreederp.nodebbintegration.bukkit.configuration.PluginConfigBukkit;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.OnTimeHook;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VanishNoPacketHook;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VaultHook;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VotifierHook;
 import com.radiofreederp.nodebbintegration.bukkit.listeners.*;
-import com.radiofreederp.nodebbintegration.configuration.PluginConfig;
 import com.radiofreederp.nodebbintegration.socketio.ESocketEvent;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
-import com.radiofreederp.nodebbintegration.tasks.TaskTick;
+import com.radiofreederp.nodebbintegration.tasks.TaskPing;
+import com.radiofreederp.nodebbintegration.tasks.TaskStatus;
 import com.radiofreederp.nodebbintegration.utils.Logger;
 import com.radiofreederp.nodebbintegration.utils.NBBPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.plugin.PluginLogger;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.json.JSONException;
@@ -24,6 +24,8 @@ import org.json.JSONObject;
 import java.util.logging.Level;
 
 public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegrationPlugin {
+
+    private PluginLogger logger;
 
     private MinecraftServerCommon minecraftServer = new BukkitServer(this);
     @Override
@@ -33,43 +35,33 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
 
     @Override
     public void log(String message, Level level) {
-        Bukkit.getLogger().log(level, "[NodeBB-Integration] " + message);
+        logger.log(level, message);
     }
 
-    // TODO: There's a better way to do this, but I can't figure it out.
     @Override
     public void runTaskAsynchronously(Runnable task) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                task.run();
-            }
-        }.runTaskAsynchronously(this);
+        Bukkit.getScheduler().runTaskAsynchronously(this, task);
     }
 
     @Override
-    public void runTaskTimerAsynchronously(Runnable task) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                task.run();
-            }
-        }.runTaskTimerAsynchronously(this, 20 * 60, 20 * 60);
+    public void runTaskTimerAsynchronously(Runnable task, int delay, int interval) {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(this, task, delay, interval);
     }
 
     @Override
     public void runTask(Runnable task) {
-        new BukkitRunnable(){
-            @Override
-            public void run() {
-                task.run();
-            }
-        }.runTask(this);
+        Bukkit.getScheduler().runTask(this, task);
     }
+
+	@Override
+	public void runTaskTimer(Runnable task, int delay, int interval) {
+		Bukkit.getScheduler().runTaskTimer(this, task, delay, interval);
+	}
 
     @Override
     public void initTaskTick() {
-        new TaskTick(this);
+        new TaskStatus(this);
+        new TaskPing(this);
     }
 
     @Override
@@ -111,6 +103,7 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
         NBBPlugin.instance = this;
 
         // Start logger.
+        logger = new PluginLogger(this);
         Logger.init(this);
 
         // Loads config and updates if necessary.
@@ -144,7 +137,7 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
         new BukkitRunnable(){
             @Override
             public void run() {
-                SocketIOClient.emit(ESocketEvent.WRITE_RANKS_WITH_MEMBERS, minecraftServer.getGroupsWithMembers(), args -> Logger.log("Received " + ESocketEvent.WRITE_RANKS_WITH_MEMBERS + " callback."));
+                SocketIOClient.emit(ESocketEvent.RANKS_WITH_MEMBERS, minecraftServer.getGroupsWithMembers(), args -> Logger.log("Received " + ESocketEvent.RANKS_WITH_MEMBERS + " callback."));
             }
         }.runTaskLater(this, 100);
 

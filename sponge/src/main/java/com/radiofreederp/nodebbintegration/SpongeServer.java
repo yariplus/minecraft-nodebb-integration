@@ -174,4 +174,9 @@ public class SpongeServer extends MinecraftServerCommon {
     public JSONObject getOfflinePlayers() {
         return new JSONObject();
     }
+
+    @Override
+    public JSONArray getScoreboards() {
+        return null;
+    }
 }

@@ -4,6 +4,7 @@ import com.radiofreederp.nodebbintegration.MinecraftServerEvents;
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationPlugin;
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationSponge;
 import com.radiofreederp.nodebbintegration.configuration.PluginConfig;
+import com.radiofreederp.nodebbintegration.socketio.ESocketEvent;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
 import com.radiofreederp.nodebbintegration.utils.Logger;
 import com.radiofreederp.nodebbintegration.utils.NBBPlugin;
@@ -28,7 +29,7 @@ public class ListenerNodeBBIntegration {
             obj.put("name", player.getName());
             obj.put("id", player.getUniqueId());
         } catch (JSONException e) {
-            Logger.log("Error constructing JSON Object for " + SocketIOClient.Events.onPlayerJoin);
+            Logger.log("Error constructing JSON Object for " + ESocketEvent.PLAYER_JOIN);
             e.printStackTrace();
         }
 
@@ -37,7 +38,7 @@ public class ListenerNodeBBIntegration {
 
     @Listener
     public void onPlayerQuit(ClientConnectionEvent.Disconnect event) {
-        String socketEvent = SocketIOClient.Events.onPlayerQuit;
+        String socketEvent = ESocketEvent.PLAYER_QUIT;
         SocketIOClient.emit(socketEvent, getPlayerQuitData(event.getTargetEntity()), args -> {});
     }
 
@@ -49,7 +50,7 @@ public class ListenerNodeBBIntegration {
             obj.put("name", player.getName());
             obj.put("id", player.getUniqueId());
         } catch (JSONException e) {
-            Logger.log("Error constructing JSON Object for " + SocketIOClient.Events.onPlayerQuit);
+            Logger.log("Error constructing JSON Object for " + ESocketEvent.PLAYER_QUIT);
             e.printStackTrace();
         }
 

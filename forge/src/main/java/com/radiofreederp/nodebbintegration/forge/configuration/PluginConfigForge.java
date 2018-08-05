@@ -1,13 +1,11 @@
 package com.radiofreederp.nodebbintegration.forge.configuration;
 
-import com.radiofreederp.nodebbintegration.NodeBBIntegrationPlugin;
 import com.radiofreederp.nodebbintegration.configuration.IPluginConfig;
 import com.radiofreederp.nodebbintegration.configuration.PluginConfig;
 import com.radiofreederp.nodebbintegration.utils.Logger;
 import net.minecraftforge.common.config.Configuration;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,14 +14,12 @@ public final class PluginConfigForge extends PluginConfig implements IPluginConf
 
 	private Configuration configuration;
 
-	//@Override
+	@Override
 	public void init(Object... args) {
 		configuration = new Configuration((File)args[0]);
 
 		try {
 			configuration.load();
-
-
 		} catch (Exception e) {
 			Logger.log("Exception loading configuration:");
 			e.printStackTrace();
@@ -32,14 +28,19 @@ public final class PluginConfigForge extends PluginConfig implements IPluginConf
 		}
 	}
 
-	//@Override
+	@Override
 	public void reload() {
-
+		try {
+			configuration.load();
+		} catch (Exception e) {
+			Logger.log("Exception loading configuration:");
+			e.printStackTrace();
+		}
 	}
 
-	//@Override
+	@Override
 	public void save() {
-
+		configuration.save();
 	}
 
 	public String getForumURL() { return configuration.get(ConfigKey.FORUMURL.getCategory(), ConfigKey.FORUMURL.getKey(), defForumUrl).getString(); }
@@ -52,7 +53,7 @@ public final class PluginConfigForge extends PluginConfig implements IPluginConf
 
 	public void setForumURL(String url) { configuration.get(ConfigKey.FORUMURL.getCategory(), ConfigKey.FORUMURL.getKey(), defForumUrl).set(url); }
 	public void setForumName(String name) { configuration.get(ConfigKey.FORUMNAME.getCategory(), ConfigKey.FORUMNAME.getKey(), defForumName).set(name); }
-	public void setForumAPIKey(String key) { configuration.get(ConfigKey.FORUMNAME.getCategory(), ConfigKey.FORUMNAME.getKey(), defForumName).set(key); }
+	public void setForumAPIKey(String key) { configuration.get(ConfigKey.FORUMAPIKEY.getCategory(), ConfigKey.FORUMAPIKEY.getKey(), defForumAPIKey).set(key); }
 
 	public void setSocketAddress(String url) { configuration.get(ConfigKey.SOCKETADDRESS.getCategory(), ConfigKey.SOCKETADDRESS.getKey(), defSocketAddress).set(url); }
 	public void setSocketTransports(List<String> transports) { configuration.get(ConfigKey.SOCKETTRANSPORTS.getCategory(), ConfigKey.SOCKETTRANSPORTS.getKey(), (String[])defSocketTransports.toArray()).set((String[])transports.toArray()); }

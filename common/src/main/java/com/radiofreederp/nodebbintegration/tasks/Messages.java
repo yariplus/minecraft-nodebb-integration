@@ -1,7 +1,5 @@
 package com.radiofreederp.nodebbintegration.tasks;
 
-import java.util.ArrayList;
-
 public final class Messages {
 	private Messages () {}
 
@@ -19,11 +17,14 @@ public final class Messages {
 	  "&f[&6NodeBB Integration&f]",
 	  "&4=&c=&6=&e=&a=&3=&b=&9=&1=&d=&5=&4=&c=&6=&e=&a=&2=&3=&b=",
 	  "&fCommands:",
-	  "&e/nodebb reload &r- Reloads config and reconnects to the forum.",
+	  "&e/nodebb reload &r- Reloads config from disk and reconnects to the forum.",
+	  "&e/nodebb url [url] &r- Get or set the forum url.",
 	  "&e/nodebb key [key] &r- Get or set the forum API key.",
 	  "&e/nodebb name [name] &r- Get or set the forum name.",
-	  "&e/nodebb url [url] &r- Get or set the forum url.",
-	  "&e/nodebb debug &r- Displays information useful for fixing errors."
+	  "&e/nodebb socket [address] &r- Get or set the socket.io address.",
+	  "&e/nodebb settings &r- View all settings values.",
+	  "&e/nodebb reset &r- Return all settings values to defaults.",
+	  "&e/nodebb debug &r- Toggle verbose logging."
 	};
 
 	public static String LINK = "Go to the link below to link your player to the forum.";

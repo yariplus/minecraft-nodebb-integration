@@ -3,14 +3,15 @@ package com.radiofreederp.nodebbintegration;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.function.Consumer;
 
-/**
- * Created by Yari on 7/9/2016.
- */
 public class ForgeServer extends MinecraftServerCommon {
   private NodeBBIntegrationPlugin plugin;
 
@@ -20,6 +21,7 @@ public class ForgeServer extends MinecraftServerCommon {
 
   @Override
   public void sendMessage(Object receiver, String message) {
+    message = message.replaceAll("&", "\u00a7");
     ((EntityPlayerMP)receiver).addChatMessage(new ChatComponentText(message));
   }
 
@@ -29,8 +31,19 @@ public class ForgeServer extends MinecraftServerCommon {
   }
 
   @Override
-  public void sendMessageToOps(String message) {
+  public void sendMessageToOps(final String message) {
+	  final String fmessage = message.replaceAll("&", "\u00a7");
+	  final String[] ops = MinecraftServer.getServer().getConfigurationManager().getOppedPlayerNames();
 
+	  MinecraftServer.getServer().getConfigurationManager().playerEntityList.forEach(new Consumer() {
+		  @Override
+		  public void accept(Object o) {
+			  EntityPlayerMP player = (EntityPlayerMP) o;
+			  if (Arrays.asList(ops).contains(player.getCommandSenderName())) {
+				  player.addChatMessage(new ChatComponentText(fmessage));
+			  }
+		  }
+	  });
   }
 
   @Override
@@ -133,5 +146,10 @@ public class ForgeServer extends MinecraftServerCommon {
   @Override
   public JSONObject getOfflinePlayers() {
     return new JSONObject();
+  }
+
+  @Override
+  public JSONArray getScoreboards() {
+    return null;
   }
 }

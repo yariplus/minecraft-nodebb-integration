@@ -2,6 +2,7 @@ package com.radiofreederp.nodebbintegration.bukkit.listeners;
 
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationBukkit;
 import com.radiofreederp.nodebbintegration.NodeBBIntegrationPlugin;
+import com.radiofreederp.nodebbintegration.socketio.ESocketEvent;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -20,9 +21,9 @@ public class ListenerVanishNoPacket implements Listener
     {
         // TODO: Make more options for handling vanished players.
         if (event.isVanishing()) {
-            SocketIOClient.emit(SocketIOClient.Events.onPlayerQuit, plugin.getMinecraftServer().getPlayerJSON(event.getPlayer()), args -> {});
+            SocketIOClient.emit(ESocketEvent.PLAYER_QUIT, plugin.getMinecraftServer().getPlayerJSON(event.getPlayer()), args -> {});
         }else{
-            SocketIOClient.emit(SocketIOClient.Events.onPlayerJoin, plugin.getMinecraftServer().getPlayerJSON(event.getPlayer()), args -> {});
+            SocketIOClient.emit(ESocketEvent.PLAYER_JOIN, plugin.getMinecraftServer().getPlayerJSON(event.getPlayer()), args -> {});
         }
     }
 }

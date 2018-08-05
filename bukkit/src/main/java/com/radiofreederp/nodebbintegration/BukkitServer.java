@@ -1,5 +1,6 @@
 package com.radiofreederp.nodebbintegration;
 
+import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.OnTimeHook;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VanishNoPacketHook;
@@ -9,16 +10,19 @@ import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class BukkitServer extends MinecraftServerCommon {
     private NodeBBIntegrationPlugin plugin;
@@ -30,7 +34,7 @@ public class BukkitServer extends MinecraftServerCommon {
     // Handle messaging.
     @Override
     public void sendMessage(Object receiver, String message) {
-        ((CommandSender)receiver).sendMessage(translateColors(message));
+        ((CommandSender)receiver).sendMessage(translateColors("&f[&7n&9BB&7i&f] &r" + message));
     }
     @Override
     public void sendConsoleMessage(String message) {
@@ -38,7 +42,7 @@ public class BukkitServer extends MinecraftServerCommon {
     }
     @Override
     public void sendMessageToOps(String message) {
-        Bukkit.getOnlinePlayers().stream().filter(player->player.hasPermission("nodebb.admin")).forEach(op->sendMessage(op, message));
+        Bukkit.getOnlinePlayers().stream().filter(player->player.hasPermission("nodebb.admin")).forEach(op->sendMessage(op, "&d" + message));
     }
 
     // Handle color.
@@ -249,6 +253,7 @@ public class BukkitServer extends MinecraftServerCommon {
         JSONObject data = new JSONObject();
 
         if (VaultHook.permission == null) return data;
+        if (!VaultHook.permission.hasGroupSupport()) return data;
 
         JSONObject groupsObj = getGroups();
 
@@ -303,5 +308,46 @@ public class BukkitServer extends MinecraftServerCommon {
         }
 
         return data;
+    }
+
+    @Override
+    public JSONArray getScoreboards() {
+        Set<OfflinePlayer> players = Bukkit.getScoreboardManager().getMainScoreboard().getPlayers();
+        Set<Objective> objectives = Bukkit.getScoreboardManager().getMainScoreboard().getObjectives();
+
+        JSONArray jObjectives = new JSONArray();
+
+        objectives.forEach(objective -> {
+            JSONObject jObjective = new JSONObject();
+            JSONArray jEntries = new JSONArray();
+
+            players.forEach(player -> {
+                if (objective.getScore(player) != null) {
+                    JSONObject jEntry = new JSONObject();
+
+                    try {
+                        jEntry.put("id", player.getUniqueId().toString());
+                        jEntry.put("name", player.getName());
+                        jEntry.put("score", objective.getScore(player).getScore());
+                        jEntries.put(jEntry);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            try {
+                jObjective.put("name", objective.getName());
+                jObjective.put("displayname", objective.getDisplayName());
+                jObjective.put("criteria", objective.getCriteria());
+                jObjective.put("displayslot", objective.getDisplaySlot());
+                jObjective.put("entries", jEntries);
+                jObjectives.put(jObjective);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return jObjectives;
     }
 }

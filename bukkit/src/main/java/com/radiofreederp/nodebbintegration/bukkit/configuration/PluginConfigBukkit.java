@@ -49,7 +49,7 @@ public final class PluginConfigBukkit extends PluginConfig implements IPluginCon
 			settingsData.set(keyForumAPIKey, getForumAPIKey() != null ? getForumAPIKey() : defForumAPIKey);
 
 			settingsData.set(keySocketAddress, getSocketAddress() != null ? getSocketAddress() : defSocketAddress);
-			settingsData.set(keySocketTransports, getSocketTransports() != null ? getSocketTransports() : defSocketTransports);
+			settingsData.set(keySocketTransports, getSocketTransports() != null && getSocketTransports().size() > 0 ? getSocketTransports() : defSocketTransports);
 			settingsData.set(keySocketNamespace, getSocketNamespace() != null ? getSocketNamespace() : defSocketNamespace);
 
 			save();
@@ -63,7 +63,7 @@ public final class PluginConfigBukkit extends PluginConfig implements IPluginCon
 
 	// Save configuration to disk.
 	@Override
-	public void save() {
+	public void save () {
 		try {
 			settingsData.save(settingsFile);
 		} catch (IOException e) {
@@ -81,12 +81,9 @@ public final class PluginConfigBukkit extends PluginConfig implements IPluginCon
 
 	// Reload configuration from disk.
 	@Override
-	public void reload() {
+	public void reload () {
 		// Reinitialize configuration files.
 		init();
-
-		// Reconnect socket client with new settings.
-		SocketIOClient.connect();
 	}
 
 	public String getForumURL() { return settingsData.getString(keyForumURL); }
@@ -97,7 +94,7 @@ public final class PluginConfigBukkit extends PluginConfig implements IPluginCon
 	public List<String> getSocketTransports() { return settingsData.getStringList(keySocketTransports); }
 	public String getSocketNamespace() { return settingsData.getString(keySocketNamespace); }
 
-	public void setForumURL(String url) { settingsData.set(keyForumURL, url); }
+	public void setForumURL(String url) { settingsData.set(keyForumURL, url); settingsData.set(keySocketAddress, url); }
 	public void setForumName(String name) { settingsData.set(keyForumName, name); }
 	public void setForumAPIKey(String key) { settingsData.set(keyForumAPIKey, key); }
 

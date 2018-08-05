@@ -9,19 +9,19 @@ import java.util.List;
 public abstract class PluginConfig implements IPluginConfig {
 	public PluginConfig(Object... args) {
 		instance = this;
-		instance.init(args);
+		init(args);
 	}
 
 	public static PluginConfig instance;
 
 	// Config variables and defaults.
-	protected static String defForumUrl = "https://forum.example.com/";
-	protected static String defForumName = "Example Forum";
-	protected static String defForumAPIKey = "SECRETPASSWORD";
+	public static String defForumUrl = "https://forum.example.com/";
+	public static String defForumName = "Example Forum";
+	public static String defForumAPIKey = "SECRETPASSWORD";
 
-	protected static String defSocketAddress = "https://forum.example.com/";
-	protected static List<String> defSocketTransports = Arrays.asList("socket", "polling");
-	protected static String defSocketNamespace = "plugins.MinecraftIntegration";
+	public static String defSocketAddress = "";
+	public static List<String> defSocketTransports = Arrays.asList("polling", "websocket");
+	public static String defSocketNamespace = "plugins.MinecraftIntegration";
 
 	JSONObject players = new JSONObject();
 
@@ -76,6 +76,16 @@ public abstract class PluginConfig implements IPluginConfig {
 	}
 
 	public static void setDebug(boolean _debug) { debug = _debug; }
+
+	public void reset () {
+		setForumURL(defForumUrl);
+		setForumName(defForumName);
+		setForumAPIKey(defForumAPIKey);
+		setSocketAddress(defSocketAddress);
+		setSocketNamespace(defSocketNamespace);
+		setSocketTransports(defSocketTransports);
+		save();
+	}
 
 	public enum ConfigKey {
 		FORUMURL("Forum URL"),

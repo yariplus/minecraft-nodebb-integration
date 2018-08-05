@@ -1,6 +1,7 @@
 package com.radiofreederp.nodebbintegration;
 
 import com.radiofreederp.nodebbintegration.utils.Helpers;
+import org.json.JSONArray;
 
 import java.util.HashMap;
 import java.util.List;

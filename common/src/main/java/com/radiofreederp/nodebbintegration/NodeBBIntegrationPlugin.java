@@ -9,8 +9,9 @@ public interface NodeBBIntegrationPlugin {
     void log(String message, Level level);
 
     void runTaskAsynchronously(Runnable task);
-    void runTaskTimerAsynchronously(Runnable task);
+    void runTaskTimerAsynchronously(Runnable task, int delay, int interval);
     void runTask(Runnable task);
+    void runTaskTimer(Runnable task, int delay, int interval);
 
     void initTaskTick();
 

@@ -1,6 +1,7 @@
 package com.radiofreederp.nodebbintegration;
 
 import com.radiofreederp.nodebbintegration.configuration.PluginConfig;
+import com.radiofreederp.nodebbintegration.socketio.ESocketEvent;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
 import com.radiofreederp.nodebbintegration.utils.Doable;
 import com.radiofreederp.nodebbintegration.utils.Logger;
@@ -11,18 +12,6 @@ import org.json.JSONObject;
 public class MinecraftServerEvents {
 
     public static NodeBBIntegrationPlugin plugin;
-
-    private static boolean applyKey(JSONObject object) {
-        try {
-            object.put("key", PluginConfig.instance.getForumAPIKey());
-        } catch (JSONException e) {
-            //TODO
-            e.printStackTrace();
-            return false;
-        } finally {
-            return true;
-        }
-    }
 
     private static void sendEvent(final String socketEvent, final JSONObject data, final Doable res) {
 
@@ -57,9 +46,7 @@ public class MinecraftServerEvents {
     }
 
     public static void onPlayerJoin(final Object player, final JSONObject data) {
-        final String socketEvent = SocketIOClient.Events.onPlayerJoin;
-
-        if (!applyKey(data)) return;
+        final String socketEvent = ESocketEvent.PLAYER_JOIN;
 
         sendEvent(socketEvent, data, new Doable() {
             @Override
@@ -87,9 +74,7 @@ public class MinecraftServerEvents {
     }
 
     public static void onPlayerQuit(final Object player, final JSONObject data) {
-        final String socketEvent = SocketIOClient.Events.onPlayerQuit;
-
-        if (!applyKey(data)) return;
+        final String socketEvent = ESocketEvent.PLAYER_QUIT;
 
         sendEvent(socketEvent, data, null);
     }

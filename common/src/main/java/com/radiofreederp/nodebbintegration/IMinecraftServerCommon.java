@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * Created by Yari on 4/17/2016.
- */
 public interface IMinecraftServerCommon {
 
     // TODO: I feel like this can be improved a lot.
@@ -56,4 +53,6 @@ public interface IMinecraftServerCommon {
     JSONObject getGroups();
     JSONObject getGroupsWithMembers();
     JSONObject getOfflinePlayers();
+
+    JSONArray getScoreboards();
 }

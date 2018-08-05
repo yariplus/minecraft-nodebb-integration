@@ -8,7 +8,7 @@ import com.radiofreederp.nodebbintegration.bukkit.hooks.VaultHook;
 import com.radiofreederp.nodebbintegration.bukkit.hooks.VotifierHook;
 import com.radiofreederp.nodebbintegration.bukkit.listeners.*;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
-import com.radiofreederp.nodebbintegration.tasks.TaskTick;
+import com.radiofreederp.nodebbintegration.tasks.TaskStatus;
 import io.socket.client.Ack;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -93,7 +93,7 @@ public class NodeBBIntegrationBukkit extends JavaPlugin implements NodeBBIntegra
 
     @Override
     public void initTaskTick() {
-        new TaskTick(this);
+        new TaskStatus(this);
     }
 
     @Override

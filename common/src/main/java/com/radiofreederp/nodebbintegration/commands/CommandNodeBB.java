@@ -33,35 +33,45 @@ public class CommandNodeBB extends MinecraftCommand {
                         config.reload();
                         server.sendMessage(sender, "Reloaded PluginConfig.");
                         server.sendConsoleMessage("Reloaded PluginConfig.");
+
+                        // Reconnect socket client with new settings.
+                        SocketIOClient.connect();
                         break;
                     case "syncgroups":
                         // Sync Players
                         plugin.runTask(new Runnable() {
                             @Override
                             public void run() {
-                                SocketIOClient.emit(ESocketEvent.WRITE_RANKS_WITH_MEMBERS, plugin.getMinecraftServer().getGroupsWithMembers(), new Ack() {
+                                SocketIOClient.emit(ESocketEvent.RANKS_WITH_MEMBERS, plugin.getMinecraftServer().getGroupsWithMembers(), new Ack() {
                                     @Override
                                     public void call(Object... args) {
-                                        Logger.log("Received " + ESocketEvent.WRITE_RANKS_WITH_MEMBERS + " callback.");
+                                        Logger.log("Received " + ESocketEvent.RANKS_WITH_MEMBERS + " callback.");
                                     }
                                 });
                             }
                         });
                         break;
                     case "debug":
+                        PluginConfig.setDebug(!PluginConfig.getDebug());
+                        if (PluginConfig.getDebug()) {
+                            server.sendMessage(sender, "Turned on verbose logging.");
+                            server.sendMessage(sender, "Post bugs to https://goo.gl/qSy6BP");
+                        } else {
+                            server.sendMessage(sender, "Turned off verbose logging.");
+                        }
+                        break;
+                    case "settings":
                         if (SocketIOClient.connected()) {
                             server.sendMessage(sender, "The server is currently &aCONNECTED to the forum.");
                         } else {
-							server.sendMessage(sender, "The server is currently &4DISCONNECTED from the forum.");
-						}
+                            server.sendMessage(sender, "The server is currently &4DISCONNECTED from the forum.");
+                        }
                         server.sendMessage(sender, "Forum Name is " + config.getForumName());
                         server.sendMessage(sender, "Forum URL is " + config.getForumURL());
                         server.sendMessage(sender, "Forum API Key is " + config.getForumAPIKey());
                         server.sendMessage(sender, "socket.io address is " + config.getSocketAddress());
                         server.sendMessage(sender, "socket.io namespace is " + config.getSocketNamespace());
                         server.sendMessage(sender, "socket.io transports is " + config.getSocketTransportsAsString());
-                        server.sendMessage(sender, "Post bugs to https://goo.gl/qSy6BP");
-                        server.sendMessage(sender, "Use &3/nodebb debug toggle&r to toggle verbose logging.");
                         break;
                     case "name":
                         server.sendMessage(sender, "Forum Name is " + config.getForumName());
@@ -84,6 +94,11 @@ public class CommandNodeBB extends MinecraftCommand {
 					case "transports":
 						server.sendMessage(sender, "socket.io transports is " + config.getSocketTransportsAsString());
 						break;
+                    case "reset":
+                        config.reset();
+                        server.sendMessage(sender, "Set settings to defaults.");
+                        server.sendConsoleMessage("Set settings to defaults.");
+                        break;
                     default:
                     case "help":
                         help(sender);
@@ -92,14 +107,6 @@ public class CommandNodeBB extends MinecraftCommand {
                 break;
             case "set":
                 switch (option) {
-                    case "debug":
-                        PluginConfig.setDebug(!PluginConfig.getDebug());
-                        if (PluginConfig.getDebug()) {
-                            server.sendMessage(sender, "Turned on verbose logging.");
-                        } else {
-                            server.sendMessage(sender, "Turned off verbose logging.");
-                        }
-                        break;
                     case "name":
                         config.setForumName(value);
                         server.sendMessage(sender, "Set forum name to " + value);
@@ -107,7 +114,10 @@ public class CommandNodeBB extends MinecraftCommand {
                         config.save();
                         break;
                     case "url":
+                        if (value.indexOf("https://") != 0) value = "https://" + value;
+                        if (value.charAt(value.length() - 1) != '/') value = value + "/";
                         config.setForumURL(value);
+                        config.setSocketAddress(value);
                         server.sendMessage(sender, "Set forum url to " + value);
                         Logger.log("Set forum url to " + value);
                         config.save();
@@ -117,11 +127,14 @@ public class CommandNodeBB extends MinecraftCommand {
                         server.sendMessage(sender, "Set new API key: " + value);
                         Logger.log("Set new API key: " + value);
                         config.save();
+                        SocketIOClient.connect();
                         break;
                     case "live":
                     case "siourl":
                     case "socketurl":
                     case "socket":
+                        if (value.indexOf("https://") != 0) value = "https://" + value;
+                        if (value.charAt(value.length() - 1) != '/') value = value + "/";
                         config.setSocketAddress(value);
                         HashMap<String, String> vars = new HashMap<>();
                         vars.put("%live%", config.getSocketAddress());

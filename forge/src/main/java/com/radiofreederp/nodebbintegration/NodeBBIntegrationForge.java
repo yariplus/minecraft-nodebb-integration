@@ -1,15 +1,14 @@
 package com.radiofreederp.nodebbintegration;
 
-import com.radiofreederp.nodebbintegration.configuration.PluginConfig;
 import com.radiofreederp.nodebbintegration.forge.commands.CommandNodeBBForge;
 import com.radiofreederp.nodebbintegration.forge.commands.CommandRegisterForge;
 import com.radiofreederp.nodebbintegration.forge.configuration.PluginConfigForge;
 import com.radiofreederp.nodebbintegration.socketio.SocketIOClient;
-import com.radiofreederp.nodebbintegration.tasks.TaskTick;
+import com.radiofreederp.nodebbintegration.tasks.TaskPing;
+import com.radiofreederp.nodebbintegration.tasks.TaskStatus;
 import com.radiofreederp.nodebbintegration.utils.Logger;
 import com.radiofreederp.nodebbintegration.utils.NBBPlugin;
 import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -19,7 +18,8 @@ import net.minecraft.util.ChatComponentText;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 @Mod(modid = NBBPlugin.ID, name = NBBPlugin.NAME, version = NBBPlugin.VERSION, acceptableRemoteVersions = "*")
@@ -34,12 +34,6 @@ public class NodeBBIntegrationForge implements NodeBBIntegrationPlugin {
   public MinecraftServerCommon getMinecraftServer() {
     return minecraftServer;
   }
-
-  //private PluginConfig config = new PluginConfigForge(this);
-
-  //public PluginConfig getPluginConfig() {
-    //return config;
-  //}
 
   // Preload event
   @Mod.EventHandler
@@ -58,7 +52,7 @@ public class NodeBBIntegrationForge implements NodeBBIntegrationPlugin {
     // Start the socket client.
     SocketIOClient.create(this);
 
-    // Monitor the TPS.
+    // Schedule our repeating tasks.
     initTaskTick();
 
     Logger.log("Loaded NodeBB Integration");
@@ -84,8 +78,11 @@ public class NodeBBIntegrationForge implements NodeBBIntegrationPlugin {
   }
 
   @Override
-  public void runTaskTimerAsynchronously(Runnable task) {
-    // TODO: Count ticks?
+  public void runTaskTimerAsynchronously(final Runnable task, int delay, int interval) {
+    // TODO: Please send help. Innocent children may die.
+    final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
+    final Thread thread = new Thread(task);
+    executor.scheduleAtFixedRate(thread, delay / 20, interval / 20, TimeUnit.SECONDS);
   }
 
   @Override
@@ -94,9 +91,15 @@ public class NodeBBIntegrationForge implements NodeBBIntegrationPlugin {
   }
 
   @Override
+  public void runTaskTimer(Runnable task, int delay, int interval) {
+    final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
+    executor.scheduleAtFixedRate(task, delay / 20, interval / 20, TimeUnit.SECONDS);
+  }
+
+  @Override
   public void initTaskTick() {
-    // TODO: Maybe I could start a timer here?
-    new TaskTick(this);
+    new TaskStatus(this);
+    new TaskPing(this);
   }
 
   @Override
