@@ -1,6 +1,6 @@
 name: NodeBBIntegration
 main: NodeBBIntegration\NodeBBIntegration
-version: 0.8.0-alpha.21
+version: 0.8.0-alpha.22
 api: [1.0.0]
 
 load: POSTWORLD

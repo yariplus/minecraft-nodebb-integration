@@ -15,11 +15,11 @@ repositories {
 }
 
 dependencies {
-  compile name: 'nodebb-integration-common-0.8.0-alpha.21-all'
-  compile name: 'nodebb-integration-bukkit-0.8.0-alpha.21'
-  //compile name: 'nodebb-integration-bungeecord-0.8.0-alpha.21'
-  compile name: 'nodebb-integration-forge-0.8.0-alpha.21'
-  compile name: 'nodebb-integration-sponge-0.8.0-alpha.21'
+  compile name: 'nodebb-integration-common-0.8.0-alpha.22-all'
+  compile name: 'nodebb-integration-bukkit-0.8.0-alpha.22'
+  //compile name: 'nodebb-integration-bungeecord-0.8.0-alpha.22'
+  compile name: 'nodebb-integration-forge-0.8.0-alpha.22'
+  compile name: 'nodebb-integration-sponge-0.8.0-alpha.22'
 }
 
 shadowJar {
