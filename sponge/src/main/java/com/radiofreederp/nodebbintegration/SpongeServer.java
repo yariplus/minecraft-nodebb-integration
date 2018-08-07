@@ -5,21 +5,25 @@ import com.radiofreederp.nodebbintegration.utils.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.spongepowered.api.MinecraftVersion;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.server.ClientPingServerEvent;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.text.channel.MessageReceiver;
 import org.spongepowered.api.text.serializer.TextSerializers;
+import org.spongepowered.api.world.storage.WorldProperties;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Optional;
 
 public class SpongeServer extends MinecraftServerCommon {
 
     private final NodeBBIntegrationPlugin plugin;
-    public SpongeServer(NodeBBIntegrationPlugin plugin) {
+    SpongeServer(NodeBBIntegrationPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -62,19 +66,29 @@ public class SpongeServer extends MinecraftServerCommon {
 
             // TODO: Vanish support.
 
-            JSONObject playerObj = new JSONObject();
-
-            try {
-                playerObj.put("name", player.getName());
-                playerObj.put("id", player.getUniqueId());
-
-                playerList.add(playerObj);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            JSONObject playerObj = getPlayerJSON(player);
+            if (playerObj != null) playerList.add(playerObj); // TODO: Refactor into Common.
         }
 
         return playerList;
+    }
+
+    @Override
+    public JSONObject getPlayerJSON(Object _player) {
+        JSONObject playerObj = new JSONObject();
+        Player player = (Player)_player;
+
+        try {
+            playerObj.put("name", player.getName());
+            playerObj.put("displayName", player.getDisplayNameData().displayName().toString());
+            playerObj.put("id", player.getUniqueId());
+        } catch (JSONException e) {
+            Logger.log("Error constructing JSON Object for getPlayerJSON");
+            e.printStackTrace();
+            return null;
+        }
+
+        return playerObj;
     }
 
     @Override
@@ -99,14 +113,8 @@ public class SpongeServer extends MinecraftServerCommon {
     }
 
     @Override
-    public JSONObject getPlayerJSON(Object _player) {
-        return null;
-    }
-
-    @Override
     public String getVersion() {
-        // TODO: ???
-        return "";
+        return Sponge.getPlatform().getMinecraftVersion().getName();
     }
 
     @Override
@@ -132,7 +140,7 @@ public class SpongeServer extends MinecraftServerCommon {
 
     @Override
     public String getWorldType() {
-        return Sponge.getServer().getDefaultWorld().get().getGeneratorType().toString();
+        return Sponge.getServer().getDefaultWorld().get().getGeneratorType().getName();
     }
 
     @Override
@@ -142,12 +150,12 @@ public class SpongeServer extends MinecraftServerCommon {
 
     @Override
     public String getMotd() {
-        return Sponge.getServer().getMotd().toString();
+        return Sponge.getServer().getMotd().toPlain();
     }
 
     @Override
     public String getPlayerPrefix(Object player) {
-        return null;
+        return "";
     }
 
     @Override

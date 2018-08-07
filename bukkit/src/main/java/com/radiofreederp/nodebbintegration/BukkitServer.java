@@ -79,6 +79,7 @@ public class BukkitServer extends MinecraftServerCommon {
 
     @Override
     public ArrayList<JSONObject> getPlayerList() {
+
         final ArrayList<JSONObject> playerList = new ArrayList<>();
 
         for (Player player : Bukkit.getServer().getOnlinePlayers()) {
@@ -110,9 +111,7 @@ public class BukkitServer extends MinecraftServerCommon {
             }
 
             if (OnTimeHook.isEnabled()) {
-                if (OnTimeHook.isEnabled()) {
-                    OnTimeHook.onTimeCheckTime(player, playerObj);
-                }
+                OnTimeHook.onTimeCheckTime(player, playerObj);
             }
         } catch (JSONException e) {
             e.printStackTrace();

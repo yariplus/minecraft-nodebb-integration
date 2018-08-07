@@ -7,6 +7,7 @@ import com.radiofreederp.nodebbintegration.sponge.commands.CommandNodeBBSponge;
 import com.radiofreederp.nodebbintegration.sponge.commands.CommandRegisterSponge;
 import com.radiofreederp.nodebbintegration.sponge.configuration.PluginConfigSponge;
 import com.radiofreederp.nodebbintegration.sponge.listeners.ListenerNodeBBIntegration;
+import com.radiofreederp.nodebbintegration.tasks.TaskPing;
 import com.radiofreederp.nodebbintegration.tasks.TaskStatus;
 import com.radiofreederp.nodebbintegration.utils.NBBPlugin;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 
 import java.nio.file.Path;
@@ -28,6 +30,7 @@ import java.util.logging.Level;
 public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
 
     private final SpongeServer server = new SpongeServer(this);
+    private final Task.Builder taskBuilder = Task.builder();
 
     // Logger
     @Inject
@@ -113,27 +116,28 @@ public class NodeBBIntegrationSponge implements NodeBBIntegrationPlugin {
 
     @Override
     public void runTaskAsynchronously(Runnable task) {
-        Sponge.getScheduler().createTaskBuilder().execute(task).async().submit(this);
+        taskBuilder.execute(task).async().submit(this);
     }
 
     @Override
     public void runTaskTimerAsynchronously(Runnable task, int delay, int interval) {
-
+        taskBuilder.execute(task).async().delayTicks(delay).intervalTicks(interval).submit(this);
     }
 
     @Override
     public void runTask(Runnable task) {
-        Sponge.getScheduler().createTaskBuilder().execute(task).submit(this);
+        taskBuilder.execute(task).submit(this);
     }
 
     @Override
     public void runTaskTimer(Runnable task, int delay, int interval) {
-
+        taskBuilder.execute(task).delayTicks(delay).intervalTicks(interval).submit(this);
     }
 
     @Override
     public void initTaskTick() {
         new TaskStatus(this);
+        new TaskPing(this);
     }
 
     @Override

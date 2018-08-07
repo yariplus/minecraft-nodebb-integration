@@ -27,43 +27,43 @@ public class TaskStatus implements Runnable {
 
     @Override
     public void run() {
-        if (SocketIOClient.connected()) {
+        if (SocketIOClient.disconnected()) {
+            SocketIOClient.connect();
+            return;
+        }
 
-            final String socketEvent = ESocketEvent.SERVER_STATUS;
+        final String socketEvent = ESocketEvent.SERVER_STATUS;
 
-            JSONObject obj = new JSONObject();
+        Logger.log("Constructing JSON Object for " + socketEvent + "...");
 
-            try {
-                obj.put("timestamp", System.currentTimeMillis());
+        JSONObject obj = new JSONObject();
 
-                obj.put("tps", server.getTPS());
-                obj.put("version", server.getVersion());
-                obj.put("name", server.getServerName());
-                obj.put("gametype", server.getWorldType());
-                obj.put("map", server.getWorldName());
-                obj.put("motd", server.getMotd());
+        try {
+            obj.put("timestamp", System.currentTimeMillis());
 
-                obj.put("players", server.getPlayerList());
-                obj.put("onlinePlayers", server.getOnlinePlayers());
-                obj.put("maxPlayers", server.getMaxPlayers());
+            obj.put("tps", server.getTPS());
+            obj.put("version", server.getVersion());
+            obj.put("name", server.getServerName());
+            obj.put("gametype", server.getWorldType());
+            obj.put("map", server.getWorldName());
+            obj.put("motd", server.getMotd());
 
-                obj.put("plugins", server.getPluginList());
+            obj.put("players", server.getPlayerList());
+            obj.put("onlinePlayers", server.getOnlinePlayers());
+            obj.put("maxPlayers", server.getMaxPlayers());
 
-                obj.put("icon", server.getServerIcon());
+            obj.put("plugins", server.getPluginList());
 
-                obj.put("objectives", server.getScoreboards());
+            obj.put("icon", server.getServerIcon());
 
-            } catch (JSONException e) {
-                Logger.log("Error constructing JSON Object for " + socketEvent);
-                e.printStackTrace();
-                return;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            obj.put("objectives", server.getScoreboards());
 
-            SocketIOClient.emit(socketEvent, obj, null);
-        } else {
-			SocketIOClient.connect();
-		}
+        } catch (Exception e) {
+            Logger.log("Error constructing JSON Object for " + socketEvent);
+            e.printStackTrace();
+            return;
+        }
+
+        SocketIOClient.emit(socketEvent, obj, null);
     }
 }
